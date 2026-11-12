@@ -28,6 +28,7 @@ bool UInvestigationSubsystem::StartCase(FName CasePluginName)
 
 	ActiveCase = MoveTemp(Loaded);
 	ActiveCasePlugin = CasePluginName;
+	bConcluded = false;
 
 	UE_LOG(LogInvestigation, Log, TEXT("Case '%s' started from plugin '%s' (%d questions, %d people, %d exhibits, %d content warnings)."),
 		*ActiveCase.CaseId.ToString(), *CasePluginName.ToString(),
@@ -46,6 +47,16 @@ void UInvestigationSubsystem::EndCase()
 	UE_LOG(LogInvestigation, Log, TEXT("Case '%s' ended."), *ActiveCase.CaseId.ToString());
 	ActiveCase = FCaseContent();
 	ActiveCasePlugin = NAME_None;
+	bConcluded = false;
+}
+
+void UInvestigationSubsystem::ConcludeCase()
+{
+	if (IsCaseActive() && !bConcluded)
+	{
+		bConcluded = true;
+		UE_LOG(LogInvestigation, Log, TEXT("Case '%s' concluded."), *ActiveCase.CaseId.ToString());
+	}
 }
 
 void UInvestigationSubsystem::LogActiveCaseSummary() const

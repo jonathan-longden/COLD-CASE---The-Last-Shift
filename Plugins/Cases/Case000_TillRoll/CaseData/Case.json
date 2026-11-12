@@ -505,6 +505,7 @@
 		{
 			"Id": "TillRoll.E.LorraineStatement2000",
 			"ExhibitRef": "RT/5",
+			"Author": "TillRoll.C.Lorraine",
 			"Name": "Witness statement of Lorraine Pike, 14/10/2000",
 			"Description": "Taken two days after Sarah was reported missing.",
 			"Availability": "InitialFile",
@@ -524,6 +525,7 @@
 		{
 			"Id": "TillRoll.E.MickStatement2000",
 			"ExhibitRef": "RT/6",
+			"Author": "TillRoll.C.Mick",
 			"Name": "Witness statement of Michael Hollis, 15/10/2000",
 			"Description": "Taken as part of house-to-house and regulars enquiries.",
 			"Availability": "InitialFile",
@@ -541,6 +543,7 @@
 		{
 			"Id": "TillRoll.E.NeighbourStatement2000",
 			"ExhibitRef": "RT/9",
+			"Author": "TillRoll.C.Neighbour",
 			"Name": "Witness statement of Doreen Ash, 16/10/2000",
 			"Description": "Neighbour living opposite the diner.",
 			"Availability": "InitialFile",

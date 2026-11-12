@@ -67,8 +67,8 @@ bool UInterviewSubsystem::StartInterview(FName CharacterId, FText& OutRefusal)
 
 	const FCaseContent* Case = GetCase();
 	const FCaseCharacter* Character = Case ? Case->FindCharacter(CharacterId) : nullptr;
-	const FCharacterRuntimeState* State = GetCharacterState(CharacterId);
-	if (!Character || !State || IsInterviewActive())
+	FCharacterRuntimeState* State = FindState(CharacterId);
+	if (!Character || !State || IsInterviewActive() || Investigation->IsCaseConcluded())
 	{
 		return false;
 	}
@@ -79,6 +79,7 @@ bool UInterviewSubsystem::StartInterview(FName CharacterId, FText& OutRefusal)
 		return false;
 	}
 
+	State->bInterviewed = true;
 	CurrentCharacterId = CharacterId;
 	return true;
 }
