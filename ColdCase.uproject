@@ -1,0 +1,26 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "5.7",
+	"Category": "",
+	"Description": "COLD CASE - narrative cold-case investigation game",
+	"Modules": [
+		{
+			"Name": "ColdCase",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "InvestigationFramework",
+			"Enabled": true
+		},
+		{
+			"Name": "Case000_TillRoll",
+			"Enabled": true
+		}
+	]
+}
