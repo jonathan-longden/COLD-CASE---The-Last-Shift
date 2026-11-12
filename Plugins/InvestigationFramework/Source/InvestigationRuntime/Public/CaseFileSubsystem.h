@@ -111,6 +111,8 @@ public:
 private:
 	void HandleCaseStarted(const FCaseContent& Case);
 	const FCaseContent* GetCase() const;
+	/** False once the case is concluded: the file is closed and can no longer be changed. */
+	bool IsOpen() const;
 	void AddEvidence(FName EvidenceId);
 
 	UPROPERTY(Transient)

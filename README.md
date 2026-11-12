@@ -76,6 +76,17 @@ Things to try on a fresh Play: challenge Mick about the car (`ColdCase.Ask TillR
 
 `ColdCase.Debug.People` (development builds only) shows the hidden trust, composure and story step, for checking the rules. The finished game never shows these.
 
+## Checking the conclusion and case review (Milestone 4)
+
+1. `ColdCase.Theory` lists the three key questions and the ID of each possible answer.
+2. Answer each with `ColdCase.Answer <QuestionId> <FactId>`.
+3. `ColdCase.Review` takes it to your DCI. The DCI only talks about how well your file supports each answer, never whether it is right. Try it early and again after more work; the wording changes as your evidence does.
+4. `ColdCase.Conclude` is final. It closes the file and prints the case review: what you concluded, how well supported it was, what actually happened, and lines of enquiry you didn't follow.
+
+Worth trying: examine only Lorraine's 2000 statement, interview only Lorraine, answer "Around 23:00 / alone / Lorraine", and conclude. You get a calm, professional review of a wrong conclusion, and nothing during play told you it was wrong.
+
+How support is counted: one person is one source however often they repeat themselves, a person's latest word replaces their earlier account, and people who weren't sure count for less.
+
 ## Working rules
 
 - C++ owns rules and state, case data owns content, Blueprints own presentation.

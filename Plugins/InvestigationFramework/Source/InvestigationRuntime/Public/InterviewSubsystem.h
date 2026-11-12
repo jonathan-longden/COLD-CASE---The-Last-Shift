@@ -34,6 +34,10 @@ struct INVESTIGATIONRUNTIME_API FCharacterRuntimeState
 	UPROPERTY(BlueprintReadOnly, Category = "Interview")
 	bool bRefusesInterview = false;
 
+	/** True once the detective has interviewed them at least once. */
+	UPROPERTY(BlueprintReadOnly, Category = "Interview")
+	bool bInterviewed = false;
+
 	/** "Once" responses they have already given. */
 	UPROPERTY(BlueprintReadOnly, Category = "Interview")
 	TArray<FName> UsedResponses;
@@ -98,6 +102,8 @@ public:
 	bool IsInterviewActive() const { return !CurrentCharacterId.IsNone(); }
 
 	FName GetCurrentCharacterId() const { return CurrentCharacterId; }
+
+	const TArray<FCharacterRuntimeState>& GetCharacterStates() const { return CharacterStates; }
 
 	/** Returns nullptr if no case is active or the character is unknown. */
 	const FCharacterRuntimeState* GetCharacterState(FName CharacterId) const;

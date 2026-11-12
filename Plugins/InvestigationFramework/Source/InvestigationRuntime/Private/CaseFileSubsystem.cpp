@@ -33,6 +33,11 @@ const FCaseContent* UCaseFileSubsystem::GetCase() const
 	return (Investigation && Investigation->IsCaseActive()) ? &Investigation->GetActiveCase() : nullptr;
 }
 
+bool UCaseFileSubsystem::IsOpen() const
+{
+	return Investigation && Investigation->IsCaseActive() && !Investigation->IsCaseConcluded();
+}
+
 void UCaseFileSubsystem::HandleCaseStarted(const FCaseContent& Case)
 {
 	HeldEvidence.Reset();
@@ -69,7 +74,7 @@ void UCaseFileSubsystem::AddEvidence(FName EvidenceId)
 bool UCaseFileSubsystem::ExamineEvidence(FName EvidenceId)
 {
 	FHeldEvidence* Held = HeldEvidence.FindByPredicate([EvidenceId](const FHeldEvidence& H) { return H.EvidenceId == EvidenceId; });
-	if (!Held)
+	if (!Held || !IsOpen())
 	{
 		return false;
 	}
@@ -85,7 +90,7 @@ bool UCaseFileSubsystem::RequestEvidence(FName EvidenceId)
 {
 	const FCaseContent* Case = GetCase();
 	const FEvidenceItem* Item = Case ? Case->FindEvidence(EvidenceId) : nullptr;
-	if (!Item || Item->Availability != EEvidenceAvailability::OnRequest || HasEvidence(EvidenceId) || PendingRequests.Contains(EvidenceId))
+	if (!IsOpen() || !Item || Item->Availability != EEvidenceAvailability::OnRequest || HasEvidence(EvidenceId) || PendingRequests.Contains(EvidenceId))
 	{
 		return false;
 	}
@@ -129,7 +134,7 @@ void UCaseFileSubsystem::NotifyInterviewEnded()
 bool UCaseFileSubsystem::ChooseInterpretation(FName FindingId, FName InterpretationId)
 {
 	const FCaseContent* Case = GetCase();
-	if (!Case)
+	if (!Case || !IsOpen())
 	{
 		return false;
 	}

@@ -137,6 +137,10 @@ TArray<FString> FCaseValidator::Validate(const FCaseContent& Content, const FCas
 	for (const FEvidenceItem& Item : Content.Evidence)
 	{
 		CheckId(Item.Id, TEXT("Evidence"), AllIds, Problems);
+		if (!Item.Author.IsNone() && !Content.FindCharacter(Item.Author))
+		{
+			Problems.Add(FString::Printf(TEXT("Evidence '%s' has unknown Author '%s'."), *Item.Id.ToString(), *Item.Author.ToString()));
+		}
 		if (Item.Findings.Num() == 0)
 		{
 			Problems.Add(FString::Printf(TEXT("Evidence '%s' has no Findings."), *Item.Id.ToString()));

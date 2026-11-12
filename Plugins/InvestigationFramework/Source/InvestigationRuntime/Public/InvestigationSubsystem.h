@@ -33,6 +33,16 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Investigation")
 	bool IsCaseActive() const { return !ActiveCasePlugin.IsNone(); }
 
+	/**
+	 * Marks the investigation as concluded. This cannot be undone for this run of the case.
+	 * Only after this may the case-review report read what really happened.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Investigation")
+	void ConcludeCase();
+
+	UFUNCTION(BlueprintPure, Category = "Investigation")
+	bool IsCaseConcluded() const { return bConcluded; }
+
 	/** The active case's content. Only meaningful while IsCaseActive() is true. */
 	const FCaseContent& GetActiveCase() const { return ActiveCase; }
 
@@ -50,4 +60,7 @@ private:
 	FCaseContent ActiveCase;
 
 	FName ActiveCasePlugin;
+
+	UPROPERTY()
+	bool bConcluded = false;
 };

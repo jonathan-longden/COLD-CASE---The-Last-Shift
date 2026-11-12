@@ -298,6 +298,13 @@ struct INVESTIGATIONRUNTIME_API FEvidenceItem
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
 	FText Description;
 
+	/**
+	 * The person whose account this is, if it is one (a witness statement, a letter). Leave empty for
+	 * physical evidence and records. Two sources from the same person are not independent of each other.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
+	FName Author;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
 	EEvidenceAvailability Availability = EEvidenceAvailability::InitialFile;
 
