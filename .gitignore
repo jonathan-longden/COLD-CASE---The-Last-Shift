@@ -1,0 +1,26 @@
+# Unreal generated folders (rebuilt automatically, never commit)
+Binaries/
+Intermediate/
+Saved/
+DerivedDataCache/
+Build/
+Plugins/**/Binaries/
+Plugins/**/Intermediate/
+
+# IDE files (regenerated from the .uproject)
+.vs/
+.vscode/
+.idea/
+*.sln
+*.suo
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.opendb
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+# OS clutter
+.DS_Store
+Thumbs.db
