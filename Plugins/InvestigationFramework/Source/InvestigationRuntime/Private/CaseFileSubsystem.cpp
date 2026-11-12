@@ -38,6 +38,7 @@ void UCaseFileSubsystem::HandleCaseStarted(const FCaseContent& Case)
 	HeldEvidence.Reset();
 	PendingRequests.Reset();
 	ChosenInterpretations.Reset();
+	Statements.Reset();
 
 	// The original file: everything that was in the box when it came up from the archive.
 	for (const FEvidenceItem& Item : Case.Evidence)
@@ -91,6 +92,24 @@ bool UCaseFileSubsystem::RequestEvidence(FName EvidenceId)
 	PendingRequests.Add(EvidenceId);
 	OnCaseFileChanged.Broadcast();
 	return true;
+}
+
+void UCaseFileSubsystem::RecordStatement(FName SpeakerId, FName ResponseId)
+{
+	const bool bAlreadyRecorded = Statements.ContainsByPredicate([SpeakerId, ResponseId](const FRecordedStatement& S)
+	{
+		return S.SpeakerId == SpeakerId && S.ResponseId == ResponseId;
+	});
+	if (bAlreadyRecorded)
+	{
+		return;
+	}
+
+	FRecordedStatement& Statement = Statements.AddDefaulted_GetRef();
+	Statement.Number = Statements.Num();
+	Statement.SpeakerId = SpeakerId;
+	Statement.ResponseId = ResponseId;
+	OnCaseFileChanged.Broadcast();
 }
 
 void UCaseFileSubsystem::NotifyInterviewEnded()
@@ -226,7 +245,22 @@ void UCaseFileSubsystem::LogCaseFile() const
 		UE_LOG(LogInvestigation, Display, TEXT("Requested, not yet arrived: %s"), *Pending.ToString());
 	}
 
-	UE_LOG(LogInvestigation, Display, TEXT("-- Your material currently points to --"));
+	if (Statements.Num() > 0)
+	{
+		UE_LOG(LogInvestigation, Display, TEXT("-- Statements taken --"));
+		for (const FRecordedStatement& Statement : Statements)
+		{
+			const FCaseCharacter* Speaker = Case->FindCharacter(Statement.SpeakerId);
+			const FInterviewResponse* Response = Speaker ? Speaker->FindResponse(Statement.ResponseId) : nullptr;
+			if (Response)
+			{
+				UE_LOG(LogInvestigation, Display, TEXT("%d. %s%s: %s"), Statement.Number, *Speaker->Name.ToString(),
+					Response->Certainty == EStatementCertainty::Unsure ? TEXT(" (unsure)") : TEXT(""), *Response->Line.ToString());
+			}
+		}
+	}
+
+	UE_LOG(LogInvestigation, Display, TEXT("-- Your exhibits currently point to --"));
 	for (const FName FactId : GetFactsSupportedByCaseFile())
 	{
 		const FCaseQuestion* Question = Case->FindQuestionForFact(FactId);
@@ -298,16 +332,4 @@ namespace CaseFileConsole
 			}
 		}));
 
-#if !UE_BUILD_SHIPPING
-	static FAutoConsoleCommandWithWorld EndInterviewCommand(
-		TEXT("ColdCase.Debug.EndInterview"),
-		TEXT("Development only. Pretends an interview just ended, so pending requests arrive."),
-		FConsoleCommandWithWorldDelegate::CreateLambda([](UWorld* World)
-		{
-			if (UCaseFileSubsystem* CaseFile = GetSubsystem(World))
-			{
-				CaseFile->NotifyInterviewEnded();
-			}
-		}));
-#endif
 }

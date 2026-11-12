@@ -53,9 +53,28 @@ Press Play, open the console with **`**, and keep **Window > Output Log** open f
 
 1. `ColdCase.CaseFile` lists the four exhibits from the original file, all "not examined".
 2. `ColdCase.Examine TillRoll.E.TillRoll`, then `ColdCase.CaseFile` again: the till roll's finding and its two readings appear, neither chosen.
-3. `ColdCase.Interpret TillRoll.E.TillRoll.LastSale TillRoll.E.TillRoll.LastSale.SarahWorking`: the case file now says your material points to "After 23:30". Nothing tells you whether that reading is right.
+3. `ColdCase.Interpret TillRoll.E.TillRoll.LastSale TillRoll.E.TillRoll.LastSale.SarahWorking`: the case file now says your exhibits point to "After 23:30". Nothing tells you whether that reading is right.
 4. `ColdCase.Request TillRoll.E.DVLARecord`: it shows as requested, not arrived.
-5. `ColdCase.Debug.EndInterview` (stands in for finishing an interview until interviews exist): the DVLA record is now in the file.
+5. The DVLA record arrives once you finish your next interview (see Milestone 3).
+
+## Checking interviews (Milestone 3)
+
+There are no dialogue trees. You pick a topic to ask about or an exhibit to show, and optionally add `rapport` or `challenge`. What the person says depends on how much they trust you, how composed they are, and what you've already put to them. Nothing ever tells you whether an answer is true.
+
+`ColdCase.Topics` lists the people and topic IDs. A good first run:
+
+1. `ColdCase.Request TillRoll.E.DVLARecord`
+2. `ColdCase.Interview TillRoll.C.Lorraine`
+3. `ColdCase.Ask TillRoll.T.LastShift` : she is certain Sarah left about eleven.
+4. `ColdCase.Present TillRoll.E.TillRoll` : she is shaken, and has nothing to defend.
+5. `ColdCase.Ask TillRoll.T.LastShift` again: her account has changed, and she is no longer sure.
+6. `ColdCase.EndInterview` : the DVLA record arrives.
+7. `ColdCase.Interview TillRoll.C.Mick`, then try `ColdCase.Ask TillRoll.T.LastShift`, `ColdCase.Present TillRoll.E.TillRoll`, `ColdCase.Present TillRoll.E.DVLARecord`, and `ColdCase.Present TillRoll.E.NeighbourStatement2000 challenge` more than once. He gives ground a step at a time, and only when pushed with evidence.
+8. `ColdCase.CaseFile` : every statement that asserted something is listed under "Statements taken".
+
+Things to try on a fresh Play: challenge Mick about the car (`ColdCase.Ask TillRoll.T.Car challenge`) before the DVLA record has arrived. He stops cooperating for good, and Lorraine has something new to say about him afterwards.
+
+`ColdCase.Debug.People` (development builds only) shows the hidden trust, composure and story step, for checking the rules. The finished game never shows these.
 
 ## Working rules
 
