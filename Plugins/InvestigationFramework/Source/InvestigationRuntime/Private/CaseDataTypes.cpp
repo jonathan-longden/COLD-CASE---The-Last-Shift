@@ -22,3 +22,25 @@ const FEvidenceItem* FCaseContent::FindEvidence(FName EvidenceId) const
 {
 	return Evidence.FindByPredicate([EvidenceId](const FEvidenceItem& E) { return E.Id == EvidenceId; });
 }
+
+const FInterviewTopic* FCaseContent::FindTopic(FName TopicId) const
+{
+	return Topics.FindByPredicate([TopicId](const FInterviewTopic& T) { return T.Id == TopicId; });
+}
+
+const FCaseFact* FCaseContent::FindFact(FName FactId) const
+{
+	for (const FCaseQuestion& Question : Questions)
+	{
+		if (const FCaseFact* Fact = Question.Facts.FindByPredicate([FactId](const FCaseFact& F) { return F.Id == FactId; }))
+		{
+			return Fact;
+		}
+	}
+	return nullptr;
+}
+
+const FInterviewResponse* FCaseCharacter::FindResponse(FName ResponseId) const
+{
+	return Responses.FindByPredicate([ResponseId](const FInterviewResponse& R) { return R.Id == ResponseId; });
+}

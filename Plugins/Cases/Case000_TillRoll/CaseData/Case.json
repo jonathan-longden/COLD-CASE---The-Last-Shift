@@ -3,64 +3,476 @@
 	"CaseId": "TillRoll",
 	"Title": "Case 000: The Till Roll",
 	"Briefing": "Mechanics test, not canon. Sarah Mercer finished a late shift at the Bluebell Diner on Thursday 12 October 2000 and was never seen again. The original inquiry settled on her leaving alone at about eleven. The box has come back up from the archive. Read the file, speak to who you can, and tell me what you can actually establish.",
-
 	"KeyQuestions": [
 		"TillRoll.Q.SarahLeftAt",
 		"TillRoll.Q.SarahLeftWith",
 		"TillRoll.Q.LastSeenBy"
 	],
-
 	"Questions": [
 		{
 			"Id": "TillRoll.Q.SarahLeftAt",
 			"Text": "When did Sarah leave the diner?",
 			"Facts": [
-				{ "Id": "TillRoll.F.SarahLeftAt.Around2300", "Text": "Around 23:00" },
-				{ "Id": "TillRoll.F.SarahLeftAt.After2330", "Text": "After 23:30" }
+				{
+					"Id": "TillRoll.F.SarahLeftAt.Around2300",
+					"Text": "Around 23:00"
+				},
+				{
+					"Id": "TillRoll.F.SarahLeftAt.After2330",
+					"Text": "After 23:30"
+				}
 			]
 		},
 		{
 			"Id": "TillRoll.Q.SarahLeftWith",
 			"Text": "Did Sarah leave alone?",
 			"Facts": [
-				{ "Id": "TillRoll.F.SarahLeftWith.Alone", "Text": "She left alone, on foot" },
-				{ "Id": "TillRoll.F.SarahLeftWith.InACar", "Text": "She left with someone, in a car" }
+				{
+					"Id": "TillRoll.F.SarahLeftWith.Alone",
+					"Text": "She left alone, on foot"
+				},
+				{
+					"Id": "TillRoll.F.SarahLeftWith.InACar",
+					"Text": "She left with someone, in a car"
+				}
 			]
 		},
 		{
 			"Id": "TillRoll.Q.LastSeenBy",
 			"Text": "Who was the last person known to have seen Sarah?",
 			"Facts": [
-				{ "Id": "TillRoll.F.LastSeenBy.Lorraine", "Text": "Lorraine Pike" },
-				{ "Id": "TillRoll.F.LastSeenBy.Mick", "Text": "Mick Hollis" },
-				{ "Id": "TillRoll.F.LastSeenBy.Unknown", "Text": "Someone not yet identified" }
+				{
+					"Id": "TillRoll.F.LastSeenBy.Lorraine",
+					"Text": "Lorraine Pike"
+				},
+				{
+					"Id": "TillRoll.F.LastSeenBy.Mick",
+					"Text": "Mick Hollis"
+				},
+				{
+					"Id": "TillRoll.F.LastSeenBy.Unknown",
+					"Text": "Someone not yet identified"
+				}
 			]
 		},
 		{
 			"Id": "TillRoll.Q.MickLeftAt",
 			"Text": "When did Mick Hollis leave the diner?",
 			"Facts": [
-				{ "Id": "TillRoll.F.MickLeftAt.By2230", "Text": "By 22:30" },
-				{ "Id": "TillRoll.F.MickLeftAt.After2330", "Text": "After 23:30" }
+				{
+					"Id": "TillRoll.F.MickLeftAt.By2230",
+					"Text": "By 22:30"
+				},
+				{
+					"Id": "TillRoll.F.MickLeftAt.After2330",
+					"Text": "After 23:30"
+				}
 			]
 		},
 		{
 			"Id": "TillRoll.Q.CarOutside",
 			"Text": "Whose was the dark estate car outside after half eleven?",
 			"Facts": [
-				{ "Id": "TillRoll.F.CarOutside.Mick", "Text": "Mick Hollis's car" },
-				{ "Id": "TillRoll.F.CarOutside.Unrelated", "Text": "Nothing to do with Sarah" }
+				{
+					"Id": "TillRoll.F.CarOutside.Mick",
+					"Text": "Mick Hollis's car"
+				},
+				{
+					"Id": "TillRoll.F.CarOutside.Unrelated",
+					"Text": "Nothing to do with Sarah"
+				}
 			]
 		}
 	],
-
 	"Characters": [
-		{ "Id": "TillRoll.C.Sarah", "Name": "Sarah Mercer", "Role": "Missing. Waitress, 32" },
-		{ "Id": "TillRoll.C.Lorraine", "Name": "Lorraine Pike", "Role": "Waitress, worked the same shift" },
-		{ "Id": "TillRoll.C.Mick", "Name": "Mick Hollis", "Role": "Regular customer" },
-		{ "Id": "TillRoll.C.Neighbour", "Name": "Doreen Ash", "Role": "Lived opposite the diner. Died 2014" }
+		{
+			"Id": "TillRoll.C.Sarah",
+			"Name": "Sarah Mercer",
+			"Role": "Missing. Waitress, 32"
+		},
+		{
+			"Id": "TillRoll.C.Lorraine",
+			"Name": "Lorraine Pike",
+			"Role": "Waitress, worked the same shift",
+			"StartingTrust": 60,
+			"StartingComposure": 70,
+			"RapportTrustDelta": 5,
+			"ChallengeTrustDelta": -10,
+			"ChallengeComposureDelta": -5,
+			"DefaultLine": "I don't know, love. It's a long time ago.",
+			"RefusalLine": "I've said all I'm going to say.",
+			"Responses": [
+				{
+					"Id": "TillRoll.R.Lorraine.Night",
+					"Trigger": "TillRoll.T.LastShift",
+					"Line": "Sarah left about eleven. Said goodnight and walked off to the bus stop on her own. I cashed up and locked the door behind her.",
+					"AssertsFacts": [
+						"TillRoll.F.SarahLeftAt.Around2300",
+						"TillRoll.F.SarahLeftWith.Alone",
+						"TillRoll.F.LastSeenBy.Lorraine"
+					]
+				},
+				{
+					"Id": "TillRoll.R.Lorraine.NightPressed",
+					"Trigger": "TillRoll.T.LastShift",
+					"Line": "I know what I saw. I've told it the same way for twenty-six years. Don't put words in my mouth.",
+					"Approach": "Challenge",
+					"TrustDelta": -5
+				},
+				{
+					"Id": "TillRoll.R.Lorraine.NightDoubt",
+					"Trigger": "TillRoll.T.LastShift",
+					"Line": "I've been turning it over. She went out the front about eleven, I do know that. But she used to have a cigarette out there. She might have come back in. I couldn't swear to it now.",
+					"RequiresFlags": [
+						"TillRoll.Flag.LorraineDoubts"
+					],
+					"Priority": 5,
+					"Certainty": "Unsure",
+					"AssertsFacts": [
+						"TillRoll.F.SarahLeftAt.After2330"
+					]
+				},
+				{
+					"Id": "TillRoll.R.Lorraine.Sarah",
+					"Trigger": "TillRoll.T.Sarah",
+					"Line": "Good worker. Never late. Kept herself to herself that last month, mind. I thought it was money."
+				},
+				{
+					"Id": "TillRoll.R.Lorraine.Mick",
+					"Trigger": "TillRoll.T.Mick",
+					"Line": "Mick Hollis. In every night, same table by the window. Harmless. He'd nurse one pot of tea for two hours."
+				},
+				{
+					"Id": "TillRoll.R.Lorraine.MickStillThere",
+					"Trigger": "TillRoll.T.Mick",
+					"Line": "Now I think about it, he was still at his table when I started cashing up. I'm nearly sure. I remember going round him with the mop.",
+					"RequiresFlags": [
+						"TillRoll.Flag.LorraineDoubts"
+					],
+					"MinTrust": 60,
+					"Priority": 5,
+					"Certainty": "Unsure",
+					"AssertsFacts": [
+						"TillRoll.F.MickLeftAt.After2330"
+					]
+				},
+				{
+					"Id": "TillRoll.R.Lorraine.MickRang",
+					"Trigger": "TillRoll.T.Mick",
+					"Line": "He rang me. First time in years. Wanted to know what I'd been saying to you. I didn't like it.",
+					"RequiresFlags": [
+						"TillRoll.Flag.MickSpooked"
+					],
+					"Priority": 10,
+					"Once": true
+				},
+				{
+					"Id": "TillRoll.R.Lorraine.Self",
+					"Trigger": "TillRoll.T.Lorraine",
+					"Line": "Me? I was there eleven years. I'd have noticed if something was wrong. That's what I can't forgive myself for."
+				},
+				{
+					"Id": "TillRoll.R.Lorraine.Car",
+					"Trigger": "TillRoll.T.Car",
+					"Line": "I never saw a car. I was out the back with the bins and the float."
+				},
+				{
+					"Id": "TillRoll.R.Lorraine.TillRoll",
+					"Trigger": "TillRoll.E.TillRoll",
+					"Line": "Half eleven? But she'd gone. I... I was sure. It's twenty-odd years, love. I'd have sworn it.",
+					"Once": true,
+					"Priority": 5,
+					"ComposureDelta": -10,
+					"SetFlags": [
+						"TillRoll.Flag.LorraineDoubts"
+					]
+				},
+				{
+					"Id": "TillRoll.R.Lorraine.TillRollAgain",
+					"Trigger": "TillRoll.E.TillRoll",
+					"Line": "I've looked at it. I don't know what to tell you. Those are her initials."
+				},
+				{
+					"Id": "TillRoll.R.Lorraine.TillRollPressed",
+					"Trigger": "TillRoll.E.TillRoll",
+					"Line": "You're telling me I've had it wrong all this time? In front of her mother, at the inquest? No. No, I won't have that.",
+					"Approach": "Challenge",
+					"Once": true,
+					"Priority": 8,
+					"TrustDelta": -15,
+					"ComposureDelta": -10
+				},
+				{
+					"Id": "TillRoll.R.Lorraine.OwnStatement",
+					"Trigger": "TillRoll.E.LorraineStatement2000",
+					"Line": "That's my signature. That's what I said, and it's what happened."
+				},
+				{
+					"Id": "TillRoll.R.Lorraine.MickStatement",
+					"Trigger": "TillRoll.E.MickStatement2000",
+					"Line": "Half ten? Well. If that's what he says."
+				},
+				{
+					"Id": "TillRoll.R.Lorraine.Neighbour",
+					"Trigger": "TillRoll.E.NeighbourStatement2000",
+					"Line": "Doreen Ash was never away from that window. If she says there was a car, there was a car. Doesn't mean it was waiting for Sarah."
+				},
+				{
+					"Id": "TillRoll.R.Lorraine.DVLA",
+					"Trigger": "TillRoll.E.DVLARecord",
+					"Line": "I wouldn't know one car from another, love."
+				}
+			]
+		},
+		{
+			"Id": "TillRoll.C.Mick",
+			"Name": "Mick Hollis",
+			"Role": "Regular customer",
+			"StartingTrust": 30,
+			"StartingComposure": 80,
+			"RapportTrustDelta": 8,
+			"ChallengeTrustDelta": -5,
+			"ChallengeComposureDelta": -5,
+			"DefaultLine": "Couldn't tell you.",
+			"RefusalLine": "Mick Hollis will not speak to you without a solicitor, and he has not appointed one.",
+			"Responses": [
+				{
+					"Id": "TillRoll.R.Mick.Night0",
+					"Trigger": "TillRoll.T.LastShift",
+					"Line": "Same as I told them at the time. Had my tea, left about half ten. Sarah was still serving when I went.",
+					"StoryStep": 0,
+					"AssertsFacts": [
+						"TillRoll.F.MickLeftAt.By2230"
+					]
+				},
+				{
+					"Id": "TillRoll.R.Mick.Night1",
+					"Trigger": "TillRoll.T.LastShift",
+					"Line": "I've said. I stayed a bit later than I told them. She locked up and walked home on her own. That's all there is.",
+					"StoryStep": 1,
+					"AssertsFacts": [
+						"TillRoll.F.MickLeftAt.After2330",
+						"TillRoll.F.SarahLeftWith.Alone"
+					]
+				},
+				{
+					"Id": "TillRoll.R.Mick.Night2",
+					"Trigger": "TillRoll.T.LastShift",
+					"Line": "I gave her a lift. Dropped her at the end of her road, about midnight. She got out and I drove home. I never saw her again.",
+					"StoryStep": 2,
+					"AssertsFacts": [
+						"TillRoll.F.SarahLeftWith.InACar",
+						"TillRoll.F.LastSeenBy.Mick"
+					]
+				},
+				{
+					"Id": "TillRoll.R.Mick.Sarah",
+					"Trigger": "TillRoll.T.Sarah",
+					"Line": "Nice lass. Always had time for you. Not like some of them."
+				},
+				{
+					"Id": "TillRoll.R.Mick.SarahPressed",
+					"Trigger": "TillRoll.T.Sarah",
+					"Line": "I never laid a finger on her. Write that down.",
+					"Approach": "Challenge",
+					"ComposureDelta": -5
+				},
+				{
+					"Id": "TillRoll.R.Mick.Lorraine",
+					"Trigger": "TillRoll.T.Lorraine",
+					"Line": "She was on with Sarah that night. Ran the place, really. That's all I know about her."
+				},
+				{
+					"Id": "TillRoll.R.Mick.Self",
+					"Trigger": "TillRoll.T.Mick",
+					"Line": "What about me? I had my tea there. It's not a crime."
+				},
+				{
+					"Id": "TillRoll.R.Mick.Car0",
+					"Trigger": "TillRoll.T.Car",
+					"Line": "I had a car, yes. Most people did. What of it?",
+					"StoryStep": 0,
+					"ComposureDelta": -5
+				},
+				{
+					"Id": "TillRoll.R.Mick.Car1",
+					"Trigger": "TillRoll.T.Car",
+					"Line": "It was parked up the road. I walked to it after she'd gone. On my own.",
+					"StoryStep": 1,
+					"ComposureDelta": -5
+				},
+				{
+					"Id": "TillRoll.R.Mick.Car2",
+					"Trigger": "TillRoll.T.Car",
+					"Line": "It was my car. I've told you now. I gave her a lift.",
+					"StoryStep": 2,
+					"AssertsFacts": [
+						"TillRoll.F.CarOutside.Mick"
+					]
+				},
+				{
+					"Id": "TillRoll.R.Mick.CarTooSoon",
+					"Trigger": "TillRoll.T.Car",
+					"Line": "Are you accusing me of something? Because if you are, I want a solicitor, and until then I've nothing to say. We're done.",
+					"Approach": "Challenge",
+					"StoryStep": 0,
+					"RequiresNotHeld": [
+						"TillRoll.E.DVLARecord"
+					],
+					"Priority": 10,
+					"EndsCooperation": true,
+					"SetFlags": [
+						"TillRoll.Flag.MickSpooked"
+					]
+				},
+				{
+					"Id": "TillRoll.R.Mick.TillRoll0",
+					"Trigger": "TillRoll.E.TillRoll",
+					"Line": "What's that got to do with me? I'd gone by then.",
+					"StoryStep": 0,
+					"ComposureDelta": -10,
+					"AssertsFacts": [
+						"TillRoll.F.MickLeftAt.By2230"
+					]
+				},
+				{
+					"Id": "TillRoll.R.Mick.TillRollLater",
+					"Trigger": "TillRoll.E.TillRoll",
+					"Line": "She was working late. I've said that.",
+					"ComposureDelta": -5
+				},
+				{
+					"Id": "TillRoll.R.Mick.OwnStatement0",
+					"Trigger": "TillRoll.E.MickStatement2000",
+					"Line": "That's what I said then and it's what I'm saying now.",
+					"StoryStep": 0
+				},
+				{
+					"Id": "TillRoll.R.Mick.OwnStatementLater",
+					"Trigger": "TillRoll.E.MickStatement2000",
+					"Line": "I was frightened, all right? A lass goes missing and you're the last one in the cafe. You'd have said the same.",
+					"Priority": -1,
+					"ComposureDelta": -5
+				},
+				{
+					"Id": "TillRoll.R.Mick.LorraineStatement",
+					"Trigger": "TillRoll.E.LorraineStatement2000",
+					"Line": "There you are, then. She left on her own. Lorraine saw her."
+				},
+				{
+					"Id": "TillRoll.R.Mick.Neighbour0",
+					"Trigger": "TillRoll.E.NeighbourStatement2000",
+					"Line": "Plenty of dark cars about. It's a main road.",
+					"StoryStep": 0,
+					"ComposureDelta": -10
+				},
+				{
+					"Id": "TillRoll.R.Mick.NeighbourTooSoon",
+					"Trigger": "TillRoll.E.NeighbourStatement2000",
+					"Line": "Are you accusing me of something? Because if you are, I want a solicitor, and until then I've nothing to say. We're done.",
+					"Approach": "Challenge",
+					"StoryStep": 0,
+					"RequiresNotHeld": [
+						"TillRoll.E.DVLARecord"
+					],
+					"Priority": 10,
+					"EndsCooperation": true,
+					"SetFlags": [
+						"TillRoll.Flag.MickSpooked"
+					]
+				},
+				{
+					"Id": "TillRoll.R.Mick.Neighbour1",
+					"Trigger": "TillRoll.E.NeighbourStatement2000",
+					"Line": "I told you. She walked.",
+					"StoryStep": 1,
+					"ComposureDelta": -10
+				},
+				{
+					"Id": "TillRoll.R.Mick.Neighbour1Breaks",
+					"Trigger": "TillRoll.E.NeighbourStatement2000",
+					"Line": "All right. All right. She got in the car. I gave her a lift, that's all it was. Dropped her at the end of her road about midnight. That's the last I saw of her, and that's the truth.",
+					"Approach": "Challenge",
+					"StoryStep": 1,
+					"MaxComposure": 50,
+					"Priority": 5,
+					"SetStoryStep": 2,
+					"AssertsFacts": [
+						"TillRoll.F.SarahLeftWith.InACar",
+						"TillRoll.F.LastSeenBy.Mick",
+						"TillRoll.F.CarOutside.Mick"
+					]
+				},
+				{
+					"Id": "TillRoll.R.Mick.Neighbour2",
+					"Trigger": "TillRoll.E.NeighbourStatement2000",
+					"Line": "That was me. I've told you.",
+					"StoryStep": 2,
+					"AssertsFacts": [
+						"TillRoll.F.CarOutside.Mick"
+					]
+				},
+				{
+					"Id": "TillRoll.R.Mick.DVLA0",
+					"Trigger": "TillRoll.E.DVLARecord",
+					"Line": "I had an Astra. So did half of Nottingham.",
+					"StoryStep": 0,
+					"ComposureDelta": -15
+				},
+				{
+					"Id": "TillRoll.R.Mick.DVLA0Shifts",
+					"Trigger": "TillRoll.E.DVLARecord",
+					"Line": "All right. I stayed for a bit. Not long. I didn't want to be the last one there, did I? But she walked home on her own.",
+					"StoryStep": 0,
+					"MaxComposure": 70,
+					"Priority": 5,
+					"SetStoryStep": 1,
+					"ComposureDelta": -10,
+					"AssertsFacts": [
+						"TillRoll.F.MickLeftAt.After2330",
+						"TillRoll.F.SarahLeftAt.After2330",
+						"TillRoll.F.SarahLeftWith.Alone"
+					]
+				},
+				{
+					"Id": "TillRoll.R.Mick.DVLA1",
+					"Trigger": "TillRoll.E.DVLARecord",
+					"Line": "It's a car. It proves I had a car.",
+					"StoryStep": 1,
+					"ComposureDelta": -5
+				},
+				{
+					"Id": "TillRoll.R.Mick.DVLA1Trust",
+					"Trigger": "TillRoll.E.DVLARecord",
+					"Line": "You've been straight with me, so. She got in the car. I gave her a lift to the end of her road. About midnight. I've carried that for twenty-six years.",
+					"Approach": "Rapport",
+					"StoryStep": 1,
+					"MinTrust": 50,
+					"Priority": 5,
+					"SetStoryStep": 2,
+					"AssertsFacts": [
+						"TillRoll.F.SarahLeftWith.InACar",
+						"TillRoll.F.LastSeenBy.Mick",
+						"TillRoll.F.CarOutside.Mick"
+					]
+				},
+				{
+					"Id": "TillRoll.R.Mick.DVLA2",
+					"Trigger": "TillRoll.E.DVLARecord",
+					"Line": "Yes. That's the car.",
+					"StoryStep": 2,
+					"AssertsFacts": [
+						"TillRoll.F.CarOutside.Mick"
+					]
+				}
+			]
+		},
+		{
+			"Id": "TillRoll.C.Neighbour",
+			"Name": "Doreen Ash",
+			"Role": "Lived opposite the diner. Died 2014"
+		}
 	],
-
 	"Evidence": [
 		{
 			"Id": "TillRoll.E.TillRoll",
@@ -77,7 +489,9 @@
 						{
 							"Id": "TillRoll.E.TillRoll.LastSale.SarahWorking",
 							"Text": "Sarah was still working at 23:32.",
-							"SupportsFacts": [ "TillRoll.F.SarahLeftAt.After2330" ]
+							"SupportsFacts": [
+								"TillRoll.F.SarahLeftAt.After2330"
+							]
 						},
 						{
 							"Id": "TillRoll.E.TillRoll.LastSale.CodeShared",
@@ -98,7 +512,11 @@
 				{
 					"Id": "TillRoll.E.LorraineStatement2000.Time",
 					"Text": "\"Sarah left about eleven. She said goodnight and walked off towards the bus stop on her own.\"",
-					"SupportsFacts": [ "TillRoll.F.SarahLeftAt.Around2300", "TillRoll.F.SarahLeftWith.Alone", "TillRoll.F.LastSeenBy.Lorraine" ],
+					"SupportsFacts": [
+						"TillRoll.F.SarahLeftAt.Around2300",
+						"TillRoll.F.SarahLeftWith.Alone",
+						"TillRoll.F.LastSeenBy.Lorraine"
+					],
 					"Interpretations": []
 				}
 			]
@@ -113,7 +531,9 @@
 				{
 					"Id": "TillRoll.E.MickStatement2000.Time",
 					"Text": "\"I had my tea and left about half ten. Sarah was still serving when I went.\"",
-					"SupportsFacts": [ "TillRoll.F.MickLeftAt.By2230" ],
+					"SupportsFacts": [
+						"TillRoll.F.MickLeftAt.By2230"
+					],
 					"Interpretations": []
 				}
 			]
@@ -133,12 +553,16 @@
 						{
 							"Id": "TillRoll.E.NeighbourStatement2000.Car.Waiting",
 							"Text": "Someone was waiting for Sarah to finish.",
-							"SupportsFacts": [ "TillRoll.F.SarahLeftWith.InACar" ]
+							"SupportsFacts": [
+								"TillRoll.F.SarahLeftWith.InACar"
+							]
 						},
 						{
 							"Id": "TillRoll.E.NeighbourStatement2000.Car.Unrelated",
 							"Text": "A car on a main road. It tells us nothing.",
-							"SupportsFacts": [ "TillRoll.F.CarOutside.Unrelated" ]
+							"SupportsFacts": [
+								"TillRoll.F.CarOutside.Unrelated"
+							]
 						}
 					]
 				}
@@ -159,7 +583,9 @@
 						{
 							"Id": "TillRoll.E.DVLARecord.Astra.MicksCar",
 							"Text": "The car Doreen Ash saw was probably Mick's.",
-							"SupportsFacts": [ "TillRoll.F.CarOutside.Mick" ]
+							"SupportsFacts": [
+								"TillRoll.F.CarOutside.Mick"
+							]
 						},
 						{
 							"Id": "TillRoll.E.DVLARecord.Astra.Coincidence",
@@ -169,6 +595,28 @@
 					]
 				}
 			]
+		}
+	],
+	"Topics": [
+		{
+			"Id": "TillRoll.T.LastShift",
+			"Text": "The night of 12 October 2000"
+		},
+		{
+			"Id": "TillRoll.T.Sarah",
+			"Text": "Sarah Mercer"
+		},
+		{
+			"Id": "TillRoll.T.Mick",
+			"Text": "Mick Hollis"
+		},
+		{
+			"Id": "TillRoll.T.Lorraine",
+			"Text": "Lorraine Pike"
+		},
+		{
+			"Id": "TillRoll.T.Car",
+			"Text": "The car outside the diner"
 		}
 	]
 }

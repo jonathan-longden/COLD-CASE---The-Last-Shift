@@ -35,6 +35,23 @@ struct INVESTIGATIONRUNTIME_API FChosenInterpretation
 	FName InterpretationId;
 };
 
+/** Something a person said in interview that asserts one or more Facts. The line itself is looked up by ID. */
+USTRUCT(BlueprintType)
+struct INVESTIGATIONRUNTIME_API FRecordedStatement
+{
+	GENERATED_BODY()
+
+	/** Order taken, starting at 1. Stable for the life of the save. */
+	UPROPERTY(BlueprintReadOnly, Category = "Case File")
+	int32 Number = 0;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Case File")
+	FName SpeakerId;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Case File")
+	FName ResponseId;
+};
+
 DECLARE_MULTICAST_DELEGATE(FOnCaseFileChanged);
 
 /**
@@ -67,6 +84,11 @@ public:
 	/** Records the player's reading of an ambiguous finding. Pass NAME_None to leave it open. */
 	UFUNCTION(BlueprintCallable, Category = "Case File")
 	bool ChooseInterpretation(FName FindingId, FName InterpretationId);
+
+	/** Called by the interview system when someone says something that asserts a Fact. Each line is recorded once. */
+	void RecordStatement(FName SpeakerId, FName ResponseId);
+
+	const TArray<FRecordedStatement>& GetStatements() const { return Statements; }
 
 	/** Called by the interview system when an interview ends. Delivers pending requests. */
 	void NotifyInterviewEnded();
@@ -102,6 +124,9 @@ private:
 
 	UPROPERTY()
 	TArray<FChosenInterpretation> ChosenInterpretations;
+
+	UPROPERTY()
+	TArray<FRecordedStatement> Statements;
 
 	FDelegateHandle CaseStartedHandle;
 };
