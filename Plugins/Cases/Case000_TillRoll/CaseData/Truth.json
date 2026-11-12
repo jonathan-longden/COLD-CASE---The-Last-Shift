@@ -1,0 +1,12 @@
+{
+	"SchemaVersion": 1,
+	"CaseId": "TillRoll",
+	"TrueFacts": [
+		"TillRoll.F.SarahLeftAt.After2330",
+		"TillRoll.F.SarahLeftWith.InACar",
+		"TillRoll.F.LastSeenBy.Mick",
+		"TillRoll.F.MickLeftAt.After2330",
+		"TillRoll.F.CarOutside.Mick"
+	],
+	"Summary": "Mechanics test, not canon. Sarah worked until about 23:35 and keyed the last sale herself at 23:32. Mick Hollis did not leave at half ten: he went out to his car, a dark Vauxhall Astra estate, and waited outside with the engine running. Sarah left with him shortly after 23:35. Lorraine sincerely remembers Sarah leaving alone at about eleven: she saw Sarah step outside for a cigarette at 23:00 and, over the years, that became her memory of Sarah leaving. Mick is lying to hide that he was the last person to see her."
+}

@@ -1,0 +1,25 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "0.1",
+	"FriendlyName": "Case 000: The Till Roll",
+	"Description": "Mechanics test case for the investigation framework. Not canon.",
+	"Category": "ColdCase|Cases",
+	"CreatedBy": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "Case000_TillRoll",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "InvestigationFramework",
+			"Enabled": true
+		}
+	]
+}

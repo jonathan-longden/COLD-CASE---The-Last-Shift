@@ -1,0 +1,174 @@
+{
+	"SchemaVersion": 1,
+	"CaseId": "TillRoll",
+	"Title": "Case 000: The Till Roll",
+	"Briefing": "Mechanics test, not canon. Sarah Mercer finished a late shift at the Bluebell Diner on Thursday 12 October 2000 and was never seen again. The original inquiry settled on her leaving alone at about eleven. The box has come back up from the archive. Read the file, speak to who you can, and tell me what you can actually establish.",
+
+	"KeyQuestions": [
+		"TillRoll.Q.SarahLeftAt",
+		"TillRoll.Q.SarahLeftWith",
+		"TillRoll.Q.LastSeenBy"
+	],
+
+	"Questions": [
+		{
+			"Id": "TillRoll.Q.SarahLeftAt",
+			"Text": "When did Sarah leave the diner?",
+			"Facts": [
+				{ "Id": "TillRoll.F.SarahLeftAt.Around2300", "Text": "Around 23:00" },
+				{ "Id": "TillRoll.F.SarahLeftAt.After2330", "Text": "After 23:30" }
+			]
+		},
+		{
+			"Id": "TillRoll.Q.SarahLeftWith",
+			"Text": "Did Sarah leave alone?",
+			"Facts": [
+				{ "Id": "TillRoll.F.SarahLeftWith.Alone", "Text": "She left alone, on foot" },
+				{ "Id": "TillRoll.F.SarahLeftWith.InACar", "Text": "She left with someone, in a car" }
+			]
+		},
+		{
+			"Id": "TillRoll.Q.LastSeenBy",
+			"Text": "Who was the last person known to have seen Sarah?",
+			"Facts": [
+				{ "Id": "TillRoll.F.LastSeenBy.Lorraine", "Text": "Lorraine Pike" },
+				{ "Id": "TillRoll.F.LastSeenBy.Mick", "Text": "Mick Hollis" },
+				{ "Id": "TillRoll.F.LastSeenBy.Unknown", "Text": "Someone not yet identified" }
+			]
+		},
+		{
+			"Id": "TillRoll.Q.MickLeftAt",
+			"Text": "When did Mick Hollis leave the diner?",
+			"Facts": [
+				{ "Id": "TillRoll.F.MickLeftAt.By2230", "Text": "By 22:30" },
+				{ "Id": "TillRoll.F.MickLeftAt.After2330", "Text": "After 23:30" }
+			]
+		},
+		{
+			"Id": "TillRoll.Q.CarOutside",
+			"Text": "Whose was the dark estate car outside after half eleven?",
+			"Facts": [
+				{ "Id": "TillRoll.F.CarOutside.Mick", "Text": "Mick Hollis's car" },
+				{ "Id": "TillRoll.F.CarOutside.Unrelated", "Text": "Nothing to do with Sarah" }
+			]
+		}
+	],
+
+	"Characters": [
+		{ "Id": "TillRoll.C.Sarah", "Name": "Sarah Mercer", "Role": "Missing. Waitress, 32" },
+		{ "Id": "TillRoll.C.Lorraine", "Name": "Lorraine Pike", "Role": "Waitress, worked the same shift" },
+		{ "Id": "TillRoll.C.Mick", "Name": "Mick Hollis", "Role": "Regular customer" },
+		{ "Id": "TillRoll.C.Neighbour", "Name": "Doreen Ash", "Role": "Lived opposite the diner. Died 2014" }
+	],
+
+	"Evidence": [
+		{
+			"Id": "TillRoll.E.TillRoll",
+			"ExhibitRef": "RT/3",
+			"Name": "Till roll, Bluebell Diner, 12/10/2000",
+			"Description": "The day's till roll, seized the following week. Each sale is printed with the time and the server's two-letter code.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "TillRoll.E.TillRoll.LastSale",
+					"Text": "The last sale of the night is keyed under server code \"S.M.\" at 23:32.",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "TillRoll.E.TillRoll.LastSale.SarahWorking",
+							"Text": "Sarah was still working at 23:32.",
+							"SupportsFacts": [ "TillRoll.F.SarahLeftAt.After2330" ]
+						},
+						{
+							"Id": "TillRoll.E.TillRoll.LastSale.CodeShared",
+							"Text": "Someone else used Sarah's till code. It says nothing about when she left.",
+							"SupportsFacts": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"Id": "TillRoll.E.LorraineStatement2000",
+			"ExhibitRef": "RT/5",
+			"Name": "Witness statement of Lorraine Pike, 14/10/2000",
+			"Description": "Taken two days after Sarah was reported missing.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "TillRoll.E.LorraineStatement2000.Time",
+					"Text": "\"Sarah left about eleven. She said goodnight and walked off towards the bus stop on her own.\"",
+					"SupportsFacts": [ "TillRoll.F.SarahLeftAt.Around2300", "TillRoll.F.SarahLeftWith.Alone", "TillRoll.F.LastSeenBy.Lorraine" ],
+					"Interpretations": []
+				}
+			]
+		},
+		{
+			"Id": "TillRoll.E.MickStatement2000",
+			"ExhibitRef": "RT/6",
+			"Name": "Witness statement of Michael Hollis, 15/10/2000",
+			"Description": "Taken as part of house-to-house and regulars enquiries.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "TillRoll.E.MickStatement2000.Time",
+					"Text": "\"I had my tea and left about half ten. Sarah was still serving when I went.\"",
+					"SupportsFacts": [ "TillRoll.F.MickLeftAt.By2230" ],
+					"Interpretations": []
+				}
+			]
+		},
+		{
+			"Id": "TillRoll.E.NeighbourStatement2000",
+			"ExhibitRef": "RT/9",
+			"Name": "Witness statement of Doreen Ash, 16/10/2000",
+			"Description": "Neighbour living opposite the diner.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "TillRoll.E.NeighbourStatement2000.Car",
+					"Text": "\"There was a dark estate car parked outside with its engine running. It was after half eleven because the news had finished.\"",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "TillRoll.E.NeighbourStatement2000.Car.Waiting",
+							"Text": "Someone was waiting for Sarah to finish.",
+							"SupportsFacts": [ "TillRoll.F.SarahLeftWith.InACar" ]
+						},
+						{
+							"Id": "TillRoll.E.NeighbourStatement2000.Car.Unrelated",
+							"Text": "A car on a main road. It tells us nothing.",
+							"SupportsFacts": [ "TillRoll.F.CarOutside.Unrelated" ]
+						}
+					]
+				}
+			]
+		},
+		{
+			"Id": "TillRoll.E.DVLARecord",
+			"ExhibitRef": "JL/1",
+			"Name": "DVLA keeper record, Michael Hollis, 2000",
+			"Description": "Vehicles registered to Michael Hollis in October 2000. Has to be requested.",
+			"Availability": "OnRequest",
+			"Findings": [
+				{
+					"Id": "TillRoll.E.DVLARecord.Astra",
+					"Text": "Registered keeper of a dark blue Vauxhall Astra estate. One of the commonest cars in Britain at the time.",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "TillRoll.E.DVLARecord.Astra.MicksCar",
+							"Text": "The car Doreen Ash saw was probably Mick's.",
+							"SupportsFacts": [ "TillRoll.F.CarOutside.Mick" ]
+						},
+						{
+							"Id": "TillRoll.E.DVLARecord.Astra.Coincidence",
+							"Text": "Thousands of people drove one. It proves nothing.",
+							"SupportsFacts": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
