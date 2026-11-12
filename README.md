@@ -47,6 +47,16 @@ Folders you will see appear after building (`Binaries`, `Intermediate`, `Saved`,
 4. Open **Window > Output Log**, type `LogInvestigation` in its search box. You should see the case's questions, four people and five exhibits.
 5. In the console, type `ColdCase.ValidateCase`. The log should end with `Validation finished: 0 problem(s).`
 
+## Checking the case file (Milestone 2)
+
+Press Play, open the console with **`**, and keep **Window > Output Log** open filtered to `LogInvestigation`.
+
+1. `ColdCase.CaseFile` lists the four exhibits from the original file, all "not examined".
+2. `ColdCase.Examine TillRoll.E.TillRoll`, then `ColdCase.CaseFile` again: the till roll's finding and its two readings appear, neither chosen.
+3. `ColdCase.Interpret TillRoll.E.TillRoll.LastSale TillRoll.E.TillRoll.LastSale.SarahWorking`: the case file now says your material points to "After 23:30". Nothing tells you whether that reading is right.
+4. `ColdCase.Request TillRoll.E.DVLARecord`: it shows as requested, not arrived.
+5. `ColdCase.Debug.EndInterview` (stands in for finishing an interview until interviews exist): the DVLA record is now in the file.
+
 ## Working rules
 
 - C++ owns rules and state, case data owns content, Blueprints own presentation.
