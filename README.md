@@ -23,7 +23,7 @@ Folders you will see appear after building (`Binaries`, `Intermediate`, `Saved`,
 
 ## One-time setup on your PC
 
-1. **Unreal Engine 5.8.2** from the Epic Games Launcher (Unreal Engine > Library > + next to Engine Versions).
+1. **Unreal Engine 5.7** (5.7.1 or later) from the Epic Games Launcher (Unreal Engine > Library > + next to Engine Versions).
 2. **Visual Studio 2026 Community.** In the installer, tick the **Game development with C++** workload, and on the right make sure **Unreal Engine installer**, **MSVC (latest)** and a **Windows 11 SDK** are ticked.
 3. **Git for Windows** (includes Git LFS) and **GitHub Desktop**.
 4. Open a terminal (Start > "Git Bash") and run once: `git lfs install`
