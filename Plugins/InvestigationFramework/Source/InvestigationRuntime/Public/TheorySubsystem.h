@@ -109,6 +109,11 @@ public:
 	/** One assessment per key Question, in the case's order. */
 	TArray<FAnswerAssessment> AssessTheory() const;
 
+	const TArray<FTheoryAnswer>& GetAnswers() const { return Answers; }
+
+	/** For loading a save only. Answers that no longer match the case content are dropped. */
+	void RestoreAnswers(const TArray<FTheoryAnswer>& InAnswers);
+
 	/** What a senior officer would say about an answer of this strength. Never refers to the truth. */
 	static FText DescribeStrength(EEvidentialStrength Strength);
 

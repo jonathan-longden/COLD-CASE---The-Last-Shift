@@ -31,6 +31,9 @@ public:
 
 	const TArray<FName>& GetFlags() const { return Flags; }
 
+	/** For loading a save only. */
+	void RestoreFlags(const TArray<FName>& InFlags) { Flags = InFlags; }
+
 private:
 	void HandleCaseStarted(const FCaseContent& Case);
 

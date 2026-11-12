@@ -10,6 +10,7 @@ class UGameInstance;
 class UCaseFileSubsystem;
 class UCaseResolutionSubsystem;
 class UInterviewSubsystem;
+class UInvestigationSaveSubsystem;
 class UInvestigationSubsystem;
 class UTheorySubsystem;
 
@@ -51,7 +52,8 @@ private:
 		ChooseAnswer,
 		Review,
 		ConfirmConclusion,
-		CaseReview
+		CaseReview,
+		SaveLoad
 	};
 
 	/** One choice in the left-hand list. */
@@ -79,6 +81,7 @@ private:
 	void BuildReview();
 	void BuildConfirmConclusion();
 	void BuildCaseReview();
+	void BuildSaveLoad();
 
 	/** Replaces the widgets on screen with ones for Title, Body and Items. */
 	void RebuildWidgets();
@@ -95,6 +98,7 @@ private:
 	TWeakObjectPtr<UInterviewSubsystem> Interviews;
 	TWeakObjectPtr<UTheorySubsystem> Theory;
 	TWeakObjectPtr<UCaseResolutionSubsystem> Resolution;
+	TWeakObjectPtr<UInvestigationSaveSubsystem> Saves;
 
 	EPage Page = EPage::Home;
 	bool bRebuildPending = true;

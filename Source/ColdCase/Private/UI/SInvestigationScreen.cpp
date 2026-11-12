@@ -6,6 +6,7 @@
 #include "Framework/Application/SlateApplication.h"
 #include "InputCoreTypes.h"
 #include "InterviewSubsystem.h"
+#include "InvestigationSaveSubsystem.h"
 #include "InvestigationSubsystem.h"
 #include "Styling/CoreStyle.h"
 #include "TheorySubsystem.h"
@@ -71,6 +72,7 @@ void SInvestigationScreen::Construct(const FArguments& InArgs)
 		Interviews = Instance->GetSubsystem<UInterviewSubsystem>();
 		Theory = Instance->GetSubsystem<UTheorySubsystem>();
 		Resolution = Instance->GetSubsystem<UCaseResolutionSubsystem>();
+		Saves = Instance->GetSubsystem<UInvestigationSaveSubsystem>();
 	}
 	bRebuildPending = true;
 }
@@ -170,7 +172,7 @@ void SInvestigationScreen::BuildPage()
 	Body.Reset();
 	Items.Reset();
 
-	if (!GetCase() || !CaseFile.IsValid() || !Interviews.IsValid() || !Theory.IsValid() || !Resolution.IsValid())
+	if (!GetCase() || !CaseFile.IsValid() || !Interviews.IsValid() || !Theory.IsValid() || !Resolution.IsValid() || !Saves.IsValid())
 	{
 		Title = FText::FromString(TEXT("COLD CASE"));
 		Body = TEXT("No case is loaded. Check the Output Log (LogInvestigation) for the reason.");
@@ -192,6 +194,7 @@ void SInvestigationScreen::BuildPage()
 	case EPage::Review: BuildReview(); break;
 	case EPage::ConfirmConclusion: BuildConfirmConclusion(); break;
 	case EPage::CaseReview: BuildCaseReview(); break;
+	case EPage::SaveLoad: BuildSaveLoad(); break;
 	default: BuildHome(); break;
 	}
 
@@ -214,6 +217,7 @@ void SInvestigationScreen::BuildHome()
 		AddItem(FText::FromString(TEXT("Read the case review")), [this]() { GoTo(EPage::CaseReview); });
 		AddItem(FText::FromString(TEXT("Look back through the exhibits")), [this]() { GoTo(EPage::Exhibits); });
 		AddItem(FText::FromString(TEXT("Look back through the statements")), [this]() { GoTo(EPage::Statements); });
+		AddItem(FText::FromString(TEXT("Save or load")), [this]() { GoTo(EPage::SaveLoad); });
 		return;
 	}
 
@@ -221,6 +225,7 @@ void SInvestigationScreen::BuildHome()
 	AddItem(FText::FromString(TEXT("Statements taken")), [this]() { GoTo(EPage::Statements); });
 	AddItem(FText::FromString(TEXT("Interview someone")), [this]() { GoTo(EPage::People); });
 	AddItem(FText::FromString(TEXT("Your theory")), [this]() { GoTo(EPage::Theory); });
+	AddItem(FText::FromString(TEXT("Save or load")), [this]() { GoTo(EPage::SaveLoad); });
 }
 
 void SInvestigationScreen::BuildExhibits()
@@ -610,6 +615,53 @@ void SInvestigationScreen::BuildCaseReview()
 	{
 		Body = TEXT("There is no case review until the investigation has been concluded.");
 	}
+	AddBackItem();
+}
+
+void SInvestigationScreen::BuildSaveLoad()
+{
+	Title = FText::FromString(TEXT("Save or load"));
+	Body = TEXT("The game also saves by itself after each interview and when you submit your conclusion.");
+
+	auto Describe = [](const FSaveSlotHeader& Header)
+	{
+		return FString::Printf(TEXT("%s, %s\n%s"), *Header.CaseTitle.ToString(), *Header.SavedAt.ToString(TEXT("%d/%m/%Y %H:%M")), *Header.Summary);
+	};
+
+	for (int32 Slot = 1; Slot <= UInvestigationSaveSubsystem::NumManualSlots; ++Slot)
+	{
+		FSaveSlotHeader Header;
+		const bool bUsed = Saves->GetManualSlotHeader(Slot, Header);
+
+		AddItem(FText::FromString(FString::Printf(TEXT("Save in slot %d%s"), Slot, bUsed ? TEXT("  (replaces what is there)") : TEXT("  (empty)"))), [this, Slot]()
+		{
+			Notice = (Saves.IsValid() && Saves->SaveManual(Slot)) ? FString::Printf(TEXT("Saved in slot %d."), Slot) : FString(TEXT("The save failed."));
+			GoTo(EPage::SaveLoad);
+		});
+		if (bUsed)
+		{
+			AddItem(FText::FromString(FString::Printf(TEXT("Load slot %d\n%s"), Slot, *Describe(Header))), [this, Slot]()
+			{
+				const bool bLoaded = Saves.IsValid() && Saves->LoadManual(Slot);
+				Transcript.Reset();
+				Notice = bLoaded ? FString::Printf(TEXT("Loaded slot %d."), Slot) : FString(TEXT("That save could not be loaded."));
+				GoTo(bLoaded ? EPage::Home : EPage::SaveLoad);
+			});
+		}
+	}
+
+	FSaveSlotHeader AutoHeader;
+	if (Saves->GetAutosaveHeader(AutoHeader))
+	{
+		AddItem(FText::FromString(FString::Printf(TEXT("Load the autosave\n%s"), *Describe(AutoHeader))), [this]()
+		{
+			const bool bLoaded = Saves.IsValid() && Saves->LoadAutosave();
+			Transcript.Reset();
+			Notice = bLoaded ? FString(TEXT("Loaded the autosave.")) : FString(TEXT("The autosave could not be loaded."));
+			GoTo(bLoaded ? EPage::Home : EPage::SaveLoad);
+		});
+	}
+
 	AddBackItem();
 }
 

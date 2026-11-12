@@ -57,6 +57,36 @@ void UCaseFileSubsystem::HandleCaseStarted(const FCaseContent& Case)
 	OnCaseFileChanged.Broadcast();
 }
 
+FCaseFileSaveData UCaseFileSubsystem::GetSaveData() const
+{
+	FCaseFileSaveData Data;
+	Data.HeldEvidence = HeldEvidence;
+	Data.PendingRequests = PendingRequests;
+	Data.ChosenInterpretations = ChosenInterpretations;
+	Data.Statements = Statements;
+	return Data;
+}
+
+void UCaseFileSubsystem::RestoreSaveData(const FCaseFileSaveData& Data)
+{
+	const FCaseContent* Case = GetCase();
+	if (!Case)
+	{
+		return;
+	}
+
+	// Saves refer to content by ID. If an update removed something, drop it rather than fail the load.
+	HeldEvidence = Data.HeldEvidence.FilterByPredicate([Case](const FHeldEvidence& H) { return Case->FindEvidence(H.EvidenceId) != nullptr; });
+	PendingRequests = Data.PendingRequests.FilterByPredicate([Case](const FName& Id) { return Case->FindEvidence(Id) != nullptr; });
+	ChosenInterpretations = Data.ChosenInterpretations;
+	Statements = Data.Statements.FilterByPredicate([Case](const FRecordedStatement& S)
+	{
+		const FCaseCharacter* Speaker = Case->FindCharacter(S.SpeakerId);
+		return Speaker && Speaker->FindResponse(S.ResponseId) != nullptr;
+	});
+	OnCaseFileChanged.Broadcast();
+}
+
 bool UCaseFileSubsystem::HasEvidence(FName EvidenceId) const
 {
 	return HeldEvidence.ContainsByPredicate([EvidenceId](const FHeldEvidence& H) { return H.EvidenceId == EvidenceId; });
@@ -110,8 +140,9 @@ void UCaseFileSubsystem::RecordStatement(FName SpeakerId, FName ResponseId)
 		return;
 	}
 
+	const int32 NextNumber = Statements.Num() > 0 ? Statements.Last().Number + 1 : 1;
 	FRecordedStatement& Statement = Statements.AddDefaulted_GetRef();
-	Statement.Number = Statements.Num();
+	Statement.Number = NextNumber;
 	Statement.SpeakerId = SpeakerId;
 	Statement.ResponseId = ResponseId;
 	OnCaseFileChanged.Broadcast();
