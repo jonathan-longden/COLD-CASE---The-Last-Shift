@@ -3,6 +3,13 @@
 	"CaseId": "TillRoll",
 	"Title": "Case 000: The Till Roll",
 	"Briefing": "Mechanics test, not canon. Sarah Mercer finished a late shift at the Bluebell Diner on Thursday 12 October 2000 and was never seen again. The original inquiry settled on her leaving alone at about eleven. The box has come back up from the archive. Read the file, speak to who you can, and tell me what you can actually establish.",
+	"OpeningFilm": {
+		"Id": "TillRoll.M.OpeningFilm",
+		"Kind": "Video",
+		"File": "OpeningFilm.mp4",
+		"Caption": "The call",
+		"Transcript": ""
+	},
 	"KeyQuestions": [
 		"TillRoll.Q.SarahLeftAt",
 		"TillRoll.Q.SarahLeftWith",

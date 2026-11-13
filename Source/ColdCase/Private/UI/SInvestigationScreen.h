@@ -138,5 +138,6 @@ private:
 	TArray<FMenuItem> Items;
 
 	FSlateColorBrush BackgroundBrush = FSlateColorBrush(FLinearColor(0.012f, 0.014f, 0.018f, 1.f));
+	FSlateColorBrush FilmBackgroundBrush = FSlateColorBrush(FLinearColor::Black);
 	FSlateColorBrush PanelBrush = FSlateColorBrush(FLinearColor(0.03f, 0.035f, 0.045f, 1.f));
 };

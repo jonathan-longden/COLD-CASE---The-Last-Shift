@@ -32,3 +32,4 @@
 
 # The small placeholder test clip is kept in plain Git so it can be pushed from anywhere. Real clips use LFS.
 Plugins/Cases/Case000_TillRoll/Media/PlayerTest.mp4 -filter -diff -merge -text
+Plugins/Cases/Case000_TillRoll/Media/OpeningFilm.mp4 -filter -diff -merge -text
