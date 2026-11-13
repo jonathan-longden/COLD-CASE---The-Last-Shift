@@ -1201,6 +1201,10 @@ bool SInvestigationScreen::DevCommand(const TArray<FString>& Args)
 			return false;
 		}
 		AskOrPresent(Id, What == TEXT("Present"));
+		if (Transcript.Num() > 0)
+		{
+			UE_LOG(LogInvestigation, Display, TEXT("%s"), *Transcript.Last());
+		}
 		return true;
 	}
 	return false;

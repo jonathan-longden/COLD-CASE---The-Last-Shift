@@ -87,6 +87,13 @@ void UCaseMediaPlayback::HandleOpened(FString OpenedUrl)
 
 void UCaseMediaPlayback::HandleOpenFailed(FString FailedUrl)
 {
+	// A clip closed while it was still opening (the player left the page) reports a failure with no address.
+	// That was deliberate, so it is not worth a warning.
+	if (FailedUrl.IsEmpty())
+	{
+		UE_LOG(LogInvestigation, Verbose, TEXT("Clip closed before it finished opening."));
+		return;
+	}
 	UE_LOG(LogInvestigation, Warning, TEXT("Clip failed to open: '%s'."), *FailedUrl);
 }
 
