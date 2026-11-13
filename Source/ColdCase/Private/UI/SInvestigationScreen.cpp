@@ -637,7 +637,7 @@ void SInvestigationScreen::AskOrPresent(FName Id, bool bPresent)
 	if (bPresent)
 	{
 		const FEvidenceItem* Item = Case->FindEvidence(Id);
-		Subject = Item ? Item->Name.ToString() : Id.ToString();
+		Subject = FString::Printf(TEXT("exhibit %s, %s"), Item ? *Item->ExhibitRef : TEXT("?"), Item ? *Item->Name.ToString() : *Id.ToString());
 	}
 	else
 	{
@@ -651,7 +651,17 @@ void SInvestigationScreen::AskOrPresent(FName Id, bool bPresent)
 
 	if (Reply.bValid)
 	{
-		FString Exchange = FString::Printf(TEXT("You %s %s%s.\n%s: \"%s\""), bPresent ? TEXT("show them") : TEXT("ask about"), *Subject, Manner, *Name, *Reply.Line.ToString());
+		// "You ask about the night of 12 October 2000." / "You show Lorraine the exhibit: Till roll, ..."
+		FString FirstName = Name;
+		FirstName.Split(TEXT(" "), &FirstName, nullptr);
+		if (!bPresent && Subject.StartsWith(TEXT("The ")))
+		{
+			Subject[0] = TEXT('t');
+		}
+		const FString Asked = bPresent
+			? FString::Printf(TEXT("You show %s %s%s"), *FirstName, *Subject, Manner)
+			: FString::Printf(TEXT("You ask about %s%s"), *Subject, Manner);
+		FString Exchange = FString::Printf(TEXT("%s.\n%s: \"%s\""), *Asked, *Name, *Reply.Line.ToString());
 		if (Reply.bInterviewEnded)
 		{
 			Exchange += FString::Printf(TEXT("\n%s ends the interview."), *Name);
@@ -770,11 +780,53 @@ void SInvestigationScreen::BuildConfirmConclusion()
 void SInvestigationScreen::BuildCaseReview()
 {
 	Title = FText::FromString(TEXT("Case review"));
-	Body = FString::Join(Resolution->GetReportLines(), TEXT("\n"));
-	if (Body.IsEmpty())
+	const FCaseReviewReport Report = Resolution.IsValid() ? Resolution->BuildReport() : FCaseReviewReport();
+	const FCaseContent* Case = GetCase();
+	if (!Report.bValid || !Case)
 	{
 		Body = TEXT("There is no case review until the investigation has been concluded.");
+		AddBackItem();
+		return;
 	}
+
+	// Written as a reviewing officer's memo: short paragraphs, no indents (wrapped lines would lose them).
+	auto Sentence = [](FString Text)
+	{
+		Text.TrimStartAndEndInline();
+		if (!Text.IsEmpty() && !FChar::IsPunct(Text[Text.Len() - 1]))
+		{
+			Text += TEXT(".");
+		}
+		return Text;
+	};
+
+	Body = FString::Printf(TEXT("REVIEW OF THE INVESTIGATION\n%s\n\n"), *Case->Title.ToString());
+	Body += TEXT("WHAT THE INVESTIGATION CONCLUDED\n");
+	int32 Number = 0;
+	for (const FCaseReviewAnswer& Answer : Report.Answers)
+	{
+		const FCaseQuestion* Question = Case->FindQuestion(Answer.Assessment.QuestionId);
+		const FCaseFact* PlayerFact = Case->FindFact(Answer.Assessment.FactId);
+		const FCaseFact* TrueFact = Case->FindFact(Answer.TrueFactId);
+		Body += FString::Printf(TEXT("\n%d. %s\n"), ++Number, Question ? *Question->Text.ToString() : TEXT("?"));
+		Body += FString::Printf(TEXT("Concluded: %s\n"), *Sentence(PlayerFact ? PlayerFact->Text.ToString() : TEXT("no answer")));
+		Body += FString::Printf(TEXT("Support: %s\n"), *Sentence(UTheorySubsystem::DescribeStrength(Answer.Assessment.Strength).ToString()));
+		Body += Answer.bMatchesTruth
+			? FString(TEXT("Finding: This is what happened.\n"))
+			: FString::Printf(TEXT("Finding: This is not what happened. In fact: %s\n"), *Sentence(TrueFact ? TrueFact->Text.ToString() : TEXT("not recorded")));
+	}
+
+	Body += TEXT("\nLINES OF ENQUIRY NOT FOLLOWED\n");
+	if (Report.Missed.Num() == 0)
+	{
+		Body += TEXT("None identified.\n");
+	}
+	for (const FText& Missed : Report.Missed)
+	{
+		Body += FString::Printf(TEXT("- %s\n"), *Missed.ToString());
+	}
+
+	Body += FString::Printf(TEXT("\nWHAT HAPPENED\n%s"), *Report.TruthSummary.ToString());
 	AddBackItem();
 }
 
@@ -900,6 +952,7 @@ void SInvestigationScreen::RebuildWidgets()
 			[
 				SNew(SScrollBox)
 				+ SScrollBox::Slot()
+				.Padding(FMargin(0.f, 0.f, 18.f, 0.f))   // keeps wrapped text clear of the scroll bar
 				[
 					SNew(STextBlock)
 					.Text(FText::FromString(Body))
@@ -1084,7 +1137,7 @@ void SInvestigationScreen::RebuildWidgets()
 					[
 						SNew(SBorder)
 						.BorderImage(PanelImage)
-						.Padding(FMargin(40.f, 44.f, 40.f, 32.f))
+						.Padding(FMargin(40.f, 64.f, 40.f, 32.f))
 						[
 							Panel
 						]
