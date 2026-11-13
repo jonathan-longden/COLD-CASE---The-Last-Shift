@@ -40,6 +40,18 @@ public:
 	virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
 	virtual FReply OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
 	virtual bool SupportsKeyboardFocus() const override { return true; }
+	virtual FReply OnPreviewKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
+	virtual FReply OnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
+
+	/**
+	 * Development only: jumps the screen to a page, for unattended screenshots and tests.
+	 * Args: <Page> [Id], e.g. "Exhibit TillRoll.E.TillRoll", "Interview TillRoll.C.Lorraine", "Clip TillRoll.M.TillRollDesk".
+	 * "Ask <TopicId>" / "Present <EvidenceId>" act inside the interview on screen. Returns false if it could not.
+	 */
+	bool DevCommand(const TArray<FString>& Args);
+
+	/** The screen currently shown, if any (development commands use it). */
+	static TSharedPtr<SInvestigationScreen> GetActive();
 
 private:
 	enum class EPage : uint8
@@ -115,6 +127,11 @@ private:
 	EPage ClipReturnPage = EPage::Home;
 	bool bClipOpened = false;
 	bool bOpeningFilmOffered = false;
+
+	/** The opening film's buttons fade away while it plays and come back on any key or mouse movement. */
+	bool IsFullScreenFilm() const;
+	float GetFilmMenuOpacity() const;
+	double FilmMenuShownAt = 0.0;
 	FSlateBrush PictureBrush;
 
 	EPage Page = EPage::Home;

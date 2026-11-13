@@ -6,6 +6,9 @@
 #include "CaseResolutionSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Framework/Application/SlateApplication.h"
+#include "HAL/IConsoleManager.h"
+#include "HAL/PlatformTime.h"
+#include "InvestigationLog.h"
 #include "InputCoreTypes.h"
 #include "InterviewSubsystem.h"
 #include "InvestigationSaveSubsystem.h"
@@ -113,9 +116,24 @@ namespace InvestigationScreenPrivate
 	}
 }
 
+namespace InvestigationScreenPrivate
+{
+	TWeakPtr<SInvestigationScreen> ActiveScreen;
+
+	/** How long the opening film's buttons stay up after the film starts or the player touches a control. */
+	constexpr double FilmMenuHoldSeconds = 3.0;
+	constexpr double FilmMenuFadeSeconds = 0.6;
+}
+
+TSharedPtr<SInvestigationScreen> SInvestigationScreen::GetActive()
+{
+	return InvestigationScreenPrivate::ActiveScreen.Pin();
+}
+
 void SInvestigationScreen::Construct(const FArguments& InArgs)
 {
 	GameInstance = InArgs._GameInstance;
+	InvestigationScreenPrivate::ActiveScreen = SharedThis(this);
 
 	// UI pictures are plain image files in the project's Art/UI folder, copied beside the packaged game.
 	const FString UiDir = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Art"), TEXT("UI")));
@@ -178,6 +196,48 @@ FReply SInvestigationScreen::OnKeyDown(const FGeometry& MyGeometry, const FKeyEv
 		return FReply::Handled();
 	}
 	return SCompoundWidget::OnKeyDown(MyGeometry, InKeyEvent);
+}
+
+bool SInvestigationScreen::IsFullScreenFilm() const
+{
+	return Page == EPage::Clip && ClipReturnPage == EPage::Home && bClipOpened && CurrentClip.Kind == ECaseMediaKind::Video;
+}
+
+float SInvestigationScreen::GetFilmMenuOpacity() const
+{
+	using namespace InvestigationScreenPrivate;
+	const double Since = FPlatformTime::Seconds() - FilmMenuShownAt;
+	if (Since <= FilmMenuHoldSeconds)
+	{
+		return 1.f;
+	}
+	return static_cast<float>(FMath::Clamp(1.0 - (Since - FilmMenuHoldSeconds) / FilmMenuFadeSeconds, 0.0, 1.0));
+}
+
+FReply SInvestigationScreen::OnPreviewKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
+{
+	if (IsFullScreenFilm())
+	{
+		const bool bWasHidden = GetFilmMenuOpacity() < 0.05f;
+		FilmMenuShownAt = FPlatformTime::Seconds();
+		// While the buttons are hidden, the first press only brings them back, so a stray key never skips the film.
+		// Esc / B still leave straight away.
+		const FKey Key = InKeyEvent.GetKey();
+		if (bWasHidden && Key != EKeys::Escape && Key != EKeys::Gamepad_FaceButton_Right)
+		{
+			return FReply::Handled();
+		}
+	}
+	return SCompoundWidget::OnPreviewKeyDown(MyGeometry, InKeyEvent);
+}
+
+FReply SInvestigationScreen::OnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+{
+	if (IsFullScreenFilm() && !MouseEvent.GetCursorDelta().IsNearlyZero())
+	{
+		FilmMenuShownAt = FPlatformTime::Seconds();
+	}
+	return SCompoundWidget::OnMouseMove(MyGeometry, MouseEvent);
 }
 
 FReply SInvestigationScreen::OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
@@ -770,6 +830,7 @@ void SInvestigationScreen::OpenClip(const FCaseMediaClip& Clip, EPage ReturnTo)
 	CurrentClip = Clip;
 	ClipReturnPage = ReturnTo;
 	bClipOpened = false;
+	FilmMenuShownAt = FPlatformTime::Seconds();
 	if (MediaPlayback.IsValid() && Investigation.IsValid())
 	{
 		bClipOpened = MediaPlayback->PlayFile(FCaseDataLoader::GetMediaPath(Investigation->GetActiveCasePlugin(), Clip.File));
@@ -906,10 +967,16 @@ void SInvestigationScreen::RebuildWidgets()
 				.VAlign(VAlign_Bottom)
 				.Padding(FMargin(24.f))
 				[
-					SNew(SBox)
-					.WidthOverride(200.f)
+					SNew(SBorder)
+					.BorderImage(FCoreStyle::Get().GetBrush("NoBorder"))
+					.Padding(FMargin(0.f))
+					.ColorAndOpacity_Lambda([this]() { return FLinearColor(1.f, 1.f, 1.f, GetFilmMenuOpacity()); })
 					[
-						Menu
+						SNew(SBox)
+						.WidthOverride(200.f)
+						[
+							Menu
+						]
 					]
 				]
 			]
@@ -1058,3 +1125,99 @@ void SInvestigationScreen::RebuildWidgets()
 		FSlateApplication::Get().SetAllUserFocus(FirstButton, EFocusCause::SetDirectly);
 	}
 }
+
+bool SInvestigationScreen::DevCommand(const TArray<FString>& Args)
+{
+	const FCaseContent* Case = GetCase();
+	if (Args.Num() < 1 || !Case || !CaseFile.IsValid())
+	{
+		return false;
+	}
+	const FString What = Args[0];
+	const FName Id = Args.Num() > 1 ? FName(*Args[1]) : NAME_None;
+
+	if (What == TEXT("Home")) { GoTo(EPage::Home); return true; }
+	if (What == TEXT("Exhibits")) { GoTo(EPage::Exhibits); return true; }
+	if (What == TEXT("Statements")) { GoTo(EPage::Statements); return true; }
+	if (What == TEXT("People")) { GoTo(EPage::People); return true; }
+	if (What == TEXT("Theory")) { GoTo(EPage::Theory); return true; }
+	if (What == TEXT("SaveLoad")) { GoTo(EPage::SaveLoad); return true; }
+	if (What == TEXT("CaseReview"))
+	{
+		if (!Investigation.IsValid() || !Investigation->IsCaseConcluded())
+		{
+			return false;
+		}
+		GoTo(EPage::CaseReview);
+		return true;
+	}
+	if (What == TEXT("Exhibit"))
+	{
+		if (!Case->FindEvidence(Id) || !CaseFile->HasEvidence(Id))
+		{
+			return false;
+		}
+		SelectedEvidence = Id;
+		GoTo(EPage::Exhibit);
+		return true;
+	}
+	if (What == TEXT("Clip"))
+	{
+		if (Case->OpeningFilm.Id == Id)
+		{
+			OpenClip(Case->OpeningFilm, EPage::Home);
+			return true;
+		}
+		for (const FEvidenceItem& Item : Case->Evidence)
+		{
+			for (const FCaseMediaClip& Clip : Item.Media)
+			{
+				if (Clip.Id == Id && CaseFile->HasEvidence(Item.Id))
+				{
+					SelectedEvidence = Item.Id;
+					OpenClip(Clip, EPage::Exhibit);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	if (What == TEXT("Interview"))
+	{
+		FText Refusal;
+		if (!Interviews.IsValid() || !Interviews->StartInterview(Id, Refusal))
+		{
+			return false;
+		}
+		Transcript.Reset();
+		Approach = EInterviewApproach::Neutral;
+		GoTo(EPage::Interview);
+		return true;
+	}
+	if (What == TEXT("Ask") || What == TEXT("Present"))
+	{
+		if (Page != EPage::Interview || !Interviews.IsValid() || !Interviews->IsInterviewActive())
+		{
+			return false;
+		}
+		AskOrPresent(Id, What == TEXT("Present"));
+		return true;
+	}
+	return false;
+}
+
+#if !UE_BUILD_SHIPPING
+namespace InvestigationScreenPrivate
+{
+	// Development only: drives the screens without a keyboard or controller, for unattended screenshots.
+	static FAutoConsoleCommand UiCommand(
+		TEXT("ColdCase.UI"),
+		TEXT("Development only. ColdCase.UI <Home|Exhibits|Exhibit|Statements|People|Interview|Theory|CaseReview|SaveLoad|Clip|Ask|Present> [Id]"),
+		FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
+		{
+			const TSharedPtr<SInvestigationScreen> Screen = SInvestigationScreen::GetActive();
+			const bool bDone = Screen.IsValid() && Screen->DevCommand(Args);
+			UE_LOG(LogInvestigation, Display, TEXT("ColdCase.UI %s: %s"), *FString::Join(Args, TEXT(" ")), bDone ? TEXT("done") : TEXT("not possible here"));
+		}));
+}
+#endif
