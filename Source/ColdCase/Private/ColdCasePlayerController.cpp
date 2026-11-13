@@ -12,7 +12,7 @@
 #include "InvestigationLog.h"
 #include "InvestigationSubsystem.h"
 #include "Misc/CoreMisc.h"
-#include "TimerManager.h"
+#include "Containers/Ticker.h"
 #include "UI/SInvestigationScreen.h"
 
 #if !UE_BUILD_SHIPPING
@@ -64,12 +64,13 @@ namespace ColdCaseMediaCommands
 			{
 				return;
 			}
+			// Timed on the real clock, not game time, which can run ahead when there is no display.
 			const float Seconds = Args.Num() > 0 ? FMath::Max(0.1f, FCString::Atof(*Args[0])) : 5.f;
-			FTimerHandle Handle;
-			World->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([]()
+			FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([](float)
 			{
 				FPlatformMisc::RequestExit(false);
-			}), Seconds, false);
+				return false;
+			}), Seconds);
 		}));
 }
 #endif
