@@ -33,6 +33,9 @@
 # The small placeholder test clip is kept in plain Git so it can be pushed from anywhere. Real clips use LFS.
 Plugins/Cases/Case000_TillRoll/Media/PlayerTest.mp4 -filter -diff -merge -text
 Plugins/Cases/Case000_TillRoll/Media/OpeningFilm.mp4 -filter -diff -merge -text
+Plugins/Cases/Case000_TillRoll/Media/TillRollDesk.mp4 -filter -diff -merge -text
+Plugins/Cases/Case000_TillRoll/Media/DinerClosing.mp4 -filter -diff -merge -text
+Plugins/Cases/Case000_TillRoll/Media/DinerFromOpposite.mp4 -filter -diff -merge -text
 
 # Small UI images kept in plain Git so they can be pushed from anywhere.
 Art/UI/*.png -filter -diff -merge -text

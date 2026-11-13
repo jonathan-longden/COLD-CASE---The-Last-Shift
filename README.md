@@ -120,11 +120,11 @@ It is a Development build, so the console (**`**) still works. Saves from the pa
 
 Any exhibit can carry clips, and a case can have an opening film. Clips are listed in `Case.json` (`Media` on an exhibit, `OpeningFilm` on the case) and the files go in the case plugin's `Media` folder as `.mp4` (H.264 video, AAC sound).
 
-To check it: press Play, open **Exhibits**, open the till roll, choose **Play the test clip**. A grainy test card with a running timestamp and a tone should play in the right-hand panel.
+To check it: press Play, open **Exhibits**, open the till roll, choose **Watch: the till roll on your desk**. An 8-second clip with room sound plays in the right-hand panel. Lorraine Pike's and Doreen Ash's statements each have a clip too (marked as reconstructions, so they are never mistaken for evidence).
 
 The opening film (`OpeningFilm.mp4`, the 999 call) plays full screen when the game starts. Choose **Continue** to skip it; it moves on by itself when it ends.
 
-Console: `ColdCase.PlayClip TillRoll.M.PlayerTest` plays it without the screens. The log shows `Clip playing` and then `Clip finished`.
+Console: `ColdCase.PlayClip TillRoll.M.TillRollDesk` (or `TillRoll.M.DinerClosing`, `TillRoll.M.DinerFromOpposite`, `TillRoll.M.OpeningFilm`) plays a clip without the screens. The log shows `Clip playing` and then `Clip finished`.
 
 ## Working rules
 
