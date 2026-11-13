@@ -14,6 +14,9 @@ public class ColdCase : ModuleRules
 			"Engine"
 		});
 
+		// Interface pictures are loose image files, copied beside the packaged game.
+		RuntimeDependencies.Add("$(ProjectDir)/Art/UI/...", StagedFileType.NonUFS);
+
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"InvestigationRuntime",

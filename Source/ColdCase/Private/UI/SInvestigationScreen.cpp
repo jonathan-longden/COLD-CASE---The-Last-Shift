@@ -11,6 +11,7 @@
 #include "InvestigationSaveSubsystem.h"
 #include "InvestigationSubsystem.h"
 #include "MediaTexture.h"
+#include "Misc/Paths.h"
 #include "Styling/CoreStyle.h"
 #include "TheorySubsystem.h"
 #include "Widgets/Images/SImage.h"
@@ -25,10 +26,16 @@
 
 namespace InvestigationScreenPrivate
 {
-	const FLinearColor ButtonNormal(0.10f, 0.12f, 0.15f, 1.f);
-	const FLinearColor ButtonFocused(0.20f, 0.42f, 0.75f, 1.f);
-	const FLinearColor TextMain(0.89f, 0.91f, 0.93f, 1.f);
-	const FLinearColor TextDim(0.55f, 0.60f, 0.66f, 1.f);
+	const FLinearColor ButtonNormal(0.f, 0.f, 0.f, 0.f);
+	const FLinearColor ButtonFocused(0.78f, 0.52f, 0.22f, 0.22f);
+	const FLinearColor Accent(0.78f, 0.52f, 0.22f, 1.f);
+	const FLinearColor TextMain(0.89f, 0.90f, 0.91f, 1.f);
+	const FLinearColor TextMenu(0.76f, 0.78f, 0.80f, 1.f);
+	const FLinearColor TextDim(0.50f, 0.54f, 0.58f, 1.f);
+	const FLinearColor Ink(0.09f, 0.085f, 0.08f, 1.f);
+	const FLinearColor StampRed(0.55f, 0.10f, 0.08f, 0.75f);
+
+	FSlateFontInfo TypedFont(int32 Size) { return FCoreStyle::GetDefaultFontStyle("Mono", Size); }
 
 	/** A list button that lights up when it has focus, so a controller user can always see where they are. */
 	class SMenuButton : public SButton
@@ -42,19 +49,56 @@ namespace InvestigationScreenPrivate
 		void Construct(const FArguments& InArgs)
 		{
 			SButton::Construct(SButton::FArguments()
+				.ButtonStyle(&FCoreStyle::Get().GetWidgetStyle<FButtonStyle>("NoBorder"))
 				.OnClicked(InArgs._OnClicked)
-				.ContentPadding(FMargin(14.f, 10.f))
-				.ButtonColorAndOpacity_Lambda([this]()
-				{
-					return FSlateColor((HasKeyboardFocus() || IsHovered()) ? ButtonFocused : ButtonNormal);
-				})
+				.ContentPadding(FMargin(0.f))
 				[
-					SNew(STextBlock)
-					.Text(InArgs._Label)
-					.Font(FCoreStyle::GetDefaultFontStyle("Regular", 15))
-					.ColorAndOpacity(FSlateColor(TextMain))
-					.AutoWrapText(true)
+					SNew(SBorder)
+					.BorderImage(FCoreStyle::Get().GetBrush("GenericWhiteBox"))
+					.BorderBackgroundColor_Lambda([this]()
+					{
+						return FSlateColor(IsLit() ? ButtonFocused : ButtonNormal);
+					})
+					.Padding(FMargin(0.f))
+					[
+						SNew(SHorizontalBox)
+
+						// A thin amber bar marks the chosen line, like a tab on a file.
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						[
+							SNew(SBox)
+							.WidthOverride(3.f)
+							[
+								SNew(SImage)
+								.Image(FCoreStyle::Get().GetBrush("GenericWhiteBox"))
+								.ColorAndOpacity_Lambda([this]()
+								{
+									return FSlateColor(IsLit() ? Accent : FLinearColor::Transparent);
+								})
+							]
+						]
+
+						+ SHorizontalBox::Slot()
+						.FillWidth(1.f)
+						.Padding(FMargin(14.f, 10.f))
+						[
+							SNew(STextBlock)
+							.Text(InArgs._Label)
+							.Font(FCoreStyle::GetDefaultFontStyle("Regular", 15))
+							.ColorAndOpacity_Lambda([this]()
+							{
+								return FSlateColor(IsLit() ? TextMain : TextMenu);
+							})
+							.AutoWrapText(true)
+						]
+					]
 				]);
+		}
+
+		bool IsLit() const
+		{
+			return HasKeyboardFocus() || IsHovered();
 		}
 	};
 
@@ -72,6 +116,21 @@ namespace InvestigationScreenPrivate
 void SInvestigationScreen::Construct(const FArguments& InArgs)
 {
 	GameInstance = InArgs._GameInstance;
+
+	// UI pictures are plain image files in the project's Art/UI folder, copied beside the packaged game.
+	const FString UiDir = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Art"), TEXT("UI")));
+	const FString BackdropPath = FPaths::Combine(UiDir, TEXT("Backdrop.png"));
+	const FString PaperPath = FPaths::Combine(UiDir, TEXT("Paper.png"));
+	if (FPaths::FileExists(BackdropPath))
+	{
+		BackdropBrush = MakeShared<FSlateDynamicImageBrush>(FName(*BackdropPath), FVector2D(1920.f, 1080.f));
+	}
+	if (FPaths::FileExists(PaperPath))
+	{
+		PaperBrush = MakeShared<FSlateDynamicImageBrush>(FName(*PaperPath), FVector2D(256.f, 256.f));
+		PaperBrush->DrawAs = ESlateBrushDrawType::Image;
+		PaperBrush->Tiling = ESlateBrushTileType::Both;
+	}
 	MediaPlayback = InArgs._MediaPlayback;
 	if (UGameInstance* Instance = GameInstance.Get())
 	{
@@ -739,7 +798,10 @@ void SInvestigationScreen::RebuildWidgets()
 {
 	using namespace InvestigationScreenPrivate;
 
-	// The right-hand panel: the page's text, with the moving picture above it when a video clip is on screen.
+	// The right-hand panel: the page's text typed on a sheet of paper, with the moving picture above it
+	// when a video clip is on screen. Without the paper image it falls back to light text on dark.
+	const bool bPaper = PaperBrush.IsValid();
+	const FLinearColor BodyColour = bPaper ? Ink : TextMain;
 	const TSharedRef<SVerticalBox> Panel = SNew(SVerticalBox);
 	UMediaTexture* Picture = MediaPlayback.IsValid() ? MediaPlayback->GetPicture() : nullptr;
 	if (Page == EPage::Clip && bClipOpened && CurrentClip.Kind == ECaseMediaKind::Video && Picture)
@@ -765,8 +827,8 @@ void SInvestigationScreen::RebuildWidgets()
 			[
 				SNew(STextBlock)
 				.Text(FText::FromString(Body))
-				.Font(FCoreStyle::GetDefaultFontStyle("Regular", 15))
-				.ColorAndOpacity(FSlateColor(TextMain))
+				.Font(TypedFont(14))
+				.ColorAndOpacity(FSlateColor(BodyColour))
 				.AutoWrapText(true)
 			];
 	}
@@ -780,8 +842,9 @@ void SInvestigationScreen::RebuildWidgets()
 				[
 					SNew(STextBlock)
 					.Text(FText::FromString(Body))
-					.Font(FCoreStyle::GetDefaultFontStyle("Regular", 15))
-					.ColorAndOpacity(FSlateColor(TextMain))
+					.Font(TypedFont(14))
+					.LineHeightPercentage(1.15f)
+					.ColorAndOpacity(FSlateColor(BodyColour))
 					.AutoWrapText(true)
 				]
 			];
@@ -860,23 +923,67 @@ void SInvestigationScreen::RebuildWidgets()
 		return;
 	}
 
+	const FSlateBrush* PanelImage = bPaper ? static_cast<const FSlateBrush*>(PaperBrush.Get()) : static_cast<const FSlateBrush*>(&PanelBrush);
+
 	ChildSlot
 	[
-		SNew(SBorder)
-		.BorderImage(&BackgroundBrush)
-		.Padding(FMargin(48.f, 36.f))
+		SNew(SOverlay)
+
+		// Background: the call centre at night, blurred and darkened.
+		+ SOverlay::Slot()
+		[
+			SNew(SBorder)
+			.BorderImage(&BackgroundBrush)
+			.Padding(FMargin(0.f))
+			[
+				SNew(SScaleBox)
+				.Stretch(EStretch::ScaleToFill)
+				[
+					SNew(SImage)
+					.Image(BackdropBrush.IsValid() ? static_cast<const FSlateBrush*>(BackdropBrush.Get()) : static_cast<const FSlateBrush*>(&BackgroundBrush))
+				]
+			]
+		]
+
+		+ SOverlay::Slot()
+		.Padding(FMargin(56.f, 36.f))
 		[
 			SNew(SVerticalBox)
 
 			+ SVerticalBox::Slot()
 			.AutoHeight()
-			.Padding(0.f, 0.f, 0.f, 24.f)
+			[
+				SNew(STextBlock)
+				.Text(FText::FromString(TEXT("MAJOR CRIME REVIEW  /  CASE FILE")))
+				.Font(TypedFont(11))
+				.ColorAndOpacity(FSlateColor(Accent))
+			]
+
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.f, 6.f, 0.f, 10.f)
 			[
 				SNew(STextBlock)
 				.Text(Title)
-				.Font(FCoreStyle::GetDefaultFontStyle("Bold", 26))
+				.Font(FCoreStyle::GetDefaultFontStyle("Bold", 28))
 				.ColorAndOpacity(FSlateColor(TextMain))
+				.ShadowOffset(FVector2D(1.f, 1.f))
+				.ShadowColorAndOpacity(FLinearColor(0.f, 0.f, 0.f, 0.8f))
 				.AutoWrapText(true)
+			]
+
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(0.f, 0.f, 0.f, 22.f)
+			[
+				SNew(SBox)
+				.HeightOverride(1.f)
+				.WidthOverride(120.f)
+				.HAlign(HAlign_Left)
+				[
+					SNew(SImage)
+					.Image(&AccentBrush)
+				]
 			]
 
 			+ SVerticalBox::Slot()
@@ -885,25 +992,50 @@ void SInvestigationScreen::RebuildWidgets()
 				SNew(SHorizontalBox)
 
 				+ SHorizontalBox::Slot()
-				.FillWidth(0.38f)
+				.FillWidth(0.36f)
 				[
-					SNew(SScrollBox)
-					.ScrollWhenFocusChanges(EScrollWhenFocusChanges::AnimatedScroll)
-					+ SScrollBox::Slot()
+					SNew(SBorder)
+					.BorderImage(&ShadeBrush)
+					.Padding(FMargin(10.f))
 					[
-						Menu
+						SNew(SScrollBox)
+						.ScrollWhenFocusChanges(EScrollWhenFocusChanges::AnimatedScroll)
+						+ SScrollBox::Slot()
+						[
+							Menu
+						]
 					]
 				]
 
 				+ SHorizontalBox::Slot()
-				.FillWidth(0.62f)
+				.FillWidth(0.64f)
 				.Padding(32.f, 0.f, 0.f, 0.f)
 				[
-					SNew(SBorder)
-					.BorderImage(&PanelBrush)
-					.Padding(FMargin(24.f))
+					SNew(SOverlay)
+
+					+ SOverlay::Slot()
 					[
-						Panel
+						SNew(SBorder)
+						.BorderImage(PanelImage)
+						.Padding(FMargin(40.f, 44.f, 40.f, 32.f))
+						[
+							Panel
+						]
+					]
+
+					// A faint stamp in the corner of the sheet.
+					+ SOverlay::Slot()
+					.HAlign(HAlign_Right)
+					.VAlign(VAlign_Top)
+					.Padding(FMargin(0.f, 14.f, 22.f, 0.f))
+					[
+						SNew(STextBlock)
+						.Visibility(bPaper ? EVisibility::HitTestInvisible : EVisibility::Collapsed)
+						.Text(FText::FromString(TEXT("RESTRICTED")))
+						.Font(TypedFont(12))
+						.ColorAndOpacity(FSlateColor(StampRed))
+						.RenderTransformPivot(FVector2D(0.5f, 0.5f))
+						.RenderTransform(FSlateRenderTransform(FQuat2D(FMath::DegreesToRadians(-6.f))))
 					]
 				]
 			]
@@ -913,8 +1045,8 @@ void SInvestigationScreen::RebuildWidgets()
 			.Padding(0.f, 18.f, 0.f, 0.f)
 			[
 				SNew(STextBlock)
-				.Text(FText::FromString(TEXT("Move: arrow keys or d-pad      Choose: Enter or A      Back: Esc or B")))
-				.Font(FCoreStyle::GetDefaultFontStyle("Regular", 11))
+				.Text(FText::FromString(TEXT("MOVE  arrows / d-pad      CHOOSE  Enter / A      BACK  Esc / B")))
+				.Font(TypedFont(10))
 				.ColorAndOpacity(FSlateColor(TextDim))
 			]
 		]
