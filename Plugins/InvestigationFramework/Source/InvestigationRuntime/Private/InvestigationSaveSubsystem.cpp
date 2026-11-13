@@ -90,8 +90,9 @@ UInvestigationSaveGame* UInvestigationSaveSubsystem::CaptureSave(bool bAutosave)
 	Save->Header.CaseId = Case.CaseId;
 	Save->Header.CasePlugin = Investigation->GetActiveCasePlugin();
 	Save->Header.CaseTitle = Case.Title;
-	Save->Header.Summary = FString::Printf(TEXT("%d of %d exhibits examined, %d statements taken%s"),
-		Examined, Save->CaseFile.HeldEvidence.Num(), Save->CaseFile.Statements.Num(),
+	const int32 NumStatements = Save->CaseFile.Statements.Num();
+	Save->Header.Summary = FString::Printf(TEXT("%d of %d exhibits examined, %d %s taken%s"),
+		Examined, Save->CaseFile.HeldEvidence.Num(), NumStatements, NumStatements == 1 ? TEXT("statement") : TEXT("statements"),
 		Save->bConcluded ? TEXT(", concluded") : TEXT(""));
 	return Save;
 }

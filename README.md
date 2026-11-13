@@ -107,6 +107,14 @@ Console: `ColdCase.Save 1` and `ColdCase.Load 1` (slots 1 to 3), or `ColdCase.Lo
 
 To check it: examine an exhibit, interview someone, save in slot 1, stop Play, press Play again, load slot 1. The exhibit is still examined, the statements are still there, and the people remember how the interview went. Save files are in `Saved/SaveGames`.
 
+## Making a standalone Windows build (Milestone 7)
+
+1. Close Unreal Editor.
+2. Double-click `Package.bat` in the project folder. The first run takes a while.
+3. When it says Done, the game is in `Packaged\Windows`. Run `ColdCase.exe`. That folder can be copied to another PC.
+
+It is a Development build, so the console (**`**) still works. Saves from the packaged game are kept in `Packaged\Windows\ColdCase\Saved\SaveGames`.
+
 ## Working rules
 
 - C++ owns rules and state, case data owns content, Blueprints own presentation.
