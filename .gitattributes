@@ -29,3 +29,6 @@
 *.mp4 filter=lfs diff=lfs merge=lfs -text
 *.ttf filter=lfs diff=lfs merge=lfs -text
 *.otf filter=lfs diff=lfs merge=lfs -text
+
+# The small placeholder test clip is kept in plain Git so it can be pushed from anywhere. Real clips use LFS.
+Plugins/Cases/Case000_TillRoll/Media/PlayerTest.mp4 -filter -diff -merge -text

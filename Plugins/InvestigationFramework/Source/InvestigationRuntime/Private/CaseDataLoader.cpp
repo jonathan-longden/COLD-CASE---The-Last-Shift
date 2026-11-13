@@ -64,3 +64,13 @@ bool FCaseDataLoader::LoadTruth(FName CasePluginName, FCaseTruth& OutTruth, FStr
 {
 	return CaseDataLoaderPrivate::ParseCaseFile(CasePluginName, TEXT("Truth.json"), OutTruth, OutError);
 }
+
+FString FCaseDataLoader::GetMediaPath(FName CasePluginName, const FString& FileName)
+{
+	const TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin(CasePluginName.ToString());
+	if (!Plugin.IsValid() || FileName.IsEmpty())
+	{
+		return FString();
+	}
+	return FPaths::ConvertRelativePathToFull(FPaths::Combine(Plugin->GetBaseDir(), TEXT("Media"), FileName));
+}

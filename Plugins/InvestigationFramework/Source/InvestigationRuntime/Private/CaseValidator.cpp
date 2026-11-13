@@ -145,6 +145,14 @@ TArray<FString> FCaseValidator::Validate(const FCaseContent& Content, const FCas
 		{
 			Problems.Add(FString::Printf(TEXT("Evidence '%s' has no Findings."), *Item.Id.ToString()));
 		}
+		for (const FCaseMediaClip& Clip : Item.Media)
+		{
+			CheckId(Clip.Id, TEXT("Media clip"), AllIds, Problems);
+			if (Clip.File.IsEmpty())
+			{
+				Problems.Add(FString::Printf(TEXT("Media clip '%s' has no File."), *Clip.Id.ToString()));
+			}
+		}
 		for (const FEvidenceFinding& Finding : Item.Findings)
 		{
 			CheckId(Finding.Id, TEXT("Finding"), AllIds, Problems);
