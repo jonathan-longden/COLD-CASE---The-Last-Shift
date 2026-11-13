@@ -18,6 +18,10 @@ public class ColdCase : ModuleRules
 		{
 			"InvestigationRuntime",
 			"InputCore",
+			"MediaAssets",
+			"MediaUtils",
+			"AudioMixer",
+			"SignalProcessing",
 			"Slate",
 			"SlateCore"
 		});

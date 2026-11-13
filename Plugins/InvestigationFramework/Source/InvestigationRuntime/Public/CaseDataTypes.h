@@ -279,6 +279,45 @@ enum class EEvidenceAvailability : uint8
 	OnRequest
 };
 
+/** What a clip is, so the screen knows whether there is a picture to show. */
+UENUM(BlueprintType)
+enum class ECaseMediaKind : uint8
+{
+	/** Moving picture, with or without sound. */
+	Video,
+	/** Sound only, such as a recorded phone call. */
+	Audio
+};
+
+/**
+ * A recording the player can play: CCTV, a 999 call, an interview tape, an opening film.
+ * The file itself lives in the case plugin's Media folder. A clip is presentation only:
+ * it never changes the state of the investigation.
+ */
+USTRUCT(BlueprintType)
+struct INVESTIGATIONRUNTIME_API FCaseMediaClip
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
+	FName Id;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
+	ECaseMediaKind Kind = ECaseMediaKind::Video;
+
+	/** File name inside the case plugin's Media folder, e.g. "Call999.mp4". */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
+	FString File;
+
+	/** Short label shown in menus, e.g. "Play the 999 call". */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
+	FText Caption;
+
+	/** What is said on the recording, shown beside it. May be empty. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
+	FText Transcript;
+};
+
 /** One exhibit. */
 USTRUCT(BlueprintType)
 struct INVESTIGATIONRUNTIME_API FEvidenceItem
@@ -310,6 +349,10 @@ struct INVESTIGATIONRUNTIME_API FEvidenceItem
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
 	TArray<FEvidenceFinding> Findings;
+
+	/** Recordings that belong to this exhibit. May be empty. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
+	TArray<FCaseMediaClip> Media;
 };
 
 /** The root of a case's player-reachable content (CaseData/Case.json). */
@@ -331,6 +374,10 @@ struct INVESTIGATIONRUNTIME_API FCaseContent
 	/** What the DCI tells you when you are handed the file. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
 	FText Briefing;
+
+	/** Played once when the case is first opened. Leave File empty for no opening film. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
+	FCaseMediaClip OpeningFilm;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
 	TArray<FCaseQuestion> Questions;

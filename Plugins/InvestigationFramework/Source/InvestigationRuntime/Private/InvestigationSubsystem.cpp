@@ -141,7 +141,26 @@ namespace InvestigationConsole
 				UE_LOG(LogInvestigation, Warning, TEXT("Truth file not checked: %s"), *Error);
 			}
 
-			const TArray<FString> Problems = FCaseValidator::Validate(Investigation->GetActiveCase(), bHasTruth ? &Truth : nullptr);
+			TArray<FString> Problems = FCaseValidator::Validate(Investigation->GetActiveCase(), bHasTruth ? &Truth : nullptr);
+
+			// Clips are files on disk, so check each one is really there.
+			TArray<FCaseMediaClip> Clips;
+			if (!Investigation->GetActiveCase().OpeningFilm.File.IsEmpty())
+			{
+				Clips.Add(Investigation->GetActiveCase().OpeningFilm);
+			}
+			for (const FEvidenceItem& Item : Investigation->GetActiveCase().Evidence)
+			{
+				Clips.Append(Item.Media);
+			}
+			for (const FCaseMediaClip& Clip : Clips)
+			{
+				const FString Path = FCaseDataLoader::GetMediaPath(Investigation->GetActiveCasePlugin(), Clip.File);
+				if (!Clip.File.IsEmpty() && !FPaths::FileExists(Path))
+				{
+					Problems.Add(FString::Printf(TEXT("Media clip '%s': file not found at '%s'."), *Clip.Id.ToString(), *Path));
+				}
+			}
 			for (const FString& Problem : Problems)
 			{
 				UE_LOG(LogInvestigation, Warning, TEXT("%s"), *Problem);

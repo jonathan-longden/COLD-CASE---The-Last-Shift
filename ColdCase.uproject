@@ -15,6 +15,13 @@
 	],
 	"Plugins": [
 		{
+			"Name": "WmfMedia",
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"Win64"
+			]
+		},
+		{
 			"Name": "InvestigationFramework",
 			"Enabled": true
 		},

@@ -6,6 +6,7 @@
 #include "Widgets/DeclarativeSyntaxSupport.h"
 #include "Widgets/SCompoundWidget.h"
 
+class UCaseMediaPlayback;
 class UGameInstance;
 class UCaseFileSubsystem;
 class UCaseResolutionSubsystem;
@@ -29,6 +30,7 @@ class SInvestigationScreen : public SCompoundWidget
 public:
 	SLATE_BEGIN_ARGS(SInvestigationScreen) {}
 		SLATE_ARGUMENT(TWeakObjectPtr<UGameInstance>, GameInstance)
+		SLATE_ARGUMENT(TWeakObjectPtr<UCaseMediaPlayback>, MediaPlayback)
 	SLATE_END_ARGS()
 
 	void Construct(const FArguments& InArgs);
@@ -53,7 +55,8 @@ private:
 		Review,
 		ConfirmConclusion,
 		CaseReview,
-		SaveLoad
+		SaveLoad,
+		Clip
 	};
 
 	/** One choice in the left-hand list. */
@@ -82,6 +85,10 @@ private:
 	void BuildConfirmConclusion();
 	void BuildCaseReview();
 	void BuildSaveLoad();
+	void BuildClip();
+
+	/** Starts a video or sound clip and shows it. ReturnTo is where Back leads afterwards. */
+	void OpenClip(const FCaseMediaClip& Clip, EPage ReturnTo);
 
 	/** Replaces the widgets on screen with ones for Title, Body and Items. */
 	void RebuildWidgets();
@@ -99,6 +106,15 @@ private:
 	TWeakObjectPtr<UTheorySubsystem> Theory;
 	TWeakObjectPtr<UCaseResolutionSubsystem> Resolution;
 	TWeakObjectPtr<UInvestigationSaveSubsystem> Saves;
+
+	TWeakObjectPtr<UCaseMediaPlayback> MediaPlayback;
+
+	/** The clip on screen, and where to go when the player leaves it. */
+	FCaseMediaClip CurrentClip;
+	EPage ClipReturnPage = EPage::Home;
+	bool bClipOpened = false;
+	bool bOpeningFilmOffered = false;
+	FSlateBrush PictureBrush;
 
 	EPage Page = EPage::Home;
 	bool bRebuildPending = true;

@@ -1,6 +1,8 @@
 #include "UI/SInvestigationScreen.h"
 
+#include "CaseDataLoader.h"
 #include "CaseFileSubsystem.h"
+#include "CaseMediaPlayback.h"
 #include "CaseResolutionSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Framework/Application/SlateApplication.h"
@@ -8,10 +10,13 @@
 #include "InterviewSubsystem.h"
 #include "InvestigationSaveSubsystem.h"
 #include "InvestigationSubsystem.h"
+#include "MediaTexture.h"
 #include "Styling/CoreStyle.h"
 #include "TheorySubsystem.h"
+#include "Widgets/Images/SImage.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Layout/SBorder.h"
+#include "Widgets/Layout/SScaleBox.h"
 #include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/SBoxPanel.h"
 #include "Widgets/Text/STextBlock.h"
@@ -65,6 +70,7 @@ namespace InvestigationScreenPrivate
 void SInvestigationScreen::Construct(const FArguments& InArgs)
 {
 	GameInstance = InArgs._GameInstance;
+	MediaPlayback = InArgs._MediaPlayback;
 	if (UGameInstance* Instance = GameInstance.Get())
 	{
 		Investigation = Instance->GetSubsystem<UInvestigationSubsystem>();
@@ -119,6 +125,11 @@ FReply SInvestigationScreen::OnMouseButtonDown(const FGeometry& MyGeometry, cons
 
 void SInvestigationScreen::GoTo(EPage NewPage)
 {
+	// Leaving a clip stops it.
+	if (Page == EPage::Clip && NewPage != EPage::Clip && MediaPlayback.IsValid())
+	{
+		MediaPlayback->Stop();
+	}
 	Page = NewPage;
 	bRebuildPending = true;
 }
@@ -131,6 +142,9 @@ void SInvestigationScreen::GoBack()
 		break;
 	case EPage::Exhibit:
 		GoTo(EPage::Exhibits);
+		break;
+	case EPage::Clip:
+		GoTo(ClipReturnPage);
 		break;
 	case EPage::Interview:
 		// Leaving the room ends the interview.
@@ -181,8 +195,20 @@ void SInvestigationScreen::BuildPage()
 		return;
 	}
 
+	// The opening film plays once, the first time the case is on screen.
+	if (!bOpeningFilmOffered)
+	{
+		bOpeningFilmOffered = true;
+		const FCaseMediaClip& Opening = GetCase()->OpeningFilm;
+		if (Page == EPage::Home && !Opening.File.IsEmpty() && !Investigation->IsCaseConcluded())
+		{
+			OpenClip(Opening, EPage::Home);
+		}
+	}
+
 	switch (Page)
 	{
+	case EPage::Clip: BuildClip(); break;
 	case EPage::Exhibits: BuildExhibits(); break;
 	case EPage::Exhibit: BuildExhibit(); break;
 	case EPage::Statements: BuildStatements(); break;
@@ -295,6 +321,13 @@ void SInvestigationScreen::BuildExhibit()
 
 	Title = FText::FromString(FString::Printf(TEXT("%s  %s"), *Item->ExhibitRef, *Item->Name.ToString()));
 	Body = Item->Description.ToString();
+
+	for (const FCaseMediaClip& Clip : Item->Media)
+	{
+		const FCaseMediaClip ClipCopy = Clip;
+		const FText Label = Clip.Caption.IsEmpty() ? FText::FromString(TEXT("Play the recording")) : Clip.Caption;
+		AddItem(Label, [this, ClipCopy]() { OpenClip(ClipCopy, EPage::Exhibit); });
+	}
 
 	const FHeldEvidence* Held = CaseFile->GetHeldEvidence().FindByPredicate([this](const FHeldEvidence& H) { return H.EvidenceId == SelectedEvidence; });
 	if (Held && Held->bExamined)
@@ -665,9 +698,86 @@ void SInvestigationScreen::BuildSaveLoad()
 	AddBackItem();
 }
 
+void SInvestigationScreen::OpenClip(const FCaseMediaClip& Clip, EPage ReturnTo)
+{
+	CurrentClip = Clip;
+	ClipReturnPage = ReturnTo;
+	bClipOpened = false;
+	if (MediaPlayback.IsValid() && Investigation.IsValid())
+	{
+		bClipOpened = MediaPlayback->PlayFile(FCaseDataLoader::GetMediaPath(Investigation->GetActiveCasePlugin(), Clip.File));
+	}
+	GoTo(EPage::Clip);
+}
+
+void SInvestigationScreen::BuildClip()
+{
+	Title = CurrentClip.Caption.IsEmpty() ? FText::FromString(TEXT("Recording")) : CurrentClip.Caption;
+	Body = CurrentClip.Transcript.ToString();
+	if (!bClipOpened)
+	{
+		Body = TEXT("This recording could not be played.") + (Body.IsEmpty() ? FString() : TEXT("\n\n") + Body);
+	}
+
+	AddItem(FText::FromString(ClipReturnPage == EPage::Home ? TEXT("Continue") : TEXT("Back")), [this]() { GoBack(); });
+	AddItem(FText::FromString(TEXT("Play again")), [this]()
+	{
+		const FCaseMediaClip Again = CurrentClip;
+		OpenClip(Again, ClipReturnPage);
+	});
+}
+
 void SInvestigationScreen::RebuildWidgets()
 {
 	using namespace InvestigationScreenPrivate;
+
+	// The right-hand panel: the page's text, with the moving picture above it when a video clip is on screen.
+	const TSharedRef<SVerticalBox> Panel = SNew(SVerticalBox);
+	UMediaTexture* Picture = MediaPlayback.IsValid() ? MediaPlayback->GetPicture() : nullptr;
+	if (Page == EPage::Clip && bClipOpened && CurrentClip.Kind == ECaseMediaKind::Video && Picture)
+	{
+		PictureBrush = FSlateBrush();
+		PictureBrush.SetResourceObject(Picture);
+		PictureBrush.ImageSize = FVector2D(1280.f, 720.f);
+		PictureBrush.DrawAs = ESlateBrushDrawType::Image;
+
+		Panel->AddSlot()
+			.FillHeight(1.f)
+			.Padding(0.f, 0.f, 0.f, 16.f)
+			[
+				SNew(SScaleBox)
+				.Stretch(EStretch::ScaleToFit)
+				[
+					SNew(SImage)
+					.Image(&PictureBrush)
+				]
+			];
+		Panel->AddSlot()
+			.AutoHeight()
+			[
+				SNew(STextBlock)
+				.Text(FText::FromString(Body))
+				.Font(FCoreStyle::GetDefaultFontStyle("Regular", 15))
+				.ColorAndOpacity(FSlateColor(TextMain))
+				.AutoWrapText(true)
+			];
+	}
+	else
+	{
+		Panel->AddSlot()
+			.FillHeight(1.f)
+			[
+				SNew(SScrollBox)
+				+ SScrollBox::Slot()
+				[
+					SNew(STextBlock)
+					.Text(FText::FromString(Body))
+					.Font(FCoreStyle::GetDefaultFontStyle("Regular", 15))
+					.ColorAndOpacity(FSlateColor(TextMain))
+					.AutoWrapText(true)
+				]
+			];
+	}
 
 	const TSharedRef<SVerticalBox> Menu = SNew(SVerticalBox);
 	TSharedPtr<SWidget> FirstButton;
@@ -742,15 +852,7 @@ void SInvestigationScreen::RebuildWidgets()
 					.BorderImage(&PanelBrush)
 					.Padding(FMargin(24.f))
 					[
-						SNew(SScrollBox)
-						+ SScrollBox::Slot()
-						[
-							SNew(STextBlock)
-							.Text(FText::FromString(Body))
-							.Font(FCoreStyle::GetDefaultFontStyle("Regular", 15))
-							.ColorAndOpacity(FSlateColor(TextMain))
-							.AutoWrapText(true)
-						]
+						Panel
 					]
 				]
 			]
