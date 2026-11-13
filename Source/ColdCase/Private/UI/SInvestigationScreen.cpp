@@ -33,7 +33,7 @@ namespace InvestigationScreenPrivate
 	const FLinearColor TextMenu(0.76f, 0.78f, 0.80f, 1.f);
 	const FLinearColor TextDim(0.50f, 0.54f, 0.58f, 1.f);
 	const FLinearColor Ink(0.09f, 0.085f, 0.08f, 1.f);
-	const FLinearColor StampRed(0.55f, 0.10f, 0.08f, 0.75f);
+	const FLinearColor StampRed(0.62f, 0.10f, 0.08f, 0.9f);
 
 	FSlateFontInfo TypedFont(int32 Size) { return FCoreStyle::GetDefaultFontStyle("Mono", Size); }
 
@@ -827,7 +827,7 @@ void SInvestigationScreen::RebuildWidgets()
 			[
 				SNew(STextBlock)
 				.Text(FText::FromString(Body))
-				.Font(TypedFont(14))
+				.Font(TypedFont(17))
 				.ColorAndOpacity(FSlateColor(BodyColour))
 				.AutoWrapText(true)
 			];
@@ -842,7 +842,7 @@ void SInvestigationScreen::RebuildWidgets()
 				[
 					SNew(STextBlock)
 					.Text(FText::FromString(Body))
-					.Font(TypedFont(14))
+					.Font(TypedFont(17))
 					.LineHeightPercentage(1.15f)
 					.ColorAndOpacity(FSlateColor(BodyColour))
 					.AutoWrapText(true)
@@ -955,7 +955,7 @@ void SInvestigationScreen::RebuildWidgets()
 			[
 				SNew(STextBlock)
 				.Text(FText::FromString(TEXT("MAJOR CRIME REVIEW  /  CASE FILE")))
-				.Font(TypedFont(11))
+				.Font(TypedFont(15))
 				.ColorAndOpacity(FSlateColor(Accent))
 			]
 
@@ -1032,7 +1032,7 @@ void SInvestigationScreen::RebuildWidgets()
 						SNew(STextBlock)
 						.Visibility(bPaper ? EVisibility::HitTestInvisible : EVisibility::Collapsed)
 						.Text(FText::FromString(TEXT("RESTRICTED")))
-						.Font(TypedFont(12))
+						.Font(TypedFont(20))
 						.ColorAndOpacity(FSlateColor(StampRed))
 						.RenderTransformPivot(FVector2D(0.5f, 0.5f))
 						.RenderTransform(FSlateRenderTransform(FQuat2D(FMath::DegreesToRadians(-6.f))))
@@ -1046,8 +1046,8 @@ void SInvestigationScreen::RebuildWidgets()
 			[
 				SNew(STextBlock)
 				.Text(FText::FromString(TEXT("MOVE  arrows / d-pad      CHOOSE  Enter / A      BACK  Esc / B")))
-				.Font(TypedFont(10))
-				.ColorAndOpacity(FSlateColor(TextDim))
+				.Font(TypedFont(14))
+				.ColorAndOpacity(FSlateColor(TextMenu))
 			]
 		]
 	];

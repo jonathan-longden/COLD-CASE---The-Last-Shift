@@ -143,7 +143,7 @@ private:
 	/** The case-file look: a darkened photograph behind everything, and the page text typed on paper. */
 	TSharedPtr<FSlateDynamicImageBrush> BackdropBrush;
 	TSharedPtr<FSlateDynamicImageBrush> PaperBrush;
-	FSlateColorBrush ShadeBrush = FSlateColorBrush(FLinearColor(0.f, 0.f, 0.f, 0.55f));
+	FSlateColorBrush ShadeBrush = FSlateColorBrush(FLinearColor(0.f, 0.f, 0.f, 0.45f));
 	FSlateColorBrush AccentBrush = FSlateColorBrush(FLinearColor(0.78f, 0.52f, 0.22f, 1.f));
 	FSlateColorBrush FilmBackgroundBrush = FSlateColorBrush(FLinearColor::Black);
 	FSlateColorBrush PanelBrush = FSlateColorBrush(FLinearColor(0.03f, 0.035f, 0.045f, 1.f));
