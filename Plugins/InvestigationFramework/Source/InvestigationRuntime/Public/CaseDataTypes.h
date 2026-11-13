@@ -60,6 +60,10 @@ struct INVESTIGATIONRUNTIME_API FInterviewTopic
 	/** Player-facing wording, e.g. "The night of 12 October". */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
 	FText Text;
+
+	/** Only offered once all of these flags are set (something the detective has to learn about first). */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
+	TArray<FName> RequiresFlags;
 };
 
 /** How the detective puts a question. */
@@ -227,6 +231,13 @@ struct INVESTIGATIONRUNTIME_API FCaseCharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case|Interview")
 	TArray<FInterviewResponse> Responses;
 
+	/**
+	 * Someone the investigation has to find first: they are not listed, and cannot be interviewed,
+	 * until all of these flags are set. Leave empty for people known from the start.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case|Interview")
+	TArray<FName> RequiresFlags;
+
 	bool CanBeInterviewed() const { return !DefaultLine.IsEmpty(); }
 	const FInterviewResponse* FindResponse(FName ResponseId) const;
 };
@@ -346,6 +357,17 @@ struct INVESTIGATIONRUNTIME_API FEvidenceItem
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
 	EEvidenceAvailability Availability = EEvidenceAvailability::InitialFile;
+
+	/**
+	 * For OnRequest exhibits: the request is only possible once all of these flags are set, so a record
+	 * can only be asked for after something in the investigation points to it. Empty means from the start.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
+	TArray<FName> RequiresFlags;
+
+	/** Flags set the first time the exhibit is examined: reading it can open a new line of enquiry. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
+	TArray<FName> SetFlagsWhenExamined;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Case")
 	TArray<FEvidenceFinding> Findings;

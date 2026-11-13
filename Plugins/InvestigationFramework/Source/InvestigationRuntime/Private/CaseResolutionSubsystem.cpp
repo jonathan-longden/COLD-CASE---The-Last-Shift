@@ -3,6 +3,7 @@
 #include "CaseDataLoader.h"
 #include "CaseDataTypes.h"
 #include "CaseFileSubsystem.h"
+#include "CaseStateSubsystem.h"
 #include "CaseTruthTypes.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
@@ -21,6 +22,7 @@ void UCaseResolutionSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	CaseFile = Collection.InitializeDependency<UCaseFileSubsystem>();
 	Interviews = Collection.InitializeDependency<UInterviewSubsystem>();
 	Theory = Collection.InitializeDependency<UTheorySubsystem>();
+	CaseState = Collection.InitializeDependency<UCaseStateSubsystem>();
 }
 
 bool UCaseResolutionSubsystem::SubmitConclusion()
@@ -108,6 +110,11 @@ FCaseReviewReport UCaseResolutionSubsystem::BuildReport() const
 		}
 		if (!State.bInterviewed)
 		{
+			if (!Interviews->IsCharacterAvailable(State.CharacterId))
+			{
+				// Someone the investigation never found. Their exhibit or lead is reported instead.
+				continue;
+			}
 			Report.Missed.Add(FText::Format(LOCTEXT("NeverInterviewed", "{0} was available and was never interviewed."), Character->Name));
 		}
 		else if (State.bRefusesInterview)
@@ -117,6 +124,34 @@ FCaseReviewReport UCaseResolutionSubsystem::BuildReport() const
 	}
 
 	Report.TruthSummary = Truth.Summary;
+
+	// 3. What followed. Each epilogue is shown only if the way the case was run matches it.
+	TSet<FName> Concluded;
+	for (const FCaseReviewAnswer& Answer : Report.Answers)
+	{
+		Concluded.Add(Answer.Assessment.FactId);
+	}
+	for (const FCaseEpilogue& Epilogue : Truth.Epilogues)
+	{
+		bool bShow = !CaseState || CaseState->HasAllFlags(Epilogue.RequiresFlags);
+		for (const FName Flag : Epilogue.RequiresNotFlags)
+		{
+			bShow &= !(CaseState && CaseState->HasFlag(Flag));
+		}
+		for (const FName FactId : Epilogue.RequiresAnswers)
+		{
+			bShow &= Concluded.Contains(FactId);
+		}
+		for (const FName FactId : Epilogue.RequiresNotAnswers)
+		{
+			bShow &= !Concluded.Contains(FactId);
+		}
+		if (bShow && !Epilogue.Text.IsEmpty())
+		{
+			Report.Afterwards.Add(Epilogue.Text);
+		}
+	}
+
 	Report.bValid = true;
 	return Report;
 }
@@ -165,6 +200,14 @@ TArray<FString> UCaseResolutionSubsystem::GetReportLines() const
 
 	Lines.Add(TEXT("-- What happened --"));
 	Lines.Add(Report.TruthSummary.ToString());
+	if (Report.Afterwards.Num() > 0)
+	{
+		Lines.Add(TEXT("-- Afterwards --"));
+		for (const FText& Paragraph : Report.Afterwards)
+		{
+			Lines.Add(Paragraph.ToString());
+		}
+	}
 	return Lines;
 }
 

@@ -51,9 +51,21 @@ public:
 	bool GetManualSlotHeader(int32 SlotNumber, FSaveSlotHeader& OutHeader);
 	bool GetAutosaveHeader(FSaveSlotHeader& OutHeader);
 
+	/** Each case keeps its own autosave, so moving between cases never loses progress. */
+	bool GetAutosaveHeaderFor(FName CasePlugin, FSaveSlotHeader& OutHeader);
+	bool LoadAutosaveFor(FName CasePlugin);
+
+	/**
+	 * Moves to another case: autosaves the case in hand, then opens the other one where the player
+	 * left it (its autosave), or from the beginning if it has never been opened. Not during an interview.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Save")
+	bool OpenCase(FName CasePlugin);
+
 private:
 	static FString ManualSlotName(int32 SlotNumber);
-	static FString AutosaveSlotName();
+	FString AutosaveSlotName() const;
+	static FString AutosaveSlotNameFor(FName CasePlugin);
 
 	/** Gathers every system's state into a new save object. Returns nullptr if there is nothing to save. */
 	UInvestigationSaveGame* CaptureSave(bool bAutosave) const;

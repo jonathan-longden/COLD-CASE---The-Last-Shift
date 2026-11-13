@@ -61,6 +61,24 @@ const FCharacterRuntimeState* UInterviewSubsystem::GetCharacterState(FName Chara
 	return CharacterStates.FindByPredicate([CharacterId](const FCharacterRuntimeState& S) { return S.CharacterId == CharacterId; });
 }
 
+bool UInterviewSubsystem::IsCharacterAvailable(FName CharacterId) const
+{
+	const FCaseContent* Case = GetCase();
+	const FCaseCharacter* Character = Case ? Case->FindCharacter(CharacterId) : nullptr;
+	if (!Character || !Character->CanBeInterviewed() || !GetCharacterState(CharacterId))
+	{
+		return false;
+	}
+	return Character->RequiresFlags.Num() == 0 || (CaseState && CaseState->HasAllFlags(Character->RequiresFlags));
+}
+
+bool UInterviewSubsystem::IsTopicAvailable(FName TopicId) const
+{
+	const FCaseContent* Case = GetCase();
+	const FInterviewTopic* Topic = Case ? Case->FindTopic(TopicId) : nullptr;
+	return Topic && (Topic->RequiresFlags.Num() == 0 || (CaseState && CaseState->HasAllFlags(Topic->RequiresFlags)));
+}
+
 bool UInterviewSubsystem::StartInterview(FName CharacterId, FText& OutRefusal)
 {
 	OutRefusal = FText::GetEmpty();
@@ -68,7 +86,7 @@ bool UInterviewSubsystem::StartInterview(FName CharacterId, FText& OutRefusal)
 	const FCaseContent* Case = GetCase();
 	const FCaseCharacter* Character = Case ? Case->FindCharacter(CharacterId) : nullptr;
 	FCharacterRuntimeState* State = FindState(CharacterId);
-	if (!Character || !State || IsInterviewActive() || Investigation->IsCaseConcluded())
+	if (!Character || !State || IsInterviewActive() || Investigation->IsCaseConcluded() || !IsCharacterAvailable(CharacterId))
 	{
 		return false;
 	}
@@ -113,7 +131,7 @@ void UInterviewSubsystem::RestoreCharacterStates(const TArray<FCharacterRuntimeS
 FInterviewReply UInterviewSubsystem::AskAbout(FName TopicId, EInterviewApproach Approach)
 {
 	const FCaseContent* Case = GetCase();
-	if (!Case || !Case->FindTopic(TopicId))
+	if (!Case || !IsTopicAvailable(TopicId))
 	{
 		return FInterviewReply();
 	}

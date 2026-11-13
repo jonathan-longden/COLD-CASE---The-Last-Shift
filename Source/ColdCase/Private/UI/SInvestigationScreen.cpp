@@ -9,6 +9,7 @@
 #include "HAL/IConsoleManager.h"
 #include "HAL/PlatformTime.h"
 #include "InvestigationLog.h"
+#include "InvestigationSettings.h"
 #include "InputCoreTypes.h"
 #include "InterviewSubsystem.h"
 #include "InvestigationSaveSubsystem.h"
@@ -364,8 +365,11 @@ void SInvestigationScreen::BuildPage()
 	case EPage::ConfirmConclusion: BuildConfirmConclusion(); break;
 	case EPage::CaseReview: BuildCaseReview(); break;
 	case EPage::SaveLoad: BuildSaveLoad(); break;
+	case EPage::Cases: BuildCases(); break;
 	default: BuildHome(); break;
 	}
+
+	AnnounceNewLeads();
 
 	if (!Notice.IsEmpty())
 	{
@@ -387,6 +391,7 @@ void SInvestigationScreen::BuildHome()
 		AddItem(FText::FromString(TEXT("Look back through the exhibits")), [this]() { GoTo(EPage::Exhibits); });
 		AddItem(FText::FromString(TEXT("Look back through the statements")), [this]() { GoTo(EPage::Statements); });
 		AddItem(FText::FromString(TEXT("Save or load")), [this]() { GoTo(EPage::SaveLoad); });
+		AddItem(FText::FromString(TEXT("Other case files")), [this]() { GoTo(EPage::Cases); });
 		return;
 	}
 
@@ -401,7 +406,7 @@ void SInvestigationScreen::BuildHome()
 		int32 Spoken = 0, Available = 0;
 		for (const FCaseCharacter& Character : Case.Characters)
 		{
-			if (!Character.CanBeInterviewed())
+			if (!Interviews.IsValid() || !Interviews->IsCharacterAvailable(Character.Id))
 			{
 				continue;
 			}
@@ -430,6 +435,7 @@ void SInvestigationScreen::BuildHome()
 	AddItem(FText::FromString(TEXT("Interview someone")), [this]() { GoTo(EPage::People); });
 	AddItem(FText::FromString(TEXT("Your theory")), [this]() { GoTo(EPage::Theory); });
 	AddItem(FText::FromString(TEXT("Save or load")), [this]() { GoTo(EPage::SaveLoad); });
+	AddItem(FText::FromString(TEXT("Other case files")), [this]() { GoTo(EPage::Cases); });
 }
 
 void SInvestigationScreen::BuildExhibits()
@@ -466,6 +472,11 @@ void SInvestigationScreen::BuildExhibits()
 			if (CaseFile->GetPendingRequests().Contains(Item.Id))
 			{
 				Body += FString::Printf(TEXT("\n\nRequested and awaited: %s."), *Item.Name.ToString());
+				continue;
+			}
+			if (!CaseFile->CanRequestEvidence(Item.Id))
+			{
+				// Nobody knows to ask for this yet.
 				continue;
 			}
 			const FName EvidenceId = Item.Id;
@@ -588,8 +599,14 @@ void SInvestigationScreen::BuildPeople()
 
 	for (const FCaseCharacter& Character : Case.Characters)
 	{
+		const bool bAvailable = Interviews->IsCharacterAvailable(Character.Id);
+		if (Character.CanBeInterviewed() && !bAvailable)
+		{
+			// Someone the investigation has not found yet.
+			continue;
+		}
 		Body += FString::Printf(TEXT("%s. %s\n"), *Character.Name.ToString(), *Character.Role.ToString());
-		if (!Character.CanBeInterviewed() || Investigation->IsCaseConcluded())
+		if (!bAvailable || Investigation->IsCaseConcluded())
 		{
 			continue;
 		}
@@ -647,6 +664,10 @@ void SInvestigationScreen::BuildInterview()
 
 	for (const FInterviewTopic& Topic : Case.Topics)
 	{
+		if (!Interviews->IsTopicAvailable(Topic.Id))
+		{
+			continue;
+		}
 		const FName TopicId = Topic.Id;
 		AddItem(FText::FromString(FString::Printf(TEXT("Ask about: %s"), *Topic.Text.ToString())), [this, TopicId]() { AskOrPresent(TopicId, false); });
 	}
@@ -878,6 +899,14 @@ void SInvestigationScreen::BuildCaseReview()
 	}
 
 	Body += FString::Printf(TEXT("\nWHAT HAPPENED\n%s"), *Report.TruthSummary.ToString());
+	if (Report.Afterwards.Num() > 0)
+	{
+		Body += TEXT("\n\nAFTERWARDS");
+		for (const FText& Paragraph : Report.Afterwards)
+		{
+			Body += FString::Printf(TEXT("\n\n%s"), *Paragraph.ToString());
+		}
+	}
 	AddBackItem();
 }
 
@@ -907,6 +936,7 @@ void SInvestigationScreen::BuildSaveLoad()
 			{
 				const bool bLoaded = Saves.IsValid() && Saves->LoadManual(Slot);
 				Transcript.Reset();
+				LeadsCase = NAME_None;
 				Notice = bLoaded ? FString::Printf(TEXT("Loaded slot %d."), Slot) : FString(TEXT("That save could not be loaded."));
 				GoTo(bLoaded ? EPage::Home : EPage::SaveLoad);
 			});
@@ -920,12 +950,145 @@ void SInvestigationScreen::BuildSaveLoad()
 		{
 			const bool bLoaded = Saves.IsValid() && Saves->LoadAutosave();
 			Transcript.Reset();
+			LeadsCase = NAME_None;
 			Notice = bLoaded ? FString(TEXT("Loaded the autosave.")) : FString(TEXT("The autosave could not be loaded."));
 			GoTo(bLoaded ? EPage::Home : EPage::SaveLoad);
 		});
 	}
 
 	AddBackItem();
+}
+
+void SInvestigationScreen::BuildCases()
+{
+	Title = FText::FromString(TEXT("Case files"));
+	Body = TEXT("Every file here was closed without an answer. Each one keeps its own place: you can put one down and pick it up again where you left it.");
+
+	const UInvestigationSettings* Settings = GetDefault<UInvestigationSettings>();
+	TArray<FName> Plugins = Settings->CasePlugins;
+	if (Plugins.Num() == 0)
+	{
+		Plugins.Add(Settings->StartupCasePlugin);
+	}
+
+	for (const FName Plugin : Plugins)
+	{
+		FCaseContent Content;
+		FString Error;
+		if (!FCaseDataLoader::LoadContent(Plugin, Content, Error))
+		{
+			UE_LOG(LogInvestigation, Warning, TEXT("Case list: %s"), *Error);
+			continue;
+		}
+
+		const bool bCurrent = Investigation->GetActiveCasePlugin() == Plugin;
+		FString Status;
+		FSaveSlotHeader Header;
+		if (bCurrent)
+		{
+			Status = Investigation->IsCaseConcluded() ? TEXT("Open on your desk. Concluded.") : TEXT("Open on your desk.");
+		}
+		else if (Saves->GetAutosaveHeaderFor(Plugin, Header))
+		{
+			Status = FString::Printf(TEXT("Last worked on %s: %s."), *Header.SavedAt.ToString(TEXT("%d/%m/%Y")), *Header.Summary);
+		}
+		else
+		{
+			Status = TEXT("Not yet opened.");
+		}
+
+		// The first sentence of the briefing is enough to say what the case is.
+		FString Logline = Content.Briefing.ToString();
+		int32 Stop = INDEX_NONE;
+		if (Logline.FindChar(TEXT('.'), Stop))
+		{
+			Logline.LeftInline(Stop + 1);
+		}
+		Body += FString::Printf(TEXT("\n\n%s\n%s\n%s"), *Content.Title.ToString(), *Logline, *Status);
+
+		if (bCurrent)
+		{
+			continue;
+		}
+		const FName PluginCopy = Plugin;
+		const FString CaseTitle = Content.Title.ToString();
+		AddItem(FText::FromString(FString::Printf(TEXT("Open %s"), *CaseTitle)), [this, PluginCopy, CaseTitle]()
+		{
+			const bool bOpened = Saves.IsValid() && Saves->OpenCase(PluginCopy);
+			Transcript.Reset();
+			LeadsCase = NAME_None;
+			if (bOpened)
+			{
+				// A new case on the desk: its opening film (if it has one) plays the first time it is opened.
+				FSaveSlotHeader Ignored;
+				bOpeningFilmOffered = Saves->GetAutosaveHeaderFor(PluginCopy, Ignored);
+				Notice = FString::Printf(TEXT("You take out the file: %s."), *CaseTitle);
+			}
+			else
+			{
+				Notice = TEXT("That file could not be opened. See the Output Log (LogInvestigation).");
+			}
+			GoTo(bOpened ? EPage::Home : EPage::Cases);
+		});
+	}
+
+	AddBackItem();
+}
+
+void SInvestigationScreen::AnnounceNewLeads()
+{
+	const FCaseContent* Case = GetCase();
+	if (!Case || !CaseFile.IsValid() || !Interviews.IsValid())
+	{
+		return;
+	}
+
+	// Every lead open right now, in the order the case lists them.
+	TArray<TPair<FName, FString>> Open;
+	for (const FEvidenceItem& Item : Case->Evidence)
+	{
+		if (Item.RequiresFlags.Num() > 0 && CaseFile->CanRequestEvidence(Item.Id))
+		{
+			Open.Emplace(Item.Id, FString::Printf(TEXT("New line of enquiry: %s can now be requested (Exhibits)."), *Item.Name.ToString()));
+		}
+	}
+	for (const FCaseCharacter& Character : Case->Characters)
+	{
+		if (Character.RequiresFlags.Num() > 0 && Interviews->IsCharacterAvailable(Character.Id))
+		{
+			Open.Emplace(Character.Id, FString::Printf(TEXT("New line of enquiry: %s can now be interviewed."), *Character.Name.ToString()));
+		}
+	}
+	for (const FInterviewTopic& Topic : Case->Topics)
+	{
+		if (Topic.RequiresFlags.Num() > 0 && Interviews->IsTopicAvailable(Topic.Id))
+		{
+			Open.Emplace(Topic.Id, FString::Printf(TEXT("New line of enquiry: you can now ask about %s."), *Topic.Text.ToString()));
+		}
+	}
+
+	// A different case, or a save just loaded: take stock quietly, without announcing what was already known.
+	const bool bTakeStock = LeadsCase != Case->CaseId;
+	LeadsCase = Case->CaseId;
+	if (bTakeStock)
+	{
+		KnownLeads.Reset();
+	}
+
+	FString Announcement;
+	for (const TPair<FName, FString>& Lead : Open)
+	{
+		bool bAlreadyKnown = false;
+		KnownLeads.Add(Lead.Key, &bAlreadyKnown);
+		if (!bAlreadyKnown && !bTakeStock)
+		{
+			Announcement += Lead.Value + TEXT("\n");
+		}
+	}
+	if (!Announcement.IsEmpty())
+	{
+		Body = Announcement + TEXT("\n") + Body;
+	}
 }
 
 void SInvestigationScreen::OpenClip(const FCaseMediaClip& Clip, EPage ReturnTo)
@@ -1247,6 +1410,7 @@ bool SInvestigationScreen::DevCommand(const TArray<FString>& Args)
 	if (What == TEXT("People")) { GoTo(EPage::People); return true; }
 	if (What == TEXT("Theory")) { GoTo(EPage::Theory); return true; }
 	if (What == TEXT("SaveLoad")) { GoTo(EPage::SaveLoad); return true; }
+	if (What == TEXT("Cases")) { GoTo(EPage::Cases); return true; }
 	if (What == TEXT("CaseReview"))
 	{
 		if (!Investigation.IsValid() || !Investigation->IsCaseConcluded())

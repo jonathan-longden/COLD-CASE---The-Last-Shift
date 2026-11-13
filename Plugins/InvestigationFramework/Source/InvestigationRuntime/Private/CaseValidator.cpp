@@ -111,7 +111,7 @@ TArray<FString> FCaseValidator::Validate(const FCaseContent& Content, const FCas
 		}
 	}
 
-	// A flag that responses wait for but nothing ever sets is almost always a typo.
+	// A flag that something waits for but nothing ever sets is almost always a typo.
 	TSet<FName> FlagsSet;
 	for (const FCaseCharacter& Character : Content.Characters)
 	{
@@ -120,18 +120,39 @@ TArray<FString> FCaseValidator::Validate(const FCaseContent& Content, const FCas
 			FlagsSet.Append(Response.SetFlags);
 		}
 	}
-	for (const FCaseCharacter& Character : Content.Characters)
+	for (const FEvidenceItem& Item : Content.Evidence)
 	{
-		for (const FInterviewResponse& Response : Character.Responses)
+		FlagsSet.Append(Item.SetFlagsWhenExamined);
+	}
+	auto CheckFlags = [&FlagsSet, &Problems](const TArray<FName>& Flags, const FString& Where)
+	{
+		for (const FName Flag : Flags)
 		{
-			for (const FName Flag : Response.RequiresFlags)
+			if (!FlagsSet.Contains(Flag))
 			{
-				if (!FlagsSet.Contains(Flag))
-				{
-					Problems.Add(FString::Printf(TEXT("Response '%s' requires flag '%s', which nothing sets."), *Response.Id.ToString(), *Flag.ToString()));
-				}
+				Problems.Add(FString::Printf(TEXT("%s requires flag '%s', which nothing sets."), *Where, *Flag.ToString()));
 			}
 		}
+	};
+	for (const FCaseCharacter& Character : Content.Characters)
+	{
+		CheckFlags(Character.RequiresFlags, FString::Printf(TEXT("Character '%s'"), *Character.Id.ToString()));
+		for (const FInterviewResponse& Response : Character.Responses)
+		{
+			CheckFlags(Response.RequiresFlags, FString::Printf(TEXT("Response '%s'"), *Response.Id.ToString()));
+		}
+	}
+	for (const FEvidenceItem& Item : Content.Evidence)
+	{
+		CheckFlags(Item.RequiresFlags, FString::Printf(TEXT("Evidence '%s'"), *Item.Id.ToString()));
+		if (Item.RequiresFlags.Num() > 0 && Item.Availability != EEvidenceAvailability::OnRequest)
+		{
+			Problems.Add(FString::Printf(TEXT("Evidence '%s' has RequiresFlags but is not OnRequest, so they do nothing."), *Item.Id.ToString()));
+		}
+	}
+	for (const FInterviewTopic& Topic : Content.Topics)
+	{
+		CheckFlags(Topic.RequiresFlags, FString::Printf(TEXT("Topic '%s'"), *Topic.Id.ToString()));
 	}
 
 	for (const FEvidenceItem& Item : Content.Evidence)
@@ -172,6 +193,19 @@ TArray<FString> FCaseValidator::Validate(const FCaseContent& Content, const FCas
 			Problems.Add(FString::Printf(TEXT("Truth.json is for case '%s' but Case.json is '%s'."), *Truth->CaseId.ToString(), *Content.CaseId.ToString()));
 		}
 		CheckFactRefs(Truth->TrueFacts, FactIds, TEXT("Truth"), Problems);
+		for (int32 Index = 0; Index < Truth->Epilogues.Num(); ++Index)
+		{
+			const FCaseEpilogue& Epilogue = Truth->Epilogues[Index];
+			const FString Where = FString::Printf(TEXT("Truth epilogue %d"), Index + 1);
+			CheckFlags(Epilogue.RequiresFlags, Where);
+			CheckFlags(Epilogue.RequiresNotFlags, Where);
+			CheckFactRefs(Epilogue.RequiresAnswers, FactIds, Where, Problems);
+			CheckFactRefs(Epilogue.RequiresNotAnswers, FactIds, Where, Problems);
+			if (Epilogue.Text.IsEmpty())
+			{
+				Problems.Add(FString::Printf(TEXT("%s has no Text."), *Where));
+			}
+		}
 		for (const FCaseQuestion& Question : Content.Questions)
 		{
 			int32 TrueCount = 0;

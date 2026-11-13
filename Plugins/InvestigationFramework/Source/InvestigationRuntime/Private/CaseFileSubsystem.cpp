@@ -1,6 +1,7 @@
 #include "CaseFileSubsystem.h"
 
 #include "CaseDataTypes.h"
+#include "CaseStateSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "HAL/IConsoleManager.h"
@@ -13,6 +14,7 @@ void UCaseFileSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 	// Make sure the investigation subsystem exists first, then listen for cases starting.
 	Investigation = Collection.InitializeDependency<UInvestigationSubsystem>();
+	CaseState = Collection.InitializeDependency<UCaseStateSubsystem>();
 	if (Investigation)
 	{
 		CaseStartedHandle = Investigation->OnCaseStarted.AddUObject(this, &UCaseFileSubsystem::HandleCaseStarted);
@@ -111,16 +113,36 @@ bool UCaseFileSubsystem::ExamineEvidence(FName EvidenceId)
 	if (!Held->bExamined)
 	{
 		Held->bExamined = true;
+
+		// Reading an exhibit can open a new line of enquiry (a name, a date, a place to ask about).
+		const FCaseContent* Case = GetCase();
+		const FEvidenceItem* Item = Case ? Case->FindEvidence(EvidenceId) : nullptr;
+		if (Item && CaseState)
+		{
+			for (const FName Flag : Item->SetFlagsWhenExamined)
+			{
+				CaseState->SetFlag(Flag);
+			}
+		}
 		OnCaseFileChanged.Broadcast();
 	}
 	return true;
 }
 
-bool UCaseFileSubsystem::RequestEvidence(FName EvidenceId)
+bool UCaseFileSubsystem::CanRequestEvidence(FName EvidenceId) const
 {
 	const FCaseContent* Case = GetCase();
 	const FEvidenceItem* Item = Case ? Case->FindEvidence(EvidenceId) : nullptr;
 	if (!IsOpen() || !Item || Item->Availability != EEvidenceAvailability::OnRequest || HasEvidence(EvidenceId) || PendingRequests.Contains(EvidenceId))
+	{
+		return false;
+	}
+	return Item->RequiresFlags.Num() == 0 || (CaseState && CaseState->HasAllFlags(Item->RequiresFlags));
+}
+
+bool UCaseFileSubsystem::RequestEvidence(FName EvidenceId)
+{
+	if (!CanRequestEvidence(EvidenceId))
 	{
 		return false;
 	}

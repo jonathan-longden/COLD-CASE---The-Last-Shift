@@ -14,7 +14,11 @@ class INVESTIGATIONRUNTIME_API UInvestigationSettings : public UDeveloperSetting
 	GENERATED_BODY()
 
 public:
-	/** Name of the case plugin to open when play starts (temporary until there is a case-select screen). */
+	/** Name of the case plugin to open when play starts. */
 	UPROPERTY(Config, EditAnywhere, Category = "Cases")
 	FName StartupCasePlugin = TEXT("Case000_TillRoll");
+
+	/** Every case the player can open, in the order they are offered (and roughly of difficulty). */
+	UPROPERTY(Config, EditAnywhere, Category = "Cases")
+	TArray<FName> CasePlugins;
 };
