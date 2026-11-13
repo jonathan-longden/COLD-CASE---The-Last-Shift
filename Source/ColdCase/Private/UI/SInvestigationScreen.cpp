@@ -16,9 +16,11 @@
 #include "Widgets/Images/SImage.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Layout/SBorder.h"
+#include "Widgets/Layout/SBox.h"
 #include "Widgets/Layout/SScaleBox.h"
 #include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/SBoxPanel.h"
+#include "Widgets/SOverlay.h"
 #include "Widgets/Text/STextBlock.h"
 
 namespace InvestigationScreenPrivate
@@ -99,6 +101,12 @@ void SInvestigationScreen::Tick(const FGeometry& AllottedGeometry, const double 
 		bRebuildPending = false;
 		BuildPage();
 		RebuildWidgets();
+	}
+
+	// When the opening film reaches its end, carry on to the case without waiting for a button.
+	if (Page == EPage::Clip && ClipReturnPage == EPage::Home && MediaPlayback.IsValid() && MediaPlayback->HasFinished())
+	{
+		GoBack();
 	}
 }
 
@@ -807,6 +815,49 @@ void SInvestigationScreen::RebuildWidgets()
 		{
 			FirstButton = Button;
 		}
+	}
+
+	// The opening film fills the whole screen, with its choices tucked into a corner.
+	if (Page == EPage::Clip && ClipReturnPage == EPage::Home && bClipOpened && CurrentClip.Kind == ECaseMediaKind::Video && Picture)
+	{
+		ChildSlot
+		[
+			SNew(SBorder)
+			.BorderImage(&FilmBackgroundBrush)
+			.Padding(FMargin(0.f))
+			[
+				SNew(SOverlay)
+
+				+ SOverlay::Slot()
+				[
+					SNew(SScaleBox)
+					.Stretch(EStretch::ScaleToFit)
+					[
+						SNew(SImage)
+						.Image(&PictureBrush)
+					]
+				]
+
+				+ SOverlay::Slot()
+				.HAlign(HAlign_Right)
+				.VAlign(VAlign_Bottom)
+				.Padding(FMargin(24.f))
+				[
+					SNew(SBox)
+					.WidthOverride(200.f)
+					[
+						Menu
+					]
+				]
+			]
+		];
+
+		FirstButtonWeak = FirstButton;
+		if (FirstButton.IsValid() && FSlateApplication::IsInitialized())
+		{
+			FSlateApplication::Get().SetAllUserFocus(FirstButton, EFocusCause::SetDirectly);
+		}
+		return;
 	}
 
 	ChildSlot

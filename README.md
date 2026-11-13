@@ -122,6 +122,8 @@ Any exhibit can carry clips, and a case can have an opening film. Clips are list
 
 To check it: press Play, open **Exhibits**, open the till roll, choose **Play the test clip**. A grainy test card with a running timestamp and a tone should play in the right-hand panel.
 
+The opening film (`OpeningFilm.mp4`, the 999 call) plays full screen when the game starts. Choose **Continue** to skip it; it moves on by itself when it ends.
+
 Console: `ColdCase.PlayClip TillRoll.M.PlayerTest` plays it without the screens. The log shows `Clip playing` and then `Clip finished`.
 
 ## Working rules
