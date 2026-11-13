@@ -4,9 +4,64 @@
 	"TrueFacts": [
 		"TillRoll.F.SarahLeftAt.After2330",
 		"TillRoll.F.SarahLeftWith.InACar",
-		"TillRoll.F.LastSeenBy.Mick",
+		"TillRoll.F.LastSeenBy.CoachDriver",
 		"TillRoll.F.MickLeftAt.After2330",
-		"TillRoll.F.CarOutside.Mick"
+		"TillRoll.F.CarOutside.Mick",
+		"TillRoll.F.WhereTaken.CoachStation",
+		"TillRoll.F.WhyLeft.Dean",
+		"TillRoll.F.SarahFate.Alive"
 	],
-	"Summary": "Mechanics test, not canon. Sarah worked until about 23:35 and keyed the last sale herself at 23:32. Mick Hollis did not leave at half ten: he went out to his car, a dark Vauxhall Astra estate, and waited outside with the engine running. Sarah left with him shortly after 23:35. Lorraine sincerely remembers Sarah leaving alone at about eleven: she saw Sarah step outside for a cigarette at 23:00 and, over the years, that became her memory of Sarah leaving. Mick is lying to hide that he was the last person to see her."
+	"Summary": "Sarah Mercer spent most of 2000 being hurt by her husband, Dean. Neighbours rang the police three times; each time Sarah said she had fallen, because Dean was in the room, and nothing was done. For three years she had been putting a little by every Friday into an account in her maiden name, with the statements sent to the diner. The day before she went, she drew it all out. On her last shift she stepped out front at about eleven to check that Mick Hollis's car was there, then came back in and finished her tables. Lorraine Pike, cashing up in the back, honestly remembered her going at eleven. The till roll was right: Sarah rang up the last sale at 23:32. Mick, a quiet regular who had seen the bruises, waited outside with the engine running and drove her to Broad Marsh for the 00:30 London coach. She made him swear never to tell. When she was reported missing he was frightened, said he had left at half ten, and then kept lying, a step at a time, to keep his promise. Dean waited three days to report her and told the police she had gone to a sister she never had. A coach driver rang the inquiry within a fortnight; the message was marked 'no action' after Dean said his wife had no reason to travel. Nobody asked about the house she was leaving. Sarah has lived as Sarah Kendrick ever since. Her mother died this spring, and Dean appeared in the paper as the husband still hoping. At 2:13 this morning she rang 999 from outside the old diner, because nobody had looked.",
+	"Epilogues": [
+		{
+			"RequiresFlags": [
+				"TillRoll.Flag.DeanTold"
+			],
+			"Text": "Eleven days after the review was closed, Dean Mercer was arrested on a street in Hastings with a kitchen knife in his coat pocket. He had found the right road. Sarah Kendrick had already gone. She left no forwarding address, and she has not rung again."
+		},
+		{
+			"RequiresFlags": [
+				"TillRoll.Flag.SarahSpoken"
+			],
+			"RequiresNotFlags": [
+				"TillRoll.Flag.DeanTold"
+			],
+			"Text": "Sarah Kendrick made a formal statement. In it she describes what happened in that house in 2000, and the night she decided to go. The file has gone to the Crown Prosecution Service. She asked for one thing in return: that somebody tell Lorraine Pike it was not her fault. Somebody did."
+		},
+		{
+			"RequiresNotFlags": [
+				"TillRoll.Flag.SarahSpoken",
+				"TillRoll.Flag.DeanTold"
+			],
+			"RequiresAnswers": [
+				"TillRoll.F.SarahFate.Alive"
+			],
+			"Text": "The review recorded that Sarah Mercer was probably alive. Nobody went to find her. Somewhere on the south coast, a woman who rang 999 from outside a closed-down diner is still waiting for somebody to look properly."
+		},
+		{
+			"RequiresAnswers": [
+				"TillRoll.F.SarahFate.Dead"
+			],
+			"Text": "On the strength of the review, Dean Mercer was arrested on suspicion of his wife's murder and released without charge the same evening. The papers ran his photograph again: the grieving husband, wronged twice. He gave an interview. He said he would never stop looking for her."
+		},
+		{
+			"RequiresFlags": [
+				"TillRoll.Flag.MickTold",
+				"TillRoll.Flag.SarahSpoken"
+			],
+			"RequiresNotFlags": [
+				"TillRoll.Flag.DeanTold"
+			],
+			"Text": "Mick Hollis was not charged with anything. When he was told Sarah was alive and well, he asked not to be told where. He said it was the only promise he had ever made that mattered."
+		},
+		{
+			"RequiresFlags": [
+				"TillRoll.Flag.MickSpooked"
+			],
+			"RequiresNotFlags": [
+				"TillRoll.Flag.MickTold"
+			],
+			"Text": "Mick Hollis never spoke to the police again. Whatever he had carried for twenty-six years, he carried a while longer."
+		}
+	]
 }
