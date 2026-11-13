@@ -98,6 +98,7 @@ FCaseReviewReport UCaseResolutionSubsystem::BuildReport() const
 			if (Finding.Interpretations.Num() > 0 && CaseFile->GetChosenInterpretation(Finding.Id).IsNone())
 			{
 				Report.Missed.Add(FText::Format(LOCTEXT("LeftOpen", "{0} ({1}): no view was taken on what it showed."), Item.Name, FText::FromString(Item.ExhibitRef)));
+				break; // once per exhibit, however many open findings it has
 			}
 		}
 	}
