@@ -122,9 +122,11 @@ Any exhibit can carry clips, and a case can have an opening film. Clips are list
 
 To check it: press Play, open **Exhibits**, open the till roll, choose **Watch: the till roll on your desk**. An 8-second clip with room sound plays in the right-hand panel. Lorraine Pike's and Doreen Ash's statements each have a clip too (marked as reconstructions, so they are never mistaken for evidence).
 
-The opening film (`OpeningFilm.mp4`, the 999 call) plays full screen when the game starts. Choose **Continue** to skip it; it moves on by itself when it ends.
+The opening film (`OpeningFilm.mp4`, the 999 call) plays full screen when the game starts. Its **Continue** and **Play again** buttons show for the first 3 seconds, then fade so the picture is clean; any key or mouse movement brings them back (the first key press only shows them, so a stray press never skips the film; Esc / B still leaves at once). It moves on by itself when it ends.
 
 Console: `ColdCase.PlayClip TillRoll.M.TillRollDesk` (or `TillRoll.M.DinerClosing`, `TillRoll.M.DinerFromOpposite`, `TillRoll.M.OpeningFilm`) plays a clip without the screens. The log shows `Clip playing` and then `Clip finished`.
+
+Console (development builds): `ColdCase.UI <Page> [Id]` moves the screen without a keyboard or controller, for unattended screenshots. Pages: `Home`, `Exhibits`, `Exhibit <EvidenceId>`, `Statements`, `People`, `Interview <CharacterId>`, `Theory`, `CaseReview` (after `ColdCase.Conclude`), `SaveLoad`, `Clip <ClipId>`; inside an interview, `Ask <TopicId>` and `Present <EvidenceId>`. The log says `done` or `not possible here`.
 
 ## Working rules
 
