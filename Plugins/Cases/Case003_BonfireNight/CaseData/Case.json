@@ -1,0 +1,774 @@
+{
+	"SchemaVersion": 1,
+	"CaseId": "Bonfire",
+	"Title": "Case 3: Bonfire Night",
+	"Briefing": "On Bonfire Night 1983 fire tore through 14 Kirkby Street in the Meadows and killed Eileen Grice, 71. The fire brigade put it down to a rocket through the letterbox. The street put it down to a fourteen-year-old called Tony Shaw, and his family were driven out within the year. Tony is 57 now. He has written to the Chief Constable asking, one last time, for his name to be cleared. Tell me what started that fire. Go gently with Tony. The last time police spoke to him, he was a child in a room with no adult.",
+	"KeyQuestions": [
+		"Bonfire.Q.Cause",
+		"Bonfire.Q.Who",
+		"Bonfire.Q.Why",
+		"Bonfire.Q.Tony"
+	],
+	"Questions": [
+		{
+			"Id": "Bonfire.Q.Cause",
+			"Text": "How did the fire at 14 Kirkby Street start?",
+			"Facts": [
+				{
+					"Id": "Bonfire.F.Cause.Firework",
+					"Text": "A stray firework through the letterbox"
+				},
+				{
+					"Id": "Bonfire.F.Cause.Heater",
+					"Text": "Her own paraffin heater"
+				},
+				{
+					"Id": "Bonfire.F.Cause.Deliberate",
+					"Text": "It was set on purpose and made to look like kids"
+				}
+			]
+		},
+		{
+			"Id": "Bonfire.Q.Who",
+			"Text": "Who was responsible for the fire?",
+			"Facts": [
+				{
+					"Id": "Bonfire.F.Who.Nobody",
+					"Text": "Nobody. It was an accident"
+				},
+				{
+					"Id": "Bonfire.F.Who.Kids",
+					"Text": "Children letting off fireworks"
+				},
+				{
+					"Id": "Bonfire.F.Who.Tony",
+					"Text": "Tony Shaw"
+				},
+				{
+					"Id": "Bonfire.F.Who.Roy",
+					"Text": "Roy Grice, her nephew"
+				}
+			]
+		},
+		{
+			"Id": "Bonfire.Q.Why",
+			"Text": "Why did the fire happen?",
+			"Facts": [
+				{
+					"Id": "Bonfire.F.Why.Chance",
+					"Text": "No reason. It was bad luck on a bad night"
+				},
+				{
+					"Id": "Bonfire.F.Why.Inherit",
+					"Text": "So that someone would inherit her house"
+				},
+				{
+					"Id": "Bonfire.F.Why.Money",
+					"Text": "To stop her going to the police about loans taken out in her name"
+				}
+			]
+		},
+		{
+			"Id": "Bonfire.Q.Tony",
+			"Text": "Was Tony Shaw telling the truth in 1983?",
+			"Facts": [
+				{
+					"Id": "Bonfire.F.Tony.Lying",
+					"Text": "No. He invented a man to cover himself"
+				},
+				{
+					"Id": "Bonfire.F.Tony.Truth",
+					"Text": "Yes. He saw a man leave her yard with a can"
+				}
+			]
+		},
+		{
+			"Id": "Bonfire.Q.Heater",
+			"Text": "Where was Eileen's paraffin heater that night?",
+			"Facts": [
+				{
+					"Id": "Bonfire.F.Heater.Hall",
+					"Text": "In the hall, by the stairs"
+				},
+				{
+					"Id": "Bonfire.F.Heater.Kitchen",
+					"Text": "In the back kitchen"
+				}
+			]
+		}
+	],
+	"Topics": [
+		{
+			"Id": "Bonfire.T.Night",
+			"Text": "Bonfire Night, 5 November 1983"
+		},
+		{
+			"Id": "Bonfire.T.Eileen",
+			"Text": "Eileen Grice"
+		},
+		{
+			"Id": "Bonfire.T.Tony",
+			"Text": "Tony Shaw"
+		},
+		{
+			"Id": "Bonfire.T.Roy",
+			"Text": "Roy Grice"
+		},
+		{
+			"Id": "Bonfire.T.Brenda",
+			"Text": "Brenda, Roy's wife in 1983"
+		},
+		{
+			"Id": "Bonfire.T.Heater",
+			"Text": "Eileen's paraffin heater",
+			"RequiresFlags": [
+				"Bonfire.Flag.HeaterLead"
+			]
+		}
+	],
+	"Characters": [
+		{
+			"Id": "Bonfire.C.Eileen",
+			"Name": "Eileen Grice",
+			"Role": "Widow, 71. Died in the fire, 5 November 1983"
+		},
+		{
+			"Id": "Bonfire.C.Tony",
+			"Name": "Tony Shaw",
+			"Role": "Fourteen in 1983, named by the street. Now 57, a lorry driver in Mansfield",
+			"StartingTrust": 30,
+			"StartingComposure": 60,
+			"RapportTrustDelta": 7,
+			"ChallengeTrustDelta": -12,
+			"ChallengeComposureDelta": -5,
+			"DefaultLine": "I said it all in 1983. Nobody listened then either.",
+			"RefusalLine": "Tony Shaw has said he'll not speak to the police again. He's said that before. This time he means it.",
+			"Responses": [
+				{
+					"Id": "Bonfire.R.Tony.Night",
+					"Trigger": "Bonfire.T.Night",
+					"Line": "I was in the back entry with Gaz Wilson letting off bangers. A man come out of Mrs Grice's back yard carrying a can. Grown man, big coat. He walked straight past us. Didn't run. Five minutes later the front of her house was going up.",
+					"AssertsFacts": [
+						"Bonfire.F.Tony.Truth",
+						"Bonfire.F.Cause.Deliberate"
+					]
+				},
+				{
+					"Id": "Bonfire.R.Tony.NightWarn",
+					"Trigger": "Bonfire.T.Night",
+					"Line": "Here we go. Same as 1983. 'Come on, son, just tell us it were you and we can all go home.' Do that once more and I'm gone.",
+					"Approach": "Challenge",
+					"Priority": 7,
+					"Once": true,
+					"TrustDelta": -5
+				},
+				{
+					"Id": "Bonfire.R.Tony.NightWalk",
+					"Trigger": "Bonfire.T.Night",
+					"Line": "No. I've waited forty years to be talked to like a man, and it's still this. We're done.",
+					"Approach": "Challenge",
+					"Priority": 6,
+					"EndsCooperation": true,
+					"SetFlags": [
+						"Bonfire.Flag.TonyWalks"
+					]
+				},
+				{
+					"Id": "Bonfire.R.Tony.Eileen",
+					"Trigger": "Bonfire.T.Eileen",
+					"Line": "She gave us a penny for the guy every year, even when she'd nothing. I'd not have hurt her. I'd not."
+				},
+				{
+					"Id": "Bonfire.R.Tony.Self",
+					"Trigger": "Bonfire.T.Tony",
+					"Line": "We left the Meadows in '84. Bricks through the window. My mam died thinking people believed her son burned an old woman."
+				},
+				{
+					"Id": "Bonfire.R.Tony.Roy",
+					"Trigger": "Bonfire.T.Roy",
+					"Line": "The nephew? Came round Saturdays in a brown Cortina. Big lad. Walked with his feet out, like a duck."
+				},
+				{
+					"Id": "Bonfire.R.Tony.RoyTrust",
+					"Trigger": "Bonfire.T.Roy",
+					"Line": "It was him in the entry. I said 'a man' in 1983 because I was fourteen and terrified and didn't know his name. A week later I saw him on the Central News, crying outside the house. Same coat. Same walk. Who was going to believe me then?",
+					"Approach": "Rapport",
+					"MinTrust": 44,
+					"Priority": 5,
+					"SetFlags": [
+						"Bonfire.Flag.TonyNamesRoy"
+					],
+					"AssertsFacts": [
+						"Bonfire.F.Who.Roy",
+						"Bonfire.F.Tony.Truth"
+					]
+				},
+				{
+					"Id": "Bonfire.R.Tony.Statement",
+					"Trigger": "Bonfire.E.TonyStatement1983",
+					"Line": "That's what I said. Every word. Read what the copper wrote at the bottom, though. 'Evasive.' I was fourteen."
+				},
+				{
+					"Id": "Bonfire.R.Tony.FireReport",
+					"Trigger": "Bonfire.E.FireReport",
+					"Line": "Paraffin. Page six. Forty years it's been on page six."
+				},
+				{
+					"Id": "Bonfire.R.Tony.Loans",
+					"Trigger": "Bonfire.E.Loans",
+					"Line": "I don't know about any of that. I was a kid."
+				},
+				{
+					"Id": "Bonfire.R.Tony.Letter",
+					"Trigger": "Bonfire.E.SolicitorLetter",
+					"Line": "She was going to stop him. And he stopped her first.",
+					"ComposureDelta": -10
+				},
+				{
+					"Id": "Bonfire.R.Tony.Heater",
+					"Trigger": "Bonfire.T.Heater",
+					"Line": "I never went in her house. I wouldn't know."
+				}
+			]
+		},
+		{
+			"Id": "Bonfire.C.Roy",
+			"Name": "Roy Grice",
+			"Role": "Eileen's nephew and only family. Now 77",
+			"StartingTrust": 55,
+			"StartingComposure": 80,
+			"RapportTrustDelta": 4,
+			"ChallengeTrustDelta": -6,
+			"ChallengeComposureDelta": -8,
+			"DefaultLine": "I'd like to help you, I really would. It's just so long ago.",
+			"RefusalLine": "Roy Grice's solicitor has written asking that all further contact go through him.",
+			"Responses": [
+				{
+					"Id": "Bonfire.R.Roy.Night",
+					"Trigger": "Bonfire.T.Night",
+					"Line": "I was at home with Brenda all evening. We watched the fireworks from the back bedroom. The phone went at half ten, and that was my life changed. It was kids. Everybody knew which kids.",
+					"AssertsFacts": [
+						"Bonfire.F.Cause.Firework",
+						"Bonfire.F.Who.Kids"
+					]
+				},
+				{
+					"Id": "Bonfire.R.Roy.Eileen",
+					"Trigger": "Bonfire.T.Eileen",
+					"Line": "Auntie Eileen. She brought me up, more or less. I still put flowers on her every November."
+				},
+				{
+					"Id": "Bonfire.R.Roy.Tony",
+					"Trigger": "Bonfire.T.Tony",
+					"Line": "The Shaw lad. I never said it was him. I only repeated what the whole street was saying. That's not the same thing.",
+					"AssertsFacts": [
+						"Bonfire.F.Who.Tony"
+					]
+				},
+				{
+					"Id": "Bonfire.R.Roy.Brenda",
+					"Trigger": "Bonfire.T.Brenda",
+					"Line": "We divorced in '86. She'll say anything about me. Bear that in mind."
+				},
+				{
+					"Id": "Bonfire.R.Roy.Self",
+					"Trigger": "Bonfire.T.Roy",
+					"Line": "I'm a seventy-seven-year-old man who lost the only mother he had. I don't know what else you want."
+				},
+				{
+					"Id": "Bonfire.R.Roy.Heater",
+					"Trigger": "Bonfire.T.Heater",
+					"Line": "In the hall, by the stairs. Always was. I told her and told her. Terrible things, paraffin heaters.",
+					"AssertsFacts": [
+						"Bonfire.F.Cause.Heater",
+						"Bonfire.F.Heater.Hall"
+					]
+				},
+				{
+					"Id": "Bonfire.R.Roy.FireReport",
+					"Trigger": "Bonfire.E.FireReport",
+					"Line": "There you are, then. Paraffin. That heater. I always said it would be the death of her.",
+					"AssertsFacts": [
+						"Bonfire.F.Cause.Heater"
+					]
+				},
+				{
+					"Id": "Bonfire.R.Roy.Photo",
+					"Trigger": "Bonfire.E.HeaterPhoto",
+					"Line": "Well, she must have moved it. She was always moving things.",
+					"ComposureDelta": -15
+				},
+				{
+					"Id": "Bonfire.R.Roy.Will",
+					"Trigger": "Bonfire.E.Will",
+					"Line": "Of course she left it to me. I was all she had. What are you suggesting?",
+					"ComposureDelta": -5
+				},
+				{
+					"Id": "Bonfire.R.Roy.Loans0",
+					"Trigger": "Bonfire.E.Loans",
+					"Line": "I don't know anything about those.",
+					"StoryStep": 0,
+					"ComposureDelta": -15
+				},
+				{
+					"Id": "Bonfire.R.Roy.LoansBreak",
+					"Trigger": "Bonfire.E.Loans",
+					"Line": "She said I could. She said, 'Roy, if you're ever stuck, use my name.' She'd forgotten she'd said it, that's all. At her age.",
+					"Approach": "Challenge",
+					"StoryStep": 0,
+					"MaxComposure": 55,
+					"Priority": 5,
+					"SetStoryStep": 1,
+					"ComposureDelta": -10
+				},
+				{
+					"Id": "Bonfire.R.Roy.Loans1",
+					"Trigger": "Bonfire.E.Loans",
+					"Line": "I've told you. She said I could.",
+					"StoryStep": 1
+				},
+				{
+					"Id": "Bonfire.R.Roy.Letter",
+					"Trigger": "Bonfire.E.SolicitorLetter",
+					"Line": "She was confused by then. She wrote all sorts.",
+					"ComposureDelta": -15
+				},
+				{
+					"Id": "Bonfire.R.Roy.LetterBreak",
+					"Trigger": "Bonfire.E.SolicitorLetter",
+					"Line": "The police. Her own nephew. After everything I did for her. I only went round on the Saturday to talk to her, to make her see sense, and she wouldn't open the door... I've nothing more to say to you without a solicitor.",
+					"Approach": "Challenge",
+					"StoryStep": 1,
+					"MaxComposure": 45,
+					"Priority": 6,
+					"EndsCooperation": true,
+					"SetFlags": [
+						"Bonfire.Flag.RoyCornered"
+					],
+					"AssertsFacts": [
+						"Bonfire.F.Why.Money",
+						"Bonfire.F.Who.Roy"
+					]
+				},
+				{
+					"Id": "Bonfire.R.Roy.TonyStatement",
+					"Trigger": "Bonfire.E.TonyStatement1983",
+					"Line": "A man with a can. The boy was making it up as he went. The police could see that.",
+					"AssertsFacts": [
+						"Bonfire.F.Tony.Lying"
+					]
+				},
+				{
+					"Id": "Bonfire.R.Roy.BrendaStatement",
+					"Trigger": "Bonfire.E.BrendaStatement1983",
+					"Line": "There. Brenda says. In all evening."
+				}
+			]
+		},
+		{
+			"Id": "Bonfire.C.Brenda",
+			"Name": "Brenda Hollins",
+			"Role": "Roy Grice's wife in 1983. Divorced 1986. Now 74",
+			"StartingTrust": 45,
+			"StartingComposure": 60,
+			"RapportTrustDelta": 6,
+			"ChallengeTrustDelta": -10,
+			"ChallengeComposureDelta": -5,
+			"DefaultLine": "I've made my peace with all that.",
+			"RefusalLine": "Brenda Hollins says she has nothing to say, and closes the door.",
+			"Responses": [
+				{
+					"Id": "Bonfire.R.Brenda.Night",
+					"Trigger": "Bonfire.T.Night",
+					"Line": "I told them Roy was in all night. He was, by the time they asked."
+				},
+				{
+					"Id": "Bonfire.R.Brenda.NightTruth",
+					"Trigger": "Bonfire.T.Night",
+					"Line": "He went out about nine. Said he'd forgotten to put Eileen's bins out. He came back at quarter to ten and got straight in the bath, and the whole landing stank of paraffin. I told myself it was from her heater. I've been telling myself that for forty years.",
+					"Approach": "Rapport",
+					"MinTrust": 57,
+					"Priority": 5,
+					"SetFlags": [
+						"Bonfire.Flag.BrendaTells"
+					],
+					"AssertsFacts": [
+						"Bonfire.F.Who.Roy",
+						"Bonfire.F.Cause.Deliberate",
+						"Bonfire.F.Tony.Truth"
+					]
+				},
+				{
+					"Id": "Bonfire.R.Brenda.Roy",
+					"Trigger": "Bonfire.T.Roy",
+					"Line": "Roy was always short. The horses. Then the loan men started coming to the door, and he'd hide in the kitchen and make me answer it.",
+					"SetFlags": [
+						"Bonfire.Flag.DebtLead"
+					]
+				},
+				{
+					"Id": "Bonfire.R.Brenda.Eileen",
+					"Trigger": "Bonfire.T.Eileen",
+					"Line": "Sharp as a tack, Eileen. Did her own books to the penny. If anything was wrong with her money, she'd have known before the bank did."
+				},
+				{
+					"Id": "Bonfire.R.Brenda.EileenTrust",
+					"Trigger": "Bonfire.T.Eileen",
+					"Line": "She rang me that week. She said, 'Brenda, I've had a letter from a finance company about a loan I never took out. I'm seeing Mr Pollard on Monday.' Mr Pollard was her solicitor. I never told Roy she'd rung. I've wondered since if she rang him too.",
+					"Approach": "Rapport",
+					"MinTrust": 50,
+					"Priority": 5,
+					"SetFlags": [
+						"Bonfire.Flag.SolicitorLead",
+						"Bonfire.Flag.DebtLead"
+					]
+				},
+				{
+					"Id": "Bonfire.R.Brenda.Tony",
+					"Trigger": "Bonfire.T.Tony",
+					"Line": "That poor lad. I knew. Somewhere, I knew, and I let them say it.",
+					"ComposureDelta": -10
+				},
+				{
+					"Id": "Bonfire.R.Brenda.Heater",
+					"Trigger": "Bonfire.T.Heater",
+					"Line": "In the back kitchen. Always. She was frightened of having it near the stairs.",
+					"AssertsFacts": [
+						"Bonfire.F.Heater.Kitchen"
+					]
+				},
+				{
+					"Id": "Bonfire.R.Brenda.Self",
+					"Trigger": "Bonfire.T.Brenda",
+					"Line": "I got out in '86. Best thing I ever did."
+				},
+				{
+					"Id": "Bonfire.R.Brenda.Loans",
+					"Trigger": "Bonfire.E.Loans",
+					"Line": "That's not Eileen's signature. That's Roy doing Eileen's signature. He did mine on the car.",
+					"ComposureDelta": -10
+				},
+				{
+					"Id": "Bonfire.R.Brenda.Letter",
+					"Trigger": "Bonfire.E.SolicitorLetter",
+					"Line": "Monday. She was going on the Monday.",
+					"ComposureDelta": -10
+				},
+				{
+					"Id": "Bonfire.R.Brenda.Statement",
+					"Trigger": "Bonfire.E.BrendaStatement1983",
+					"Line": "I signed what Roy told me to sign. I was twenty-nine and frightened of him."
+				},
+				{
+					"Id": "Bonfire.R.Brenda.Pressed",
+					"Trigger": "Bonfire.T.Night",
+					"Line": "Don't you come here and make me the one who did something wrong. Out.",
+					"Approach": "Challenge",
+					"Priority": 6,
+					"EndsCooperation": true
+				}
+			]
+		},
+		{
+			"Id": "Bonfire.C.Wragg",
+			"Name": "Alan Wragg",
+			"Role": "Retired fire officer. Sub Officer on the first engine in 1983. Now 84",
+			"StartingTrust": 60,
+			"StartingComposure": 70,
+			"RapportTrustDelta": 4,
+			"ChallengeTrustDelta": -5,
+			"ChallengeComposureDelta": -5,
+			"DefaultLine": "I wrote what I saw. It's all in the report.",
+			"RefusalLine": "Alan Wragg says he's said his piece.",
+			"Responses": [
+				{
+					"Id": "Bonfire.R.Wragg.Night",
+					"Trigger": "Bonfire.T.Night",
+					"Line": "Front door, hall, stairs, all gone in minutes. A rocket through a letterbox doesn't do that. Not on its own. Something had been poured.",
+					"AssertsFacts": [
+						"Bonfire.F.Cause.Deliberate"
+					]
+				},
+				{
+					"Id": "Bonfire.R.Wragg.Heater",
+					"Trigger": "Bonfire.T.Heater",
+					"Line": "In the back kitchen, standing up, tank half full. I photographed it. It's in my report, for anyone who read past page one.",
+					"AssertsFacts": [
+						"Bonfire.F.Heater.Kitchen"
+					]
+				},
+				{
+					"Id": "Bonfire.R.Wragg.FireReport",
+					"Trigger": "Bonfire.E.FireReport",
+					"Line": "My station officer took the paraffin out of the summary. Bonfire Night, a rocket stick in the hall: kids. I put it back in as an appendix. That's why it's on page six. Nobody reads page six."
+				},
+				{
+					"Id": "Bonfire.R.Wragg.Tony",
+					"Trigger": "Bonfire.T.Tony",
+					"Line": "We had that lad's name before the fire was out. Somebody's mother said it, and it stuck."
+				},
+				{
+					"Id": "Bonfire.R.Wragg.Roy",
+					"Trigger": "Bonfire.T.Roy",
+					"Line": "The nephew turned up while we were still damping down. He asked if the heater had gone up. First thing he asked. I thought that was odd. I said so, at the time, to the wrong people."
+				},
+				{
+					"Id": "Bonfire.R.Wragg.Photo",
+					"Trigger": "Bonfire.E.HeaterPhoto",
+					"Line": "That's mine. Scorched one side, from the kitchen door being open to the hall. It never moved."
+				}
+			]
+		}
+	],
+	"Evidence": [
+		{
+			"Id": "Bonfire.E.FireReport",
+			"ExhibitRef": "FB/1",
+			"Name": "Fire investigation report, 14 Kirkby Street, 6/11/1983",
+			"Description": "Nottinghamshire Fire Brigade. Eight pages; the summary is on page one.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "Bonfire.E.FireReport.Summary",
+					"Text": "Summary: fire started in the hall after a firework came through the letterbox. A spent rocket stick was recovered from the hall floor.",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "Bonfire.E.FireReport.Summary.Firework",
+							"Text": "A firework started it",
+							"SupportsFacts": [
+								"Bonfire.F.Cause.Firework",
+								"Bonfire.F.Who.Kids"
+							]
+						},
+						{
+							"Id": "Bonfire.E.FireReport.Summary.Planted",
+							"Text": "A rocket stick in the hall is easily left there",
+							"SupportsFacts": []
+						}
+					]
+				},
+				{
+					"Id": "Bonfire.E.FireReport.Appendix",
+					"Text": "Appendix, page six, Sub Officer A. Wragg: seat of fire at the foot of the stairs, two metres from the door; a burn trail along the hall carpet; strong smell of paraffin.",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "Bonfire.E.FireReport.Appendix.Poured",
+							"Text": "Paraffin was poured along the hall. The fire was set",
+							"SupportsFacts": [
+								"Bonfire.F.Cause.Deliberate"
+							]
+						},
+						{
+							"Id": "Bonfire.E.FireReport.Appendix.Heater",
+							"Text": "Her paraffin heater leaked or went over",
+							"SupportsFacts": [
+								"Bonfire.F.Cause.Heater"
+							]
+						}
+					]
+				}
+			],
+			"SetFlagsWhenExamined": [
+				"Bonfire.Flag.HeaterLead"
+			]
+		},
+		{
+			"Id": "Bonfire.E.TonyStatement1983",
+			"ExhibitRef": "MS/3",
+			"Name": "Statement of Anthony Shaw, aged 14, 6/11/1983",
+			"Description": "Taken at Meadows police station. No parent or other adult present.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "Bonfire.E.TonyStatement1983.Man",
+					"Text": "\"I was in the entry with Gary Wilson. A man came out of Mrs Grice's back yard with a can. He had a big coat on.\" Officer's note: 'Boy evasive. In possession of fireworks.'",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "Bonfire.E.TonyStatement1983.Man.Cover",
+							"Text": "He invented a man to cover for himself",
+							"SupportsFacts": [
+								"Bonfire.F.Tony.Lying",
+								"Bonfire.F.Who.Tony"
+							]
+						},
+						{
+							"Id": "Bonfire.E.TonyStatement1983.Man.Saw",
+							"Text": "He saw a man leave her yard with a can",
+							"SupportsFacts": [
+								"Bonfire.F.Tony.Truth",
+								"Bonfire.F.Cause.Deliberate"
+							]
+						}
+					]
+				}
+			],
+			"Author": "Bonfire.C.Tony"
+		},
+		{
+			"Id": "Bonfire.E.RoyStatement1983",
+			"ExhibitRef": "MS/4",
+			"Name": "Statement of Roy Grice, 6/11/1983",
+			"Description": "Taken at his home the morning after.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "Bonfire.E.RoyStatement1983.Heater",
+					"Text": "\"I was at home with my wife all evening. My aunt kept a paraffin heater in the hall and I had warned her about it more than once.\"",
+					"SupportsFacts": [
+						"Bonfire.F.Heater.Hall",
+						"Bonfire.F.Cause.Heater"
+					],
+					"Interpretations": []
+				}
+			],
+			"Author": "Bonfire.C.Roy"
+		},
+		{
+			"Id": "Bonfire.E.BrendaStatement1983",
+			"ExhibitRef": "MS/5",
+			"Name": "Statement of Brenda Grice, 6/11/1983",
+			"Description": "Two lines, taken at the same visit as her husband's.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "Bonfire.E.BrendaStatement1983.Alibi",
+					"Text": "\"My husband was at home with me all evening. We watched the fireworks from the back bedroom.\"",
+					"SupportsFacts": [],
+					"Interpretations": []
+				}
+			],
+			"Author": "Bonfire.C.Brenda"
+		},
+		{
+			"Id": "Bonfire.E.HeaterPhoto",
+			"ExhibitRef": "FB/2",
+			"Name": "Fire brigade photographs, rear kitchen",
+			"Description": "Sub Officer Wragg's photographs, filed with the appendix. Have to be requested from the brigade archive.",
+			"Availability": "OnRequest",
+			"Findings": [
+				{
+					"Id": "Bonfire.E.HeaterPhoto.Kitchen",
+					"Text": "The paraffin heater stands upright in the back kitchen, tank half full, scorched only on the side facing the hall door.",
+					"SupportsFacts": [
+						"Bonfire.F.Heater.Kitchen"
+					],
+					"Interpretations": [
+						{
+							"Id": "Bonfire.E.HeaterPhoto.Kitchen.NotHeater",
+							"Text": "The heater didn't start it",
+							"SupportsFacts": [
+								"Bonfire.F.Cause.Deliberate"
+							]
+						},
+						{
+							"Id": "Bonfire.E.HeaterPhoto.Kitchen.Moved",
+							"Text": "Someone moved it afterwards",
+							"SupportsFacts": []
+						}
+					]
+				}
+			],
+			"RequiresFlags": [
+				"Bonfire.Flag.HeaterLead"
+			]
+		},
+		{
+			"Id": "Bonfire.E.Will",
+			"ExhibitRef": "JL/1",
+			"Name": "Will of Eileen Grice, made 1979, proved 1984",
+			"Description": "From the probate registry.",
+			"Availability": "OnRequest",
+			"Findings": [
+				{
+					"Id": "Bonfire.E.Will.Roy",
+					"Text": "Everything to her nephew Roy Grice: the house at 14 Kirkby Street and \u00a34,200 in savings.",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "Bonfire.E.Will.Roy.Motive",
+							"Text": "Roy had a reason to want her gone",
+							"SupportsFacts": [
+								"Bonfire.F.Why.Inherit",
+								"Bonfire.F.Who.Roy"
+							]
+						},
+						{
+							"Id": "Bonfire.E.Will.Roy.Family",
+							"Text": "A woman leaving everything to her only family",
+							"SupportsFacts": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"Id": "Bonfire.E.Loans",
+			"ExhibitRef": "JL/2",
+			"Name": "Finance agreements in the name of Eileen Grice, 1983",
+			"Description": "Recovered from the finance company's archive.",
+			"Availability": "OnRequest",
+			"Findings": [
+				{
+					"Id": "Bonfire.E.Loans.Signatures",
+					"Text": "Three loans, \u00a32,850 in all, taken out in Eileen Grice's name between March and September 1983 and paid into an account in Arnold. The signatures do not match her pension book.",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "Bonfire.E.Loans.Signatures.Roy",
+							"Text": "Roy was borrowing in her name",
+							"SupportsFacts": [
+								"Bonfire.F.Why.Money",
+								"Bonfire.F.Who.Roy"
+							]
+						},
+						{
+							"Id": "Bonfire.E.Loans.Signatures.Hers",
+							"Text": "She borrowed for herself and was ashamed of it",
+							"SupportsFacts": []
+						}
+					]
+				}
+			],
+			"RequiresFlags": [
+				"Bonfire.Flag.DebtLead"
+			]
+		},
+		{
+			"Id": "Bonfire.E.SolicitorLetter",
+			"ExhibitRef": "JL/3",
+			"Name": "Letter from Eileen Grice to Pollard & Co, solicitors, 3/11/1983",
+			"Description": "Found in the firm's dead files. Two days before the fire.",
+			"Availability": "OnRequest",
+			"Findings": [
+				{
+					"Id": "Bonfire.E.SolicitorLetter.Text",
+					"Text": "\"Dear Mr Pollard, I have had a letter about a loan I have never taken out. I have reason to think it is my nephew. I should like to see you on Monday, and then I think I must go to the police. Yours sincerely, E. Grice.\"",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "Bonfire.E.SolicitorLetter.Text.Silenced",
+							"Text": "Someone needed her quiet before Monday",
+							"SupportsFacts": [
+								"Bonfire.F.Why.Money",
+								"Bonfire.F.Who.Roy",
+								"Bonfire.F.Cause.Deliberate"
+							]
+						},
+						{
+							"Id": "Bonfire.E.SolicitorLetter.Text.Coincidence",
+							"Text": "A sad coincidence of dates",
+							"SupportsFacts": []
+						}
+					]
+				}
+			],
+			"RequiresFlags": [
+				"Bonfire.Flag.SolicitorLead"
+			]
+		}
+	]
+}

@@ -6,6 +6,7 @@
 #include "CaseResolutionSubsystem.generated.h"
 
 class UCaseFileSubsystem;
+class UCaseStateSubsystem;
 class UInterviewSubsystem;
 class UInvestigationSubsystem;
 
@@ -47,6 +48,10 @@ struct INVESTIGATIONRUNTIME_API FCaseReviewReport
 	/** A plain account of what happened. */
 	UPROPERTY(BlueprintReadOnly, Category = "Case Review")
 	FText TruthSummary;
+
+	/** What followed, chosen by how the investigation was run and what it concluded. */
+	UPROPERTY(BlueprintReadOnly, Category = "Case Review")
+	TArray<FText> Afterwards;
 };
 
 /**
@@ -92,4 +97,7 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UTheorySubsystem> Theory;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UCaseStateSubsystem> CaseState;
 };

@@ -5,6 +5,7 @@
 #include "CaseFileSubsystem.generated.h"
 
 struct FCaseContent;
+class UCaseStateSubsystem;
 class UInvestigationSubsystem;
 
 /** The player's record of one exhibit. Saved; refers to authored content by ID only. */
@@ -100,6 +101,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Case File")
 	bool RequestEvidence(FName EvidenceId);
 
+	/** True if the exhibit can be asked for now: on request, not held or awaited, and its lead has been found. */
+	UFUNCTION(BlueprintPure, Category = "Case File")
+	bool CanRequestEvidence(FName EvidenceId) const;
+
 	/** Records the player's reading of an ambiguous finding. Pass NAME_None to leave it open. */
 	UFUNCTION(BlueprintCallable, Category = "Case File")
 	bool ChooseInterpretation(FName FindingId, FName InterpretationId);
@@ -141,6 +146,9 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<UInvestigationSubsystem> Investigation;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UCaseStateSubsystem> CaseState;
 
 	UPROPERTY()
 	TArray<FHeldEvidence> HeldEvidence;

@@ -116,6 +116,15 @@ public:
 	/** Returns nullptr if no case is active or the character is unknown. */
 	const FCharacterRuntimeState* GetCharacterState(FName CharacterId) const;
 
+	/**
+	 * True if this person can be interviewed and the investigation has found them
+	 * (their RequiresFlags are all set). Says nothing about whether they will cooperate.
+	 */
+	bool IsCharacterAvailable(FName CharacterId) const;
+
+	/** True if the detective knows enough to ask about this topic (its RequiresFlags are all set). */
+	bool IsTopicAvailable(FName TopicId) const;
+
 private:
 	void HandleCaseStarted(const FCaseContent& Case);
 	const FCaseContent* GetCase() const;

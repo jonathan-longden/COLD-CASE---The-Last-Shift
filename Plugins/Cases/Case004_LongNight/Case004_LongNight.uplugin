@@ -1,0 +1,26 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Case 4: The Long Night",
+	"Description": "Dennis Hale, Gedling, November 1984.",
+	"Category": "ColdCase|Cases",
+	"CreatedBy": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"Installed": false,
+	"EnabledByDefault": true,
+	"Modules": [
+		{
+			"Name": "Case004_LongNight",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "InvestigationFramework",
+			"Enabled": true
+		}
+	]
+}

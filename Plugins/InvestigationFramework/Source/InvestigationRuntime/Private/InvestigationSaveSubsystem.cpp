@@ -50,9 +50,29 @@ FString UInvestigationSaveSubsystem::ManualSlotName(int32 SlotNumber)
 	return FString::Printf(TEXT("ColdCase_Manual%d"), SlotNumber);
 }
 
-FString UInvestigationSaveSubsystem::AutosaveSlotName()
+FString UInvestigationSaveSubsystem::AutosaveSlotName() const
 {
-	return TEXT("ColdCase_Auto");
+	return AutosaveSlotNameFor(Investigation ? Investigation->GetActiveCasePlugin() : NAME_None);
+}
+
+FString UInvestigationSaveSubsystem::AutosaveSlotNameFor(FName CasePlugin)
+{
+	// The first case keeps the original slot name, so autosaves made before there were several cases still load.
+	if (CasePlugin.IsNone() || CasePlugin == FName(TEXT("Case000_TillRoll")))
+	{
+		return TEXT("ColdCase_Auto");
+	}
+	return FString::Printf(TEXT("ColdCase_Auto_%s"), *CasePlugin.ToString());
+}
+
+bool UInvestigationSaveSubsystem::GetAutosaveHeaderFor(FName CasePlugin, FSaveSlotHeader& OutHeader)
+{
+	return GetSlotHeader(AutosaveSlotNameFor(CasePlugin), OutHeader);
+}
+
+bool UInvestigationSaveSubsystem::LoadAutosaveFor(FName CasePlugin)
+{
+	return LoadSlot(AutosaveSlotNameFor(CasePlugin));
 }
 
 bool UInvestigationSaveSubsystem::CanSaveNow() const
@@ -239,6 +259,27 @@ bool UInvestigationSaveSubsystem::LoadSlot(const FString& SlotName)
 	return true;
 }
 
+bool UInvestigationSaveSubsystem::OpenCase(FName CasePlugin)
+{
+	if (!Investigation || !Interviews || CasePlugin.IsNone() || Interviews->IsInterviewActive())
+	{
+		return false;
+	}
+	if (Investigation->IsCaseActive())
+	{
+		if (Investigation->GetActiveCasePlugin() == CasePlugin)
+		{
+			return true;
+		}
+		Autosave();
+	}
+	if (UGameplayStatics::DoesSaveGameExist(AutosaveSlotNameFor(CasePlugin), 0) && LoadAutosaveFor(CasePlugin))
+	{
+		return true;
+	}
+	return Investigation->StartCase(CasePlugin);
+}
+
 // ---------------------------------------------------------------------------------------------
 // Console commands for testing saves.
 // ---------------------------------------------------------------------------------------------
@@ -273,6 +314,18 @@ namespace InvestigationSaveConsole
 			{
 				const bool bLoaded = Args[0].Equals(TEXT("auto"), ESearchCase::IgnoreCase) ? Saves->LoadAutosave() : Saves->LoadManual(FCString::Atoi(*Args[0]));
 				UE_LOG(LogInvestigation, Display, TEXT("%s"), bLoaded ? TEXT("Loaded.") : TEXT("Nothing to load in that slot."));
+			}
+		}));
+
+	static FAutoConsoleCommandWithWorldAndArgs OpenCaseCommand(
+		TEXT("ColdCase.OpenCase"),
+		TEXT("ColdCase.OpenCase <CasePlugin>: autosaves this case and opens another where you left it."),
+		FConsoleCommandWithWorldAndArgsDelegate::CreateLambda([](const TArray<FString>& Args, UWorld* World)
+		{
+			UInvestigationSaveSubsystem* Saves = GetSubsystem(World);
+			if (Saves && Args.Num() == 1)
+			{
+				UE_LOG(LogInvestigation, Display, TEXT("%s"), Saves->OpenCase(FName(*Args[0])) ? TEXT("Case opened.") : TEXT("That case could not be opened."));
 			}
 		}));
 }

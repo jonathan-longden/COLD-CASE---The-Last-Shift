@@ -1,0 +1,26 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Case 3: Bonfire Night",
+	"Description": "Eileen Grice, the Meadows, 5 November 1983.",
+	"Category": "ColdCase|Cases",
+	"CreatedBy": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"Installed": false,
+	"EnabledByDefault": true,
+	"Modules": [
+		{
+			"Name": "Case003_BonfireNight",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "InvestigationFramework",
+			"Enabled": true
+		}
+	]
+}

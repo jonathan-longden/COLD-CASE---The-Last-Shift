@@ -69,7 +69,8 @@ private:
 		ConfirmConclusion,
 		CaseReview,
 		SaveLoad,
-		Clip
+		Clip,
+		Cases
 	};
 
 	/** One choice in the left-hand list. */
@@ -99,6 +100,15 @@ private:
 	void BuildCaseReview();
 	void BuildSaveLoad();
 	void BuildClip();
+	void BuildCases();
+
+	/**
+	 * New lines of enquiry (records that can now be requested, people who can now be found, things that
+	 * can now be asked about) are announced once, at the top of the page, the moment they open up.
+	 */
+	void AnnounceNewLeads();
+	TSet<FName> KnownLeads;
+	FName LeadsCase;
 
 	/** Starts a video or sound clip and shows it. ReturnTo is where Back leads afterwards. */
 	void OpenClip(const FCaseMediaClip& Clip, EPage ReturnTo);

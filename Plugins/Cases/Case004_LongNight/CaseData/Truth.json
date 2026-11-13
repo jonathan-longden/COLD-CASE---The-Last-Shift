@@ -1,0 +1,78 @@
+{
+	"SchemaVersion": 1,
+	"CaseId": "LongNight",
+	"TrueFacts": [
+		"LongNight.F.Confession.Unreliable",
+		"LongNight.F.PaulWhere.Custody",
+		"LongNight.F.Killer.Keith",
+		"LongNight.F.Motive.June",
+		"LongNight.F.Weapon.FencePost"
+	],
+	"Summary": "Since the summer of 1984 Dennis Hale had been meeting June Marsh, his brother-in-law Keith's wife, at his allotment on Thursday afternoons. Keith found out. On 21 November he sat in the Miners' Welfare watching Dennis all evening, followed him out at about quarter past ten, and caught him on the embankment path. When Dennis laughed at him, Keith pulled a post from the broken fence and hit him once. Dennis went down the bank. At five past ten, before any of this, police at the colliery gates had already dragged Paul Ritchie off a picket coach for breach of the peace; he cut his hand on the coach door. A press photographer caught it with the church clock behind. Keith went home soaked, with split knuckles, and gave the police three Yorkshire voices. DS Ray Tolley, under pressure from above to charge someone fast, moved Paul's arrest time to half past ten and kept him nineteen hours without a solicitor until he signed a confession built from what the officers believed: a brick, a scab, a picket. The post was bagged and never tested. June said nothing, and watched from the kitchen window as Keith burned his coat. Paul Ritchie served nine years and died in 2015.",
+	"Epilogues": [
+		{
+			"RequiresAnswers": [
+				"LongNight.F.Confession.Unreliable",
+				"LongNight.F.PaulWhere.Custody"
+			],
+			"Text": "The Criminal Cases Review Commission referred Paul Ritchie's conviction to the Court of Appeal on the strength of the review. It was quashed eleven months later. Gemma Ritchie read the judgment aloud at her father's grave. It took four minutes. He had served nine years."
+		},
+		{
+			"RequiresAnswers": [
+				"LongNight.F.Confession.Reliable"
+			],
+			"Text": "The Commission declined to refer the case. Paul Ritchie's conviction stands. Gemma Ritchie has said she will apply again, and again after that."
+		},
+		{
+			"RequiresFlags": [
+				"LongNight.Flag.KeithAdmits"
+			],
+			"RequiresAnswers": [
+				"LongNight.F.Killer.Keith"
+			],
+			"Text": "Keith Marsh was charged with the manslaughter of Dennis Hale. He was found unfit to stand trial, and a jury decided that he had done it. He died in a care home in Carlton the following year. June did not visit."
+		},
+		{
+			"RequiresFlags": [
+				"LongNight.Flag.JuneTells"
+			],
+			"RequiresNotFlags": [
+				"LongNight.Flag.KeithAdmits"
+			],
+			"RequiresAnswers": [
+				"LongNight.F.Killer.Keith"
+			],
+			"Text": "June Marsh made a statement. The Crown Prosecution Service decided that after forty years, with the coat long burned, there was no realistic prospect of a conviction. Keith Marsh was told. He said nothing at all."
+		},
+		{
+			"RequiresAnswers": [
+				"LongNight.F.Killer.Pickets"
+			],
+			"Text": "The review recorded that Dennis Hale was probably killed by pickets who were never identified. Keith Marsh was sent a copy as a witness. He kept it in the drawer by his bed."
+		},
+		{
+			"RequiresFlags": [
+				"LongNight.Flag.TolleyAdmits"
+			],
+			"Text": "Ray Tolley's account of 'helping them remember' was passed to the Independent Office for Police Conduct. He was eighty-one and long retired. The IOPC noted that it had no power over him, and closed the matter. His words are in the file now, though."
+		},
+		{
+			"RequiresFlags": [
+				"LongNight.Flag.JuneShut"
+			],
+			"RequiresNotFlags": [
+				"LongNight.Flag.JuneTells"
+			],
+			"Text": "June Marsh never spoke to the police again. She told her daughter she had nearly said it, this time. Nearly."
+		},
+		{
+			"RequiresFlags": [
+				"LongNight.Flag.KeithShut"
+			],
+			"RequiresNotFlags": [
+				"LongNight.Flag.KeithAdmits"
+			],
+			"Text": "Keith Marsh's daughter wrote to complain that her father had been upset by questions about her mother. He would not see police again."
+		}
+	]
+}
