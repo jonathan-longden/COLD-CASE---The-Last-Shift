@@ -39,10 +39,22 @@ Folders you will see appear after building (`Binaries`, `Intermediate`, `Saved`,
    - If it fails, open **View > Error List**, and send the **first** error (the top one is usually the real cause).
 7. When it says `Build succeeded`, close Visual Studio and double-click `ColdCase.uproject`.
 
+## Playing the prototype
+
+Press **Play** in the editor. The investigation screen appears: choices on the left, text on the right.
+
+- **Mouse:** click a choice.
+- **Keyboard:** arrow keys to move, Enter to choose, Esc to go back. (In the editor, Esc stops Play; use the Back choice instead, or use Standalone Game from the Play drop-down.)
+- **Gamepad:** d-pad or left stick to move, A to choose, B to go back.
+
+From the first screen you can read the exhibits, interview Lorraine and Mick, build your theory, take it to your DCI, and submit a conclusion to get the case review.
+
+The sections below are the typed console commands (press **`**) used to test each system. They still work alongside the screens.
+
 ## Checking it works (Milestone 1)
 
 1. In the editor, press **Play** (the green triangle, or Alt+P).
-2. Green text should appear top-left: `Case loaded: Case 000: The Till Roll`.
+2. The investigation screen should appear with the title `Case 000: The Till Roll`.
 3. Press the **`** key (left of 1) to open the console, type `ColdCase.DumpCase` and press Enter.
 4. Open **Window > Output Log**, type `LogInvestigation` in its search box. You should see the case's questions, four people and five exhibits.
 5. In the console, type `ColdCase.ValidateCase`. The log should end with `Validation finished: 0 problem(s).`

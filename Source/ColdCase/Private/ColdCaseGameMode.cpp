@@ -1,30 +1,33 @@
 #include "ColdCaseGameMode.h"
 
+#include "ColdCasePlayerController.h"
 #include "Engine/Engine.h"
 #include "Engine/GameInstance.h"
 #include "InvestigationSettings.h"
 #include "InvestigationSubsystem.h"
 
+AColdCaseGameMode::AColdCaseGameMode()
+{
+	PlayerControllerClass = AColdCasePlayerController::StaticClass();
+
+	// The prototype is played entirely through its screens, so there is no character to walk around as.
+	DefaultPawnClass = nullptr;
+}
+
 void AColdCaseGameMode::StartPlay()
 {
-	Super::StartPlay();
-
+	// Start the case before play begins, so the screen has a case to show from its first frame.
 	UGameInstance* GameInstance = GetGameInstance();
 	UInvestigationSubsystem* Investigation = GameInstance ? GameInstance->GetSubsystem<UInvestigationSubsystem>() : nullptr;
-	if (!Investigation || Investigation->IsCaseActive())
+	if (Investigation && !Investigation->IsCaseActive())
 	{
-		return;
+		const FName CasePlugin = GetDefault<UInvestigationSettings>()->StartupCasePlugin;
+		if (!Investigation->StartCase(CasePlugin) && GEngine)
+		{
+			const FString Message = FString::Printf(TEXT("Could not load case plugin '%s'. See the Output Log (LogInvestigation)."), *CasePlugin.ToString());
+			GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Red, Message);
+		}
 	}
 
-	const FName CasePlugin = GetDefault<UInvestigationSettings>()->StartupCasePlugin;
-	const bool bStarted = Investigation->StartCase(CasePlugin);
-
-	// Temporary on-screen confirmation so the first build has something visible to check.
-	if (GEngine)
-	{
-		const FString Message = bStarted
-			? FString::Printf(TEXT("Case loaded: %s  (type ColdCase.DumpCase in the console for details)"), *Investigation->GetActiveCase().Title.ToString())
-			: FString::Printf(TEXT("Could not load case plugin '%s'. See the Output Log (LogInvestigation)."), *CasePlugin.ToString());
-		GEngine->AddOnScreenDebugMessage(-1, 30.f, bStarted ? FColor::Green : FColor::Red, Message);
-	}
+	Super::StartPlay();
 }

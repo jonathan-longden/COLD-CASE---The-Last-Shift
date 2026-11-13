@@ -121,49 +121,65 @@ FCaseReviewReport UCaseResolutionSubsystem::BuildReport() const
 	return Report;
 }
 
-void UCaseResolutionSubsystem::LogReport() const
+TArray<FString> UCaseResolutionSubsystem::GetReportLines() const
 {
+	TArray<FString> Lines;
+
 	const FCaseReviewReport Report = BuildReport();
 	if (!Report.bValid)
 	{
-		UE_LOG(LogInvestigation, Display, TEXT("There is no case review until the investigation has been concluded."));
-		return;
+		return Lines;
 	}
 
 	const FCaseContent& Case = Investigation->GetActiveCase();
 
-	UE_LOG(LogInvestigation, Display, TEXT("=== CASE REVIEW: %s ==="), *Case.Title.ToString());
-	UE_LOG(LogInvestigation, Display, TEXT("-- What the investigation concluded --"));
+	Lines.Add(FString::Printf(TEXT("=== CASE REVIEW: %s ==="), *Case.Title.ToString()));
+	Lines.Add(TEXT("-- What the investigation concluded --"));
 	for (const FCaseReviewAnswer& Answer : Report.Answers)
 	{
 		const FCaseQuestion* Question = Case.FindQuestion(Answer.Assessment.QuestionId);
 		const FCaseFact* PlayerFact = Case.FindFact(Answer.Assessment.FactId);
 		const FCaseFact* TrueFact = Case.FindFact(Answer.TrueFactId);
-		UE_LOG(LogInvestigation, Display, TEXT("%s"), Question ? *Question->Text.ToString() : TEXT("?"));
-		UE_LOG(LogInvestigation, Display, TEXT("    Concluded: %s"), PlayerFact ? *PlayerFact->Text.ToString() : TEXT("(no answer)"));
-		UE_LOG(LogInvestigation, Display, TEXT("    On the evidence held: %s"), *UTheorySubsystem::DescribeStrength(Answer.Assessment.Strength).ToString());
+		Lines.Add(Question ? Question->Text.ToString() : FString(TEXT("?")));
+		Lines.Add(FString::Printf(TEXT("    Concluded: %s"), PlayerFact ? *PlayerFact->Text.ToString() : TEXT("(no answer)")));
+		Lines.Add(FString::Printf(TEXT("    On the evidence held: %s"), *UTheorySubsystem::DescribeStrength(Answer.Assessment.Strength).ToString()));
 		if (Answer.bMatchesTruth)
 		{
-			UE_LOG(LogInvestigation, Display, TEXT("    This was what happened."));
+			Lines.Add(TEXT("    This was what happened."));
 		}
 		else
 		{
-			UE_LOG(LogInvestigation, Display, TEXT("    This was not what happened. In fact: %s"), TrueFact ? *TrueFact->Text.ToString() : TEXT("(not recorded)"));
+			Lines.Add(FString::Printf(TEXT("    This was not what happened. In fact: %s"), TrueFact ? *TrueFact->Text.ToString() : TEXT("(not recorded)")));
 		}
 	}
 
-	UE_LOG(LogInvestigation, Display, TEXT("-- Lines of enquiry not followed --"));
+	Lines.Add(TEXT("-- Lines of enquiry not followed --"));
 	if (Report.Missed.Num() == 0)
 	{
-		UE_LOG(LogInvestigation, Display, TEXT("None identified."));
+		Lines.Add(TEXT("None identified."));
 	}
 	for (const FText& Missed : Report.Missed)
 	{
-		UE_LOG(LogInvestigation, Display, TEXT("%s"), *Missed.ToString());
+		Lines.Add(Missed.ToString());
 	}
 
-	UE_LOG(LogInvestigation, Display, TEXT("-- What happened --"));
-	UE_LOG(LogInvestigation, Display, TEXT("%s"), *Report.TruthSummary.ToString());
+	Lines.Add(TEXT("-- What happened --"));
+	Lines.Add(Report.TruthSummary.ToString());
+	return Lines;
+}
+
+void UCaseResolutionSubsystem::LogReport() const
+{
+	const TArray<FString> Lines = GetReportLines();
+	if (Lines.Num() == 0)
+	{
+		UE_LOG(LogInvestigation, Display, TEXT("There is no case review until the investigation has been concluded."));
+		return;
+	}
+	for (const FString& Line : Lines)
+	{
+		UE_LOG(LogInvestigation, Display, TEXT("%s"), *Line);
+	}
 }
 
 // ---------------------------------------------------------------------------------------------

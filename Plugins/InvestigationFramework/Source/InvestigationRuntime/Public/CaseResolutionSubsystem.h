@@ -74,6 +74,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Case Review")
 	FCaseReviewReport BuildReport() const;
 
+	/** The report as readable lines of text, for a screen or the log. Empty unless the case is concluded. */
+	TArray<FString> GetReportLines() const;
+
 	/** Writes the report to the Output Log. */
 	void LogReport() const;
 

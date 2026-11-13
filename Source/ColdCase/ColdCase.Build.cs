@@ -16,7 +16,10 @@ public class ColdCase : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
-			"InvestigationRuntime"
+			"InvestigationRuntime",
+			"InputCore",
+			"Slate",
+			"SlateCore"
 		});
 	}
 }
