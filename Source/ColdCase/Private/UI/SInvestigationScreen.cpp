@@ -416,7 +416,7 @@ void SInvestigationScreen::BuildHome()
 		}
 		const int32 Pending = CaseFile->GetPendingRequests().Num();
 
-		Body += TEXT("\n\n\nSTATE OF THE FILE\n\n");
+		Body += TEXT("\n\nSTATE OF THE FILE\n\n");
 		Body += FString::Printf(TEXT("Exhibits held:        %d%s\n"), Held, Unexamined > 0 ? *FString::Printf(TEXT("  (%d not yet examined)"), Unexamined) : TEXT(""));
 		Body += FString::Printf(TEXT("Requests outstanding: %d\n"), Pending);
 		Body += FString::Printf(TEXT("Statements taken:     %d\n"), CaseFile->GetStatements().Num());
