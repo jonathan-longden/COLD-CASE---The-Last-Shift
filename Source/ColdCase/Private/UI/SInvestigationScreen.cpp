@@ -16,6 +16,7 @@
 #include "MediaTexture.h"
 #include "Misc/Paths.h"
 #include "Styling/CoreStyle.h"
+#include "Styling/StyleDefaults.h"
 #include "TheorySubsystem.h"
 #include "Widgets/Images/SImage.h"
 #include "Widgets/Input/SButton.h"
@@ -39,6 +40,21 @@ namespace InvestigationScreenPrivate
 	const FLinearColor StampRed(0.62f, 0.10f, 0.08f, 0.9f);
 
 	FSlateFontInfo TypedFont(int32 Size) { return FCoreStyle::GetDefaultFontStyle("Mono", Size); }
+
+	/** The default scroll box draws a dark shadow line at its edge when text overflows; on the paper it looks like a rule through the text. */
+	const FScrollBoxStyle* PaperScrollStyle()
+	{
+		static FScrollBoxStyle Style = []()
+		{
+			FScrollBoxStyle Copy = FCoreStyle::Get().GetWidgetStyle<FScrollBoxStyle>("ScrollBox");
+			Copy.SetTopShadowBrush(*FStyleDefaults::GetNoBrush());
+			Copy.SetBottomShadowBrush(*FStyleDefaults::GetNoBrush());
+			Copy.SetLeftShadowBrush(*FStyleDefaults::GetNoBrush());
+			Copy.SetRightShadowBrush(*FStyleDefaults::GetNoBrush());
+			return Copy;
+		}();
+		return &Style;
+	}
 
 	/** A list button that lights up when it has focus, so a controller user can always see where they are. */
 	class SMenuButton : public SButton
@@ -951,6 +967,7 @@ void SInvestigationScreen::RebuildWidgets()
 			.FillHeight(1.f)
 			[
 				SNew(SScrollBox)
+				.Style(InvestigationScreenPrivate::PaperScrollStyle())
 				+ SScrollBox::Slot()
 				.Padding(FMargin(0.f, 0.f, 18.f, 0.f))   // keeps wrapped text clear of the scroll bar
 				[
