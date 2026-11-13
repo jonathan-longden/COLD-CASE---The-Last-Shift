@@ -99,6 +99,14 @@ Worth trying: examine only Lorraine's 2000 statement, interview only Lorraine, a
 
 How support is counted: one person is one source however often they repeat themselves, a person's latest word replaces their earlier account, and people who weren't sure count for less.
 
+## Saving and loading (Milestone 6)
+
+On screen: **Save or load** from the first screen. There are three manual slots and one autosave. The game autosaves after every interview and when you submit your conclusion, never in the middle of an interview.
+
+Console: `ColdCase.Save 1` and `ColdCase.Load 1` (slots 1 to 3), or `ColdCase.Load auto`.
+
+To check it: examine an exhibit, interview someone, save in slot 1, stop Play, press Play again, load slot 1. The exhibit is still examined, the statements are still there, and the people remember how the interview went. Save files are in `Saved/SaveGames`.
+
 ## Working rules
 
 - C++ owns rules and state, case data owns content, Blueprints own presentation.

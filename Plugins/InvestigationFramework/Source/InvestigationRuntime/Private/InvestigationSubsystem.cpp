@@ -56,6 +56,7 @@ void UInvestigationSubsystem::ConcludeCase()
 	{
 		bConcluded = true;
 		UE_LOG(LogInvestigation, Log, TEXT("Case '%s' concluded."), *ActiveCase.CaseId.ToString());
+		OnCaseConcluded.Broadcast();
 	}
 }
 

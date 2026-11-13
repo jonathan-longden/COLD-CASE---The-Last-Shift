@@ -6,6 +6,7 @@
 #include "InvestigationSubsystem.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnInvestigationCaseStarted, const FCaseContent& /*Case*/);
+DECLARE_MULTICAST_DELEGATE(FOnInvestigationCaseConcluded);
 
 /**
  * The front door to the investigation. Starts and ends a case and owns the loaded case content.
@@ -51,6 +52,12 @@ public:
 
 	/** Broadcast after a case has loaded successfully. */
 	FOnInvestigationCaseStarted OnCaseStarted;
+
+	/** Broadcast when the player concludes the case. Not broadcast when a concluded save is loaded. */
+	FOnInvestigationCaseConcluded OnCaseConcluded;
+
+	/** For loading a save only: puts back whether the case had been concluded. */
+	void RestoreConcluded(bool bInConcluded) { bConcluded = bInConcluded; }
 
 	/** Writes a readable summary of the active case to the Output Log. */
 	void LogActiveCaseSummary() const;

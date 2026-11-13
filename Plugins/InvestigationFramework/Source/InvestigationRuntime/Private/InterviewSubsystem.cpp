@@ -95,6 +95,19 @@ void UInterviewSubsystem::EndInterview()
 	{
 		CaseFile->NotifyInterviewEnded();
 	}
+	OnInterviewEnded.Broadcast();
+}
+
+void UInterviewSubsystem::RestoreCharacterStates(const TArray<FCharacterRuntimeState>& InStates)
+{
+	CurrentCharacterId = NAME_None;
+	for (const FCharacterRuntimeState& Saved : InStates)
+	{
+		if (FCharacterRuntimeState* State = FindState(Saved.CharacterId))
+		{
+			*State = Saved;
+		}
+	}
 }
 
 FInterviewReply UInterviewSubsystem::AskAbout(FName TopicId, EInterviewApproach Approach)

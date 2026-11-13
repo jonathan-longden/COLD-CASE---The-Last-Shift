@@ -52,6 +52,25 @@ struct INVESTIGATIONRUNTIME_API FRecordedStatement
 	FName ResponseId;
 };
 
+/** Everything about the case file that goes into a save. */
+USTRUCT()
+struct INVESTIGATIONRUNTIME_API FCaseFileSaveData
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<FHeldEvidence> HeldEvidence;
+
+	UPROPERTY()
+	TArray<FName> PendingRequests;
+
+	UPROPERTY()
+	TArray<FChosenInterpretation> ChosenInterpretations;
+
+	UPROPERTY()
+	TArray<FRecordedStatement> Statements;
+};
+
 DECLARE_MULTICAST_DELEGATE(FOnCaseFileChanged);
 
 /**
@@ -102,6 +121,11 @@ public:
 	 * plus the interpretations the player chose. Says nothing about whether they are true.
 	 */
 	TArray<FName> GetFactsSupportedByCaseFile() const;
+
+	FCaseFileSaveData GetSaveData() const;
+
+	/** For loading a save only. Anything that no longer exists in the case content is dropped. */
+	void RestoreSaveData(const FCaseFileSaveData& Data);
 
 	FOnCaseFileChanged OnCaseFileChanged;
 

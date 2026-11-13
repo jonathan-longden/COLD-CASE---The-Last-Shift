@@ -67,6 +67,25 @@ bool UTheorySubsystem::SetAnswer(FName QuestionId, FName FactId)
 	return true;
 }
 
+void UTheorySubsystem::RestoreAnswers(const TArray<FTheoryAnswer>& InAnswers)
+{
+	Answers.Reset();
+	const FCaseContent* Case = GetCase();
+	if (!Case)
+	{
+		return;
+	}
+	for (const FTheoryAnswer& Answer : InAnswers)
+	{
+		const FCaseQuestion* Question = Case->KeyQuestions.Contains(Answer.QuestionId) ? Case->FindQuestion(Answer.QuestionId) : nullptr;
+		const FName FactId = Answer.FactId;
+		if (Question && Question->Facts.ContainsByPredicate([FactId](const FCaseFact& F) { return F.Id == FactId; }))
+		{
+			Answers.Add(Answer);
+		}
+	}
+}
+
 FName UTheorySubsystem::GetAnswer(FName QuestionId) const
 {
 	const FTheoryAnswer* Answer = Answers.FindByPredicate([QuestionId](const FTheoryAnswer& A) { return A.QuestionId == QuestionId; });

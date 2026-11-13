@@ -62,6 +62,8 @@ struct INVESTIGATIONRUNTIME_API FInterviewReply
 	bool bInterviewEnded = false;
 };
 
+DECLARE_MULTICAST_DELEGATE(FOnInterviewEnded);
+
 /**
  * Runs interviews. The player picks a topic to ask about or an exhibit to present, and an approach.
  * The answer is chosen by rules from the character's authored responses and their current state.
@@ -104,6 +106,12 @@ public:
 	FName GetCurrentCharacterId() const { return CurrentCharacterId; }
 
 	const TArray<FCharacterRuntimeState>& GetCharacterStates() const { return CharacterStates; }
+
+	/** For loading a save only. People the save doesn't mention keep their starting state. */
+	void RestoreCharacterStates(const TArray<FCharacterRuntimeState>& InStates);
+
+	/** Broadcast after an interview closes. A safe moment to autosave. */
+	FOnInterviewEnded OnInterviewEnded;
 
 	/** Returns nullptr if no case is active or the character is unknown. */
 	const FCharacterRuntimeState* GetCharacterState(FName CharacterId) const;
