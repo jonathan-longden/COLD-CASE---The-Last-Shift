@@ -390,6 +390,41 @@ void SInvestigationScreen::BuildHome()
 		return;
 	}
 
+	// A typed status note under the briefing, so the sheet reads like a working file rather than an empty page.
+	{
+		int32 Held = 0, Unexamined = 0;
+		for (const FHeldEvidence& Item : CaseFile->GetHeldEvidence())
+		{
+			++Held;
+			Unexamined += Item.bExamined ? 0 : 1;
+		}
+		int32 Spoken = 0, Available = 0;
+		for (const FCaseCharacter& Character : Case.Characters)
+		{
+			if (!Character.CanBeInterviewed())
+			{
+				continue;
+			}
+			++Available;
+			const FCharacterRuntimeState* State = Interviews.IsValid() ? Interviews->GetCharacterState(Character.Id) : nullptr;
+			Spoken += (State && State->bInterviewed) ? 1 : 0;
+		}
+		int32 Answered = 0;
+		for (const FName QuestionId : Case.KeyQuestions)
+		{
+			Answered += Theory.IsValid() && !Theory->GetAnswer(QuestionId).IsNone() ? 1 : 0;
+		}
+		const int32 Pending = CaseFile->GetPendingRequests().Num();
+
+		Body += TEXT("\n\nSTATE OF THE FILE\n\n");
+		Body += FString::Printf(TEXT("Exhibits held:        %d%s\n"), Held, Unexamined > 0 ? *FString::Printf(TEXT("  (%d not yet examined)"), Unexamined) : TEXT(""));
+		Body += FString::Printf(TEXT("Requests outstanding: %d\n"), Pending);
+		Body += FString::Printf(TEXT("Statements taken:     %d\n"), CaseFile->GetStatements().Num());
+		Body += FString::Printf(TEXT("People spoken to:     %d of %d\n"), Spoken, Available);
+		Body += FString::Printf(TEXT("Key questions:        %d of %d answered\n"), Answered, Case.KeyQuestions.Num());
+		Body += TEXT("\nNothing in this file has been tested in court. Treat every page as a claim, not a fact.");
+	}
+
 	AddItem(FText::FromString(TEXT("Exhibits")), [this]() { GoTo(EPage::Exhibits); });
 	AddItem(FText::FromString(TEXT("Statements taken")), [this]() { GoTo(EPage::Statements); });
 	AddItem(FText::FromString(TEXT("Interview someone")), [this]() { GoTo(EPage::People); });
@@ -825,11 +860,11 @@ void SInvestigationScreen::BuildCaseReview()
 		const FCaseFact* PlayerFact = Case->FindFact(Answer.Assessment.FactId);
 		const FCaseFact* TrueFact = Case->FindFact(Answer.TrueFactId);
 		Body += FString::Printf(TEXT("\n%d. %s\n"), ++Number, Question ? *Question->Text.ToString() : TEXT("?"));
-		Body += FString::Printf(TEXT("Concluded: %s\n"), *Sentence(PlayerFact ? PlayerFact->Text.ToString() : TEXT("no answer")));
-		Body += FString::Printf(TEXT("Support: %s\n"), *Sentence(UTheorySubsystem::DescribeStrength(Answer.Assessment.Strength).ToString()));
+		Body += FString::Printf(TEXT("Concluded:\n%s\n"), *Sentence(PlayerFact ? PlayerFact->Text.ToString() : TEXT("no answer")));
+		Body += FString::Printf(TEXT("Support:\n%s\n"), *Sentence(UTheorySubsystem::DescribeStrength(Answer.Assessment.Strength).ToString()));
 		Body += Answer.bMatchesTruth
-			? FString(TEXT("Finding: This is what happened.\n"))
-			: FString::Printf(TEXT("Finding: This is not what happened. In fact: %s\n"), *Sentence(TrueFact ? TrueFact->Text.ToString() : TEXT("not recorded")));
+			? FString(TEXT("Finding:\nThis is what happened.\n"))
+			: FString::Printf(TEXT("Finding:\nThis is not what happened. In fact: %s\n"), *Sentence(TrueFact ? TrueFact->Text.ToString() : TEXT("not recorded")));
 	}
 
 	Body += TEXT("\nLINES OF ENQUIRY NOT FOLLOWED\n");
