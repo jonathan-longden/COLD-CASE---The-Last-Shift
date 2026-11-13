@@ -489,11 +489,11 @@
 			"Availability": "InitialFile",
 			"Media": [
 				{
-					"Id": "TillRoll.M.PlayerTest",
+					"Id": "TillRoll.M.TillRollDesk",
 					"Kind": "Video",
-					"File": "PlayerTest.mp4",
-					"Caption": "Play the test clip",
-					"Transcript": "A placeholder to prove video and sound play. It will be replaced by real footage."
+					"File": "TillRollDesk.mp4",
+					"Caption": "Watch: the till roll on your desk",
+					"Transcript": "The till roll from the Bluebell Diner, out of its evidence bag for the first time in years. The paper has yellowed and the ink has faded, but the columns can still be read."
 				}
 			],
 			"Findings": [
@@ -525,6 +525,15 @@
 			"Name": "Witness statement of Lorraine Pike, 14/10/2000",
 			"Description": "Taken two days after Sarah was reported missing.",
 			"Availability": "InitialFile",
+			"Media": [
+				{
+					"Id": "TillRoll.M.DinerClosing",
+					"Kind": "Video",
+					"File": "DinerClosing.mp4",
+					"Caption": "Watch: the Bluebell Diner at closing (reconstruction)",
+					"Transcript": "Reconstruction, not evidence. The diner after closing on a wet October night: chairs up on the tables, the mop bucket out, the coffee machine still warm."
+				}
+			],
 			"Findings": [
 				{
 					"Id": "TillRoll.E.LorraineStatement2000.Time",
@@ -563,6 +572,15 @@
 			"Name": "Witness statement of Doreen Ash, 16/10/2000",
 			"Description": "Neighbour living opposite the diner.",
 			"Availability": "InitialFile",
+			"Media": [
+				{
+					"Id": "TillRoll.M.DinerFromOpposite",
+					"Kind": "Video",
+					"File": "DinerFromOpposite.mp4",
+					"Caption": "Watch: the view from Doreen Ash's window (reconstruction)",
+					"Transcript": "Reconstruction, not evidence. The diner and the main road as they would have looked through the rain from the house opposite, late on a wet October night."
+				}
+			],
 			"Findings": [
 				{
 					"Id": "TillRoll.E.NeighbourStatement2000.Car",
