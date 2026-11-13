@@ -1,0 +1,71 @@
+{
+	"SchemaVersion": 1,
+	"CaseId": "Bonfire",
+	"TrueFacts": [
+		"Bonfire.F.Cause.Deliberate",
+		"Bonfire.F.Who.Roy",
+		"Bonfire.F.Why.Money",
+		"Bonfire.F.Tony.Truth",
+		"Bonfire.F.Heater.Kitchen"
+	],
+	"Summary": "Through 1983 Roy Grice, in debt to bookmakers and loan men, took out three loans in his aunt Eileen's name, forging her signature. In November a finance company wrote to her. She told Brenda she would see her solicitor on Monday, and wrote to him saying she thought it was her nephew and that she must go to the police. On Bonfire Night Roy told Brenda he was going to put Eileen's bins out. He let himself into the back yard with a can of paraffin, poured it along the hall to the foot of the stairs, lit it, and pushed a spent rocket through the letterbox on his way out to make it look like children. Fourteen-year-old Tony Shaw, letting off bangers in the back entry, saw a man in a big coat walk out of her yard with a can. Roy went home and got straight in the bath. The next morning he told police her heater stood in the hall, where it never was. The station officer wanted a Bonfire Night accident and cut the paraffin from the summary. The street wanted a culprit and chose the boy who had been seen nearby. Roy inherited the house, sold it within the year, and has laid flowers on her grave every November since.",
+	"Epilogues": [
+		{
+			"RequiresFlags": [
+				"Bonfire.Flag.BrendaTells"
+			],
+			"RequiresAnswers": [
+				"Bonfire.F.Who.Roy"
+			],
+			"Text": "Roy Grice was charged with the murder of his aunt at the age of seventy-seven. Brenda Hollins gave evidence against him. He was convicted the following spring and will die in prison. He sent no flowers that November."
+		},
+		{
+			"RequiresNotFlags": [
+				"Bonfire.Flag.BrendaTells"
+			],
+			"RequiresAnswers": [
+				"Bonfire.F.Who.Roy"
+			],
+			"Text": "The Crown Prosecution Service judged that without a witness to Roy's movements that night, there was no realistic prospect of conviction. Roy Grice was told by letter. He still lays flowers on his aunt's grave every November."
+		},
+		{
+			"RequiresAnswers": [
+				"Bonfire.F.Tony.Truth"
+			],
+			"RequiresNotFlags": [
+				"Bonfire.Flag.TonyWalks"
+			],
+			"Text": "Tony Shaw received a letter from the Chief Constable. It said the review had found nothing to connect him with the fire, and that his account in 1983 had been true. He had it framed. He said his mam would have wanted it on the wall."
+		},
+		{
+			"RequiresAnswers": [
+				"Bonfire.F.Tony.Truth"
+			],
+			"RequiresFlags": [
+				"Bonfire.Flag.TonyWalks"
+			],
+			"Text": "Tony Shaw's name was cleared by letter. He sent it back unopened, with a note: 'You could have asked me properly.'"
+		},
+		{
+			"RequiresAnswers": [
+				"Bonfire.F.Tony.Lying"
+			],
+			"Text": "The review found nothing to clear Tony Shaw's name. He was told by letter. He did not reply. He has stopped writing."
+		},
+		{
+			"RequiresAnswers": [
+				"Bonfire.F.Cause.Firework"
+			],
+			"Text": "The file was closed again as an accident on Bonfire Night. The last people on Kirkby Street who remember it still tell the story about the Shaw boy."
+		},
+		{
+			"RequiresFlags": [
+				"Bonfire.Flag.RoyCornered"
+			],
+			"RequiresNotFlags": [
+				"Bonfire.Flag.BrendaTells"
+			],
+			"Text": "Roy Grice's solicitor wrote to complain about the interview. In the same letter, without seeming to notice, he confirmed that his client had been at Kirkby Street on the night of the fire."
+		}
+	]
+}

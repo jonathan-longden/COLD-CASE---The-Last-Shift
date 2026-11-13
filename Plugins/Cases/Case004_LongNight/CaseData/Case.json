@@ -1,0 +1,895 @@
+{
+	"SchemaVersion": 1,
+	"CaseId": "LongNight",
+	"Title": "Case 4: The Long Night",
+	"Briefing": "On the night of 21 November 1984, at the height of the miners' strike, Dennis Hale, 41, a Gedling miner who had gone back to work, was found dead at the foot of the railway embankment behind the pit. Paul Ritchie, a 23-year-old flying picket from Barnsley, confessed after nineteen hours in a cell and served nine years for manslaughter. He died in 2015, still saying he had been made to sign. His daughter Gemma took the case to the Criminal Cases Review Commission, and they have sent it to us. Everyone in this file picked a side in 1984. Most of them still have. Don't let them pick one for you.",
+	"KeyQuestions": [
+		"LongNight.Q.Confession",
+		"LongNight.Q.PaulWhere",
+		"LongNight.Q.Killer",
+		"LongNight.Q.Motive"
+	],
+	"Questions": [
+		{
+			"Id": "LongNight.Q.Confession",
+			"Text": "Was Paul Ritchie's confession reliable?",
+			"Facts": [
+				{
+					"Id": "LongNight.F.Confession.Reliable",
+					"Text": "Yes. He killed Dennis and admitted it"
+				},
+				{
+					"Id": "LongNight.F.Confession.Unreliable",
+					"Text": "No. It was shaped by the officers who took it"
+				}
+			]
+		},
+		{
+			"Id": "LongNight.Q.PaulWhere",
+			"Text": "Where was Paul Ritchie when Dennis Hale died?",
+			"Facts": [
+				{
+					"Id": "LongNight.F.PaulWhere.Embankment",
+					"Text": "On the embankment path"
+				},
+				{
+					"Id": "LongNight.F.PaulWhere.Custody",
+					"Text": "Already under arrest at the pit gates"
+				}
+			]
+		},
+		{
+			"Id": "LongNight.Q.Killer",
+			"Text": "Who killed Dennis Hale?",
+			"Facts": [
+				{
+					"Id": "LongNight.F.Killer.Paul",
+					"Text": "Paul Ritchie"
+				},
+				{
+					"Id": "LongNight.F.Killer.Pickets",
+					"Text": "Other pickets, never identified"
+				},
+				{
+					"Id": "LongNight.F.Killer.Keith",
+					"Text": "Keith Marsh, his brother-in-law"
+				},
+				{
+					"Id": "LongNight.F.Killer.Nobody",
+					"Text": "Nobody. He fell in the dark"
+				}
+			]
+		},
+		{
+			"Id": "LongNight.Q.Motive",
+			"Text": "Why was Dennis Hale killed?",
+			"Facts": [
+				{
+					"Id": "LongNight.F.Motive.Strike",
+					"Text": "Because he had crossed the picket line"
+				},
+				{
+					"Id": "LongNight.F.Motive.June",
+					"Text": "Because of his affair with June Marsh"
+				},
+				{
+					"Id": "LongNight.F.Motive.None",
+					"Text": "There was no reason. It was a fall"
+				}
+			]
+		},
+		{
+			"Id": "LongNight.Q.Weapon",
+			"Text": "What struck Dennis Hale?",
+			"Facts": [
+				{
+					"Id": "LongNight.F.Weapon.Brick",
+					"Text": "A brick"
+				},
+				{
+					"Id": "LongNight.F.Weapon.FencePost",
+					"Text": "A length of wooden fence post"
+				}
+			]
+		}
+	],
+	"Topics": [
+		{
+			"Id": "LongNight.T.Night",
+			"Text": "The night of 21 November 1984"
+		},
+		{
+			"Id": "LongNight.T.Dennis",
+			"Text": "Dennis Hale"
+		},
+		{
+			"Id": "LongNight.T.Paul",
+			"Text": "Paul Ritchie"
+		},
+		{
+			"Id": "LongNight.T.Keith",
+			"Text": "Keith Marsh"
+		},
+		{
+			"Id": "LongNight.T.Interview",
+			"Text": "How Paul Ritchie's confession was taken"
+		},
+		{
+			"Id": "LongNight.T.June",
+			"Text": "June Marsh",
+			"RequiresFlags": [
+				"LongNight.Flag.JNote"
+			]
+		}
+	],
+	"Characters": [
+		{
+			"Id": "LongNight.C.Dennis",
+			"Name": "Dennis Hale",
+			"Role": "Miner, 41. Went back to work in August 1984. Died 21 November 1984"
+		},
+		{
+			"Id": "LongNight.C.Paul",
+			"Name": "Paul Ritchie",
+			"Role": "Flying picket from Barnsley. Convicted 1985. Died 2015"
+		},
+		{
+			"Id": "LongNight.C.Gemma",
+			"Name": "Gemma Ritchie",
+			"Role": "Paul's daughter. Brought the case to the review commission",
+			"StartingTrust": 60,
+			"StartingComposure": 60,
+			"RapportTrustDelta": 5,
+			"ChallengeTrustDelta": -10,
+			"ChallengeComposureDelta": -5,
+			"DefaultLine": "Ask me anything. I've read every page of it, more than once.",
+			"RefusalLine": "Gemma Ritchie says she'll deal with the commission directly from now on.",
+			"Responses": [
+				{
+					"Id": "LongNight.R.Gemma.Paul",
+					"Trigger": "LongNight.T.Paul",
+					"Line": "Dad said they kept the light on and took his boots and wouldn't let him sleep. He said by the end he'd have signed that he shot Kennedy.",
+					"AssertsFacts": [
+						"LongNight.F.Confession.Unreliable"
+					]
+				},
+				{
+					"Id": "LongNight.R.Gemma.Night",
+					"Trigger": "LongNight.T.Night",
+					"Line": "He was nicked at the gates. He always said it: 'I was in the back of a van before that man left the pub.' Nobody wrote the time down right.",
+					"AssertsFacts": [
+						"LongNight.F.PaulWhere.Custody"
+					]
+				},
+				{
+					"Id": "LongNight.R.Gemma.NightTrust",
+					"Trigger": "LongNight.T.Night",
+					"Line": "There was a photographer at the gates that night. Dad saw the flash when they dragged him off the coach steps. He used to say, 'If they ever find that picture, Gem, I'm home.' Nobody ever looked for it.",
+					"Approach": "Rapport",
+					"MinTrust": 65,
+					"Priority": 5,
+					"SetFlags": [
+						"LongNight.Flag.PhotoLead"
+					],
+					"AssertsFacts": [
+						"LongNight.F.PaulWhere.Custody"
+					]
+				},
+				{
+					"Id": "LongNight.R.Gemma.Interview",
+					"Trigger": "LongNight.T.Interview",
+					"Line": "Nineteen hours. No solicitor. They brought a solicitor in after he'd signed, to read it over. Then it was all very proper.",
+					"AssertsFacts": [
+						"LongNight.F.Confession.Unreliable"
+					]
+				},
+				{
+					"Id": "LongNight.R.Gemma.Dennis",
+					"Trigger": "LongNight.T.Dennis",
+					"Line": "I've thought about him more than my dad has, probably. He had kids too. They got told a picket did it, and that was that for them as well."
+				},
+				{
+					"Id": "LongNight.R.Gemma.Keith",
+					"Trigger": "LongNight.T.Keith",
+					"Line": "The witness. Three lads with Yorkshire voices. Funny how he heard their voices in the dark and never saw a face."
+				},
+				{
+					"Id": "LongNight.R.Gemma.Pressed",
+					"Trigger": "LongNight.T.Paul",
+					"Line": "You think I don't know what people say? 'She would say that.' I'd have dropped this years ago if I thought he did it. I'm not daft.",
+					"Approach": "Challenge",
+					"TrustDelta": -5
+				},
+				{
+					"Id": "LongNight.R.Gemma.Confession",
+					"Trigger": "LongNight.E.Confession",
+					"Line": "'I picked up a brick.' Now read the post-mortem. There was no brick."
+				},
+				{
+					"Id": "LongNight.R.Gemma.Photos",
+					"Trigger": "LongNight.E.Photos",
+					"Line": "That's him. That's my dad. Look at the clock. Look at the clock.",
+					"ComposureDelta": -20,
+					"AssertsFacts": [
+						"LongNight.F.PaulWhere.Custody"
+					]
+				},
+				{
+					"Id": "LongNight.R.Gemma.Lab",
+					"Trigger": "LongNight.E.Lab",
+					"Line": "They used my swab. They said it was a long shot. ... It isn't him. It was never him.",
+					"ComposureDelta": -20,
+					"AssertsFacts": [
+						"LongNight.F.Confession.Unreliable"
+					]
+				}
+			]
+		},
+		{
+			"Id": "LongNight.C.Keith",
+			"Name": "Keith Marsh",
+			"Role": "Working miner, Dennis's brother-in-law. Prosecution witness in 1985. Now 78",
+			"StartingTrust": 30,
+			"StartingComposure": 75,
+			"RapportTrustDelta": 4,
+			"ChallengeTrustDelta": -8,
+			"ChallengeComposureDelta": -8,
+			"DefaultLine": "I said what I saw. Three lads, Yorkshire voices, on the path.",
+			"RefusalLine": "Keith Marsh's daughter says he's had a fall and won't be seeing anyone.",
+			"Responses": [
+				{
+					"Id": "LongNight.R.Keith.Night0",
+					"Trigger": "LongNight.T.Night",
+					"Line": "I came out of the Welfare after Dennis. Saw three lads on the path by the line. Yorkshire voices. Next morning he's dead at the bottom of the bank. Doesn't take a genius.",
+					"StoryStep": 0,
+					"AssertsFacts": [
+						"LongNight.F.Killer.Pickets",
+						"LongNight.F.Motive.Strike"
+					]
+				},
+				{
+					"Id": "LongNight.R.Keith.Dennis",
+					"Trigger": "LongNight.T.Dennis",
+					"Line": "My sister's husband. Went back to work the same week as me. We were scabs together, if you like. They shouted it at us at the gates every morning."
+				},
+				{
+					"Id": "LongNight.R.Keith.Paul",
+					"Trigger": "LongNight.T.Paul",
+					"Line": "They got him, didn't they. He signed it."
+				},
+				{
+					"Id": "LongNight.R.Keith.Interview",
+					"Trigger": "LongNight.T.Interview",
+					"Line": "Not my business how the police did their job."
+				},
+				{
+					"Id": "LongNight.R.Keith.June0",
+					"Trigger": "LongNight.T.June",
+					"Line": "What's my wife got to do with anything?",
+					"StoryStep": 0,
+					"ComposureDelta": -10
+				},
+				{
+					"Id": "LongNight.R.Keith.JuneTooSoon",
+					"Trigger": "LongNight.T.June",
+					"Line": "You leave June out of this. You come to my house and say her name like that? Get out.",
+					"Approach": "Challenge",
+					"StoryStep": 0,
+					"Priority": 10,
+					"EndsCooperation": true,
+					"SetFlags": [
+						"LongNight.Flag.KeithShut"
+					]
+				},
+				{
+					"Id": "LongNight.R.Keith.Self",
+					"Trigger": "LongNight.T.Keith",
+					"Line": "I worked forty years underground and went back when my kids were hungry. That's me."
+				},
+				{
+					"Id": "LongNight.R.Keith.Note0",
+					"Trigger": "LongNight.E.Property",
+					"Line": "'Usual place.' I wouldn't know.",
+					"StoryStep": 0,
+					"ComposureDelta": -15
+				},
+				{
+					"Id": "LongNight.R.Keith.NoteJune",
+					"Trigger": "LongNight.E.Property",
+					"Line": "You've been talking to June. ... She's not well. She gets confused about what year it is.",
+					"StoryStep": 0,
+					"RequiresFlags": [
+						"LongNight.Flag.JuneAffair"
+					],
+					"Priority": 5,
+					"SetStoryStep": 1,
+					"ComposureDelta": -15
+				},
+				{
+					"Id": "LongNight.R.Keith.Night1",
+					"Trigger": "LongNight.T.Night",
+					"Line": "I've told you what I saw.",
+					"StoryStep": 1,
+					"ComposureDelta": -10,
+					"AssertsFacts": [
+						"LongNight.F.Killer.Pickets"
+					]
+				},
+				{
+					"Id": "LongNight.R.Keith.Breaks",
+					"Trigger": "LongNight.T.Night",
+					"Line": "He'd been with my wife since the summer. Everybody knew but me. I followed him out of the Welfare. I only meant to tell him I knew. He laughed. He laughed at me, and there was a post by the fence... I told your lot I saw pickets. They wanted pickets. They had one in the cells inside the hour.",
+					"Approach": "Challenge",
+					"StoryStep": 1,
+					"MaxComposure": 45,
+					"RequiresFlags": [
+						"LongNight.Flag.JuneTells"
+					],
+					"Priority": 8,
+					"SetStoryStep": 2,
+					"SetFlags": [
+						"LongNight.Flag.KeithAdmits"
+					],
+					"AssertsFacts": [
+						"LongNight.F.Killer.Keith",
+						"LongNight.F.Motive.June",
+						"LongNight.F.Weapon.FencePost"
+					]
+				},
+				{
+					"Id": "LongNight.R.Keith.BreaksQuiet",
+					"Trigger": "LongNight.T.Dennis",
+					"Line": "I'm seventy-eight. I've been waiting for somebody to sit there and ask me properly since I was thirty-four. ... It was me. Not that lad. I followed Dennis out of the Welfare over June, and I hit him with a fence post, and he went down the bank. Then I watched them send a boy to prison for it, and I said nothing.",
+					"Approach": "Rapport",
+					"StoryStep": 1,
+					"MinTrust": 42,
+					"RequiresHeld": [
+						"LongNight.E.Lab"
+					],
+					"Priority": 8,
+					"SetStoryStep": 2,
+					"SetFlags": [
+						"LongNight.Flag.KeithAdmits"
+					],
+					"AssertsFacts": [
+						"LongNight.F.Killer.Keith",
+						"LongNight.F.Motive.June",
+						"LongNight.F.Weapon.FencePost"
+					]
+				},
+				{
+					"Id": "LongNight.R.Keith.Night2",
+					"Trigger": "LongNight.T.Night",
+					"Line": "I've told you. I'll say it in court if I live that long.",
+					"StoryStep": 2
+				},
+				{
+					"Id": "LongNight.R.Keith.Photos",
+					"Trigger": "LongNight.E.Photos",
+					"Line": "So he was nicked early. Doesn't mean there weren't others.",
+					"AssertsFacts": [
+						"LongNight.F.Killer.Pickets"
+					],
+					"ComposureDelta": -10
+				},
+				{
+					"Id": "LongNight.R.Keith.Lab",
+					"Trigger": "LongNight.E.Lab",
+					"Line": "Never touched it. Never touched any post.",
+					"ComposureDelta": -20
+				},
+				{
+					"Id": "LongNight.R.Keith.Pocketbook",
+					"Trigger": "LongNight.E.Pocketbook",
+					"Line": "I slipped on the ice. It was November.",
+					"ComposureDelta": -10
+				},
+				{
+					"Id": "LongNight.R.Keith.Statement",
+					"Trigger": "LongNight.E.KeithStatement1984",
+					"Line": "That's my statement. I stood by it in court."
+				},
+				{
+					"Id": "LongNight.R.Keith.Steward",
+					"Trigger": "LongNight.E.StewardStatement",
+					"Line": "Course I left after him. It was closing time. Everyone left."
+				}
+			]
+		},
+		{
+			"Id": "LongNight.C.June",
+			"Name": "June Marsh",
+			"Role": "Keith's wife. Now 79",
+			"StartingTrust": 40,
+			"StartingComposure": 50,
+			"RapportTrustDelta": 7,
+			"ChallengeTrustDelta": -12,
+			"ChallengeComposureDelta": -10,
+			"RequiresFlags": [
+				"LongNight.Flag.JNote"
+			],
+			"DefaultLine": "I don't want to talk about Dennis.",
+			"RefusalLine": "June Marsh won't open the door again.",
+			"Responses": [
+				{
+					"Id": "LongNight.R.June.Dennis",
+					"Trigger": "LongNight.T.Dennis",
+					"Line": "He was my sister-in-law's husband. That's all there is to say.",
+					"ComposureDelta": -5
+				},
+				{
+					"Id": "LongNight.R.June.DennisTrust",
+					"Trigger": "LongNight.T.Dennis",
+					"Line": "We'd been meeting since the summer. At his allotment, Thursdays, when Keith was on afters. He was going to tell Carol at Christmas. ... I've never said that out loud. Not in forty years.",
+					"Approach": "Rapport",
+					"MinTrust": 54,
+					"Priority": 5,
+					"SetFlags": [
+						"LongNight.Flag.JuneAffair"
+					],
+					"AssertsFacts": [
+						"LongNight.F.Motive.June"
+					]
+				},
+				{
+					"Id": "LongNight.R.June.Note",
+					"Trigger": "LongNight.E.Property",
+					"Line": "That's my writing. 'Usual place.' The allotment.",
+					"MinTrust": 45,
+					"Priority": 4,
+					"SetFlags": [
+						"LongNight.Flag.JuneAffair"
+					],
+					"AssertsFacts": [
+						"LongNight.F.Motive.June"
+					]
+				},
+				{
+					"Id": "LongNight.R.June.NoteLow",
+					"Trigger": "LongNight.E.Property",
+					"Line": "I don't know what that is.",
+					"ComposureDelta": -10
+				},
+				{
+					"Id": "LongNight.R.June.Night",
+					"Trigger": "LongNight.T.Night",
+					"Line": "Keith was at the Welfare. He came home. That's all.",
+					"ComposureDelta": -5
+				},
+				{
+					"Id": "LongNight.R.June.NightTruth",
+					"Trigger": "LongNight.T.Night",
+					"Line": "He came in at eleven. His coat was soaked through and his knuckles were split. He burned that coat in the garden incinerator the next morning, and I stood at the kitchen window and watched him do it, and I never said a word. Not when they took that lad. Not when he went to prison. Not ever.",
+					"Approach": "Rapport",
+					"MinTrust": 61,
+					"RequiresFlags": [
+						"LongNight.Flag.JuneAffair"
+					],
+					"Priority": 6,
+					"SetFlags": [
+						"LongNight.Flag.JuneTells"
+					],
+					"AssertsFacts": [
+						"LongNight.F.Killer.Keith",
+						"LongNight.F.Motive.June"
+					]
+				},
+				{
+					"Id": "LongNight.R.June.Keith",
+					"Trigger": "LongNight.T.Keith",
+					"Line": "Keith's not a well man. Leave him be."
+				},
+				{
+					"Id": "LongNight.R.June.Paul",
+					"Trigger": "LongNight.T.Paul",
+					"Line": "I used to read about his appeals in the paper and turn the page.",
+					"ComposureDelta": -10
+				},
+				{
+					"Id": "LongNight.R.June.Warn",
+					"Trigger": "LongNight.T.Night",
+					"Line": "I won't be spoken to like that in my own kitchen. I'll ask you once.",
+					"Approach": "Challenge",
+					"Priority": 8,
+					"Once": true
+				},
+				{
+					"Id": "LongNight.R.June.Out",
+					"Trigger": "LongNight.T.Night",
+					"Line": "Get out of my house.",
+					"Approach": "Challenge",
+					"Priority": 7,
+					"EndsCooperation": true,
+					"SetFlags": [
+						"LongNight.Flag.JuneShut"
+					]
+				},
+				{
+					"Id": "LongNight.R.June.Lab",
+					"Trigger": "LongNight.E.Lab",
+					"Line": "Then you know. You don't need me.",
+					"ComposureDelta": -15
+				},
+				{
+					"Id": "LongNight.R.June.Photos",
+					"Trigger": "LongNight.E.Photos",
+					"Line": "Oh, that poor boy.",
+					"ComposureDelta": -10
+				}
+			]
+		},
+		{
+			"Id": "LongNight.C.Tolley",
+			"Name": "Ray Tolley",
+			"Role": "Detective Sergeant who took the confession. Retired 1999. Now 81",
+			"StartingTrust": 40,
+			"StartingComposure": 80,
+			"RapportTrustDelta": 3,
+			"ChallengeTrustDelta": -6,
+			"ChallengeComposureDelta": -10,
+			"DefaultLine": "It's all in the file. It was a proper investigation.",
+			"RefusalLine": "Ray Tolley's Federation representative says he will answer written questions only.",
+			"Responses": [
+				{
+					"Id": "LongNight.R.Tolley.Interview",
+					"Trigger": "LongNight.T.Interview",
+					"Line": "He was offered a solicitor, and he signed every page. That's what the record shows.",
+					"AssertsFacts": [
+						"LongNight.F.Confession.Reliable"
+					]
+				},
+				{
+					"Id": "LongNight.R.Tolley.Night",
+					"Trigger": "LongNight.T.Night",
+					"Line": "Ritchie was arrested at half ten, near the path, with a cut hand and a temper. You'd have arrested him too.",
+					"AssertsFacts": [
+						"LongNight.F.PaulWhere.Embankment"
+					]
+				},
+				{
+					"Id": "LongNight.R.Tolley.Paul",
+					"Trigger": "LongNight.T.Paul",
+					"Line": "A hothead. Came down from Barnsley looking for a fight and found one."
+				},
+				{
+					"Id": "LongNight.R.Tolley.Keith",
+					"Trigger": "LongNight.T.Keith",
+					"Line": "Keith Marsh was a good witness. Sober, working man, said what he saw and stuck to it."
+				},
+				{
+					"Id": "LongNight.R.Tolley.Dennis",
+					"Trigger": "LongNight.T.Dennis",
+					"Line": "A man who went back to feed his family, and they killed him for it. You remember that."
+				},
+				{
+					"Id": "LongNight.R.Tolley.PM",
+					"Trigger": "LongNight.E.PostMortem",
+					"Line": "Brick, post. He was in a state. He'd not remember what he picked up. That's not a defence, that's a detail."
+				},
+				{
+					"Id": "LongNight.R.Tolley.Pocketbook",
+					"Trigger": "LongNight.E.Pocketbook",
+					"Line": "Times get corrected. You write it up after. Everyone did.",
+					"ComposureDelta": -15
+				},
+				{
+					"Id": "LongNight.R.Tolley.Photos",
+					"Trigger": "LongNight.E.Photos",
+					"Line": "A church clock in a photograph. You're going to hang forty years on a church clock?",
+					"ComposureDelta": -15
+				},
+				{
+					"Id": "LongNight.R.Tolley.Custody",
+					"Trigger": "LongNight.E.CustodyRecord",
+					"Line": "Solicitor requested, none available. That was the strike. Nobody was available.",
+					"ComposureDelta": -5
+				},
+				{
+					"Id": "LongNight.R.Tolley.Breaks",
+					"Trigger": "LongNight.T.Interview",
+					"Line": "You weren't there. We had the Chief Constable on the phone every hour. A working man dead on the line in the middle of all that. Somebody had to be in that cell, and Ritchie was already in it. I didn't put him there. ... I helped him remember. That's what we called it. Helping them remember.",
+					"Approach": "Challenge",
+					"MaxComposure": 50,
+					"RequiresHeld": [
+						"LongNight.E.Pocketbook"
+					],
+					"Priority": 6,
+					"EndsCooperation": true,
+					"SetFlags": [
+						"LongNight.Flag.TolleyAdmits"
+					],
+					"AssertsFacts": [
+						"LongNight.F.Confession.Unreliable",
+						"LongNight.F.PaulWhere.Custody"
+					]
+				},
+				{
+					"Id": "LongNight.R.Tolley.Lab",
+					"Trigger": "LongNight.E.Lab",
+					"Line": "DNA. In my day we had a man's own words. Now you have a smear on a stick.",
+					"ComposureDelta": -10
+				}
+			]
+		}
+	],
+	"Evidence": [
+		{
+			"Id": "LongNight.E.Confession",
+			"ExhibitRef": "RT/12",
+			"Name": "Confession of Paul Ritchie, 22/11/1984",
+			"Description": "Signed on each page at 17:45, after his arrest the night before.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "LongNight.E.Confession.Text",
+					"Text": "\"I saw him on the path and I knew he was a scab. I picked up a brick and hit him and he went down the bank. I am sorry for it.\"",
+					"SupportsFacts": [
+						"LongNight.F.Confession.Reliable",
+						"LongNight.F.Killer.Paul",
+						"LongNight.F.Motive.Strike",
+						"LongNight.F.Weapon.Brick",
+						"LongNight.F.PaulWhere.Embankment"
+					],
+					"Interpretations": []
+				}
+			],
+			"Author": "LongNight.C.Paul"
+		},
+		{
+			"Id": "LongNight.E.CustodyRecord",
+			"ExhibitRef": "RT/13",
+			"Name": "Custody record, Paul Ritchie, Arnold police station",
+			"Description": "The station's record of his detention.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "LongNight.E.CustodyRecord.Times",
+					"Text": "Booked in 22:40. Arrested 'approx 22:30, colliery gates' (the time is written over). Solicitor requested 02:10; 'none available' at 04:00, 07:00 and 11:00. Confession signed 17:45.",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "LongNight.E.CustodyRecord.Times.Order",
+							"Text": "A long night in a busy station, but the record is in order",
+							"SupportsFacts": [
+								"LongNight.F.Confession.Reliable"
+							]
+						},
+						{
+							"Id": "LongNight.E.CustodyRecord.Times.Pressure",
+							"Text": "Nineteen hours, no solicitor, and an altered arrest time",
+							"SupportsFacts": [
+								"LongNight.F.Confession.Unreliable"
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"Id": "LongNight.E.PostMortem",
+			"ExhibitRef": "PM/1",
+			"Name": "Post-mortem report, Dennis Hale",
+			"Description": "Home Office pathologist, November 1984.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "LongNight.E.PostMortem.Blow",
+					"Text": "Death from a single heavy blow to the left temple by a long, straight-edged object. Splinters of creosoted timber in the wound. The injuries from the fall down the embankment came after.",
+					"SupportsFacts": [
+						"LongNight.F.Weapon.FencePost"
+					],
+					"Interpretations": [
+						{
+							"Id": "LongNight.E.PostMortem.Blow.NotBrick",
+							"Text": "There was no brick: the confession is wrong about how it was done",
+							"SupportsFacts": [
+								"LongNight.F.Confession.Unreliable"
+							]
+						},
+						{
+							"Id": "LongNight.E.PostMortem.Blow.Dark",
+							"Text": "In the dark he might not know what he'd picked up",
+							"SupportsFacts": [
+								"LongNight.F.Confession.Reliable"
+							]
+						}
+					]
+				}
+			],
+			"SetFlagsWhenExamined": [
+				"LongNight.Flag.WeaponLead"
+			]
+		},
+		{
+			"Id": "LongNight.E.KeithStatement1984",
+			"ExhibitRef": "RT/7",
+			"Name": "Witness statement of Keith Marsh, 22/11/1984",
+			"Description": "Taken the morning after.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "LongNight.E.KeithStatement1984.Pickets",
+					"Text": "\"I left the Welfare just after Dennis. On the path by the line I saw three young men and heard Yorkshire voices. I could not see faces.\"",
+					"SupportsFacts": [
+						"LongNight.F.Killer.Pickets",
+						"LongNight.F.Motive.Strike"
+					],
+					"Interpretations": []
+				}
+			],
+			"Author": "LongNight.C.Keith"
+		},
+		{
+			"Id": "LongNight.E.StewardStatement",
+			"ExhibitRef": "RT/8",
+			"Name": "Statement of Stan Ellis, steward, Gedling Miners' Welfare",
+			"Description": "Taken 23/11/1984. Mr Ellis died in 2002.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "LongNight.E.StewardStatement.Leaving",
+					"Text": "\"Dennis Hale left about quarter past ten, on his own, and he'd had a few. Keith Marsh went not long after. He'd been sat watching Dennis all night, not talking.\"",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "LongNight.E.StewardStatement.Leaving.Followed",
+							"Text": "Keith followed Dennis out",
+							"SupportsFacts": [
+								"LongNight.F.Killer.Keith"
+							]
+						},
+						{
+							"Id": "LongNight.E.StewardStatement.Leaving.Closing",
+							"Text": "Two men leaving the same club at the end of the night",
+							"SupportsFacts": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"Id": "LongNight.E.Property",
+			"ExhibitRef": "RT/4",
+			"Name": "Property of the deceased, Dennis Hale",
+			"Description": "What was in his pockets.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "LongNight.E.Property.Note",
+					"Text": "A wallet; house keys; an NUM card cut in half; a folded note in a woman's hand: \"Thursday. Usual place. J x\". Dennis's wife was called Carol.",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "LongNight.E.Property.Note.Affair",
+							"Text": "Dennis was seeing a woman whose name begins with J",
+							"SupportsFacts": [
+								"LongNight.F.Motive.June"
+							]
+						},
+						{
+							"Id": "LongNight.E.Property.Note.Nothing",
+							"Text": "An old note. It needn't mean anything",
+							"SupportsFacts": []
+						}
+					]
+				}
+			],
+			"SetFlagsWhenExamined": [
+				"LongNight.Flag.JNote"
+			]
+		},
+		{
+			"Id": "LongNight.E.Pocketbook",
+			"ExhibitRef": "RT/20",
+			"Name": "Pocket notebook of DS R. Tolley, 21-22/11/1984",
+			"Description": "Never disclosed to the defence. Found in a box of his papers given to the force museum.",
+			"Availability": "OnRequest",
+			"Findings": [
+				{
+					"Id": "LongNight.E.Pocketbook.Arrest",
+					"Text": "\"21.55 Ritchie arrested at gates, breach of the peace.\" The 21.55 is struck through, and \"22.30\" is written beside it in different ink.",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "LongNight.E.Pocketbook.Arrest.Moved",
+							"Text": "The arrest time was moved to fit the killing",
+							"SupportsFacts": [
+								"LongNight.F.PaulWhere.Custody",
+								"LongNight.F.Confession.Unreliable"
+							]
+						},
+						{
+							"Id": "LongNight.E.Pocketbook.Arrest.Corrected",
+							"Text": "A slip, corrected when he wrote it up",
+							"SupportsFacts": []
+						}
+					]
+				},
+				{
+					"Id": "LongNight.E.Pocketbook.Keith",
+					"Text": "\"23.20 K. Marsh, witness, at station. Knuckles grazed. Says slipped on ice.\"",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "LongNight.E.Pocketbook.Keith.Fight",
+							"Text": "Keith had been in a fight that night",
+							"SupportsFacts": [
+								"LongNight.F.Killer.Keith"
+							]
+						},
+						{
+							"Id": "LongNight.E.Pocketbook.Keith.Ice",
+							"Text": "He slipped on the ice, as he said",
+							"SupportsFacts": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"Id": "LongNight.E.Photos",
+			"ExhibitRef": "EP/1",
+			"Name": "Evening Post contact sheet, Gedling colliery gates, 21/11/1984",
+			"Description": "Found in the newspaper's archive, never published.",
+			"Availability": "OnRequest",
+			"Findings": [
+				{
+					"Id": "LongNight.E.Photos.Frame14",
+					"Text": "Frame 14: Paul Ritchie held by two officers beside the picket coach at the gates. Behind them, the clock on St Andrew's church reads five past ten.",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "LongNight.E.Photos.Frame14.Custody",
+							"Text": "Paul was under arrest before Dennis left the Welfare",
+							"SupportsFacts": [
+								"LongNight.F.PaulWhere.Custody",
+								"LongNight.F.Confession.Unreliable"
+							]
+						},
+						{
+							"Id": "LongNight.E.Photos.Frame14.Clock",
+							"Text": "A church clock in a photograph. It could be wrong",
+							"SupportsFacts": []
+						}
+					]
+				}
+			],
+			"RequiresFlags": [
+				"LongNight.Flag.PhotoLead"
+			]
+		},
+		{
+			"Id": "LongNight.E.Lab",
+			"ExhibitRef": "FS/1",
+			"Name": "Forensic report: fence post from the embankment, 2026",
+			"Description": "The post was bagged in 1984 and never examined. Tested now at your request.",
+			"Availability": "OnRequest",
+			"Findings": [
+				{
+					"Id": "LongNight.E.Lab.Result",
+					"Text": "Blood on the post is Dennis Hale's. A partial male DNA profile on the grip excludes Paul Ritchie, by comparison with his daughter's reference sample.",
+					"SupportsFacts": [
+						"LongNight.F.Weapon.FencePost"
+					],
+					"Interpretations": [
+						{
+							"Id": "LongNight.E.Lab.Result.Other",
+							"Text": "Someone other than Paul Ritchie held the weapon",
+							"SupportsFacts": [
+								"LongNight.F.Confession.Unreliable"
+							]
+						},
+						{
+							"Id": "LongNight.E.Lab.Result.Contaminated",
+							"Text": "Forty years in a store. Anyone could have handled it",
+							"SupportsFacts": []
+						}
+					]
+				}
+			],
+			"RequiresFlags": [
+				"LongNight.Flag.WeaponLead"
+			]
+		}
+	]
+}

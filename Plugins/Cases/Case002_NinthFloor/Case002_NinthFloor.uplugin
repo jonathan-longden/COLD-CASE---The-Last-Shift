@@ -1,0 +1,26 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Case 2: The Ninth Floor",
+	"Description": "Colin Pask, Kingsmead House, March 1996.",
+	"Category": "ColdCase|Cases",
+	"CreatedBy": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"Installed": false,
+	"EnabledByDefault": true,
+	"Modules": [
+		{
+			"Name": "Case002_NinthFloor",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "InvestigationFramework",
+			"Enabled": true
+		}
+	]
+}

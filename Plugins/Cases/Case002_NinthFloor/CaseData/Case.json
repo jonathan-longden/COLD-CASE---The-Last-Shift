@@ -1,0 +1,790 @@
+{
+	"SchemaVersion": 1,
+	"CaseId": "NinthFloor",
+	"Title": "Case 2: The Ninth Floor",
+	"Briefing": "Colin Pask, 58, a retired bus driver, went over the balcony of his ninth-floor flat in Kingsmead House, St Ann's, on Saturday 9 March 1996. The coroner recorded an open verdict and the file was closed as a probable suicide. His daughter Karen has written to us every March since. This year she sent something new: a page from his diary. Find out how Colin Pask died. And be careful who you lean on. Some of these people are very old now, and some of them aren't.",
+	"KeyQuestions": [
+		"NinthFloor.Q.Death",
+		"NinthFloor.Q.WhoThere",
+		"NinthFloor.Q.Alibi",
+		"NinthFloor.Q.Ring"
+	],
+	"Questions": [
+		{
+			"Id": "NinthFloor.Q.Death",
+			"Text": "How did Colin Pask die?",
+			"Facts": [
+				{
+					"Id": "NinthFloor.F.Death.Suicide",
+					"Text": "He took his own life"
+				},
+				{
+					"Id": "NinthFloor.F.Death.Accident",
+					"Text": "He fell by accident"
+				},
+				{
+					"Id": "NinthFloor.F.Death.Pushed",
+					"Text": "He went over in a struggle with someone"
+				}
+			]
+		},
+		{
+			"Id": "NinthFloor.Q.WhoThere",
+			"Text": "Who was with Colin when he fell?",
+			"Facts": [
+				{
+					"Id": "NinthFloor.F.WhoThere.NoOne",
+					"Text": "No one. He was alone"
+				},
+				{
+					"Id": "NinthFloor.F.WhoThere.Lee",
+					"Text": "Lee Cotter, from the flat next door"
+				},
+				{
+					"Id": "NinthFloor.F.WhoThere.Stranger",
+					"Text": "A burglar from off the estate"
+				}
+			]
+		},
+		{
+			"Id": "NinthFloor.Q.Alibi",
+			"Text": "Was Lee Cotter with Pat Rawlings all evening, as they both said?",
+			"Facts": [
+				{
+					"Id": "NinthFloor.F.Alibi.Yes",
+					"Text": "Yes. He never left her flat"
+				},
+				{
+					"Id": "NinthFloor.F.Alibi.No",
+					"Text": "No. He was not with her when Colin fell"
+				}
+			]
+		},
+		{
+			"Id": "NinthFloor.Q.Ring",
+			"Text": "What happened to Maureen Pask's eternity ring?",
+			"Facts": [
+				{
+					"Id": "NinthFloor.F.Ring.SoldByColin",
+					"Text": "Colin sold it himself, because he was short of money"
+				},
+				{
+					"Id": "NinthFloor.F.Ring.StolenByLee",
+					"Text": "Lee Cotter took it and pawned it"
+				}
+			]
+		},
+		{
+			"Id": "NinthFloor.Q.Mood",
+			"Text": "Was Colin low enough to take his own life?",
+			"Facts": [
+				{
+					"Id": "NinthFloor.F.Mood.Yes",
+					"Text": "Yes. He was grieving, in debt and frightened"
+				},
+				{
+					"Id": "NinthFloor.F.Mood.No",
+					"Text": "No. He was making plans"
+				}
+			]
+		}
+	],
+	"Topics": [
+		{
+			"Id": "NinthFloor.T.Night",
+			"Text": "The night of 9 March 1996"
+		},
+		{
+			"Id": "NinthFloor.T.Colin",
+			"Text": "Colin Pask"
+		},
+		{
+			"Id": "NinthFloor.T.Lee",
+			"Text": "Lee Cotter"
+		},
+		{
+			"Id": "NinthFloor.T.Pat",
+			"Text": "Pat Rawlings"
+		},
+		{
+			"Id": "NinthFloor.T.Key",
+			"Text": "Colin's spare key",
+			"RequiresFlags": [
+				"NinthFloor.Flag.SpareKey"
+			]
+		},
+		{
+			"Id": "NinthFloor.T.Ring",
+			"Text": "Maureen Pask's ring",
+			"RequiresFlags": [
+				"NinthFloor.Flag.JewelleryBox"
+			]
+		}
+	],
+	"Characters": [
+		{
+			"Id": "NinthFloor.C.Colin",
+			"Name": "Colin Pask",
+			"Role": "Retired bus driver, 58. Widowed 1994. Died 9 March 1996"
+		},
+		{
+			"Id": "NinthFloor.C.Karen",
+			"Name": "Karen Pask",
+			"Role": "Colin's daughter. Has written to the police every March for thirty years",
+			"StartingTrust": 70,
+			"StartingComposure": 60,
+			"RapportTrustDelta": 5,
+			"ChallengeTrustDelta": -10,
+			"ChallengeComposureDelta": -5,
+			"DefaultLine": "I've told you everything I know. That's why I keep writing.",
+			"RefusalLine": "Karen Pask says she will speak to your superintendent and nobody else.",
+			"Responses": [
+				{
+					"Id": "NinthFloor.R.Karen.Night",
+					"Trigger": "NinthFloor.T.Night",
+					"Line": "He rang me at six. Said he was off to the club and he'd be back for the film at nine. He sounded like himself. He sounded fine.",
+					"AssertsFacts": [
+						"NinthFloor.F.Mood.No"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Karen.Colin",
+					"Trigger": "NinthFloor.T.Colin",
+					"Line": "He wasn't a man who'd do that. He'd booked a week in Skegness for May. He'd paid the deposit. You don't pay a deposit.",
+					"AssertsFacts": [
+						"NinthFloor.F.Mood.No"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Karen.ColinPressed",
+					"Trigger": "NinthFloor.T.Colin",
+					"Line": "Don't. Everyone's said that to me for thirty years. 'He was grieving, love.' Of course he was grieving. He wasn't finished.",
+					"Approach": "Challenge",
+					"TrustDelta": -5
+				},
+				{
+					"Id": "NinthFloor.R.Karen.Lee",
+					"Trigger": "NinthFloor.T.Lee",
+					"Line": "The lad lodging with Pat next door. Dad said things had been going missing since he came. Tobacco tins. A tenner from the tea caddy. He'd not say anything, because of Pat."
+				},
+				{
+					"Id": "NinthFloor.R.Karen.Pat",
+					"Trigger": "NinthFloor.T.Pat",
+					"Line": "Pat Rawlings. Mum's friend for forty years. Dad gave her his spare key, in case he ever had a fall and couldn't get to the door.",
+					"SetFlags": [
+						"NinthFloor.Flag.SpareKey"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Karen.Key",
+					"Trigger": "NinthFloor.T.Key",
+					"Line": "Pat had it. Nobody else. Dad was funny about keys."
+				},
+				{
+					"Id": "NinthFloor.R.Karen.Ring",
+					"Trigger": "NinthFloor.T.Ring",
+					"Line": "Mum's eternity ring. Five little diamonds. After she died he wore it on his little finger, till it got too tight, then he kept it in her box by the bed. It wasn't on him and it wasn't in the flat. The police said he'd likely sold it. He'd have sold a kidney first.",
+					"SetFlags": [
+						"NinthFloor.Flag.RingLead"
+					],
+					"AssertsFacts": [
+						"NinthFloor.F.Mood.No"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Karen.Diary",
+					"Trigger": "NinthFloor.E.Diary",
+					"Line": "That's his writing. 'Someone has been in the flat again.' Again. He wrote again."
+				},
+				{
+					"Id": "NinthFloor.R.Karen.Inquest",
+					"Trigger": "NinthFloor.E.Inquest",
+					"Line": "Two hundred pound of council tax. That's what they decided my dad died over."
+				},
+				{
+					"Id": "NinthFloor.R.Karen.PM",
+					"Trigger": "NinthFloor.E.PostMortem",
+					"Line": "I couldn't read it, then. ... Fingers. On his arm. Nobody ever said that to me. Nobody said.",
+					"ComposureDelta": -10
+				},
+				{
+					"Id": "NinthFloor.R.Karen.Photos",
+					"Trigger": "NinthFloor.E.ScenePhotos",
+					"Line": "Mum's box. Open. He'd never leave it open.",
+					"SetFlags": [
+						"NinthFloor.Flag.JewelleryBox"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Karen.Pawn",
+					"Trigger": "NinthFloor.E.PawnRecord",
+					"Line": "That's Mum's ring. Forty-five pounds. Lee Cotter took Mum's ring off my dad's bedside and got forty-five pounds for it.",
+					"ComposureDelta": -15
+				},
+				{
+					"Id": "NinthFloor.R.Karen.CallLog",
+					"Trigger": "NinthFloor.E.CallLog",
+					"Line": "A second call. Somebody saw him running and it isn't even in the file?",
+					"ComposureDelta": -10
+				}
+			]
+		},
+		{
+			"Id": "NinthFloor.C.Lee",
+			"Name": "Lee Cotter",
+			"Role": "Lodged with Pat Rawlings next door in 1996. Now 52",
+			"StartingTrust": 35,
+			"StartingComposure": 70,
+			"RapportTrustDelta": 5,
+			"ChallengeTrustDelta": -10,
+			"ChallengeComposureDelta": -10,
+			"DefaultLine": "Dunno. It was thirty years ago, mate.",
+			"RefusalLine": "Lee Cotter has a solicitor now, and the solicitor says no.",
+			"Responses": [
+				{
+					"Id": "NinthFloor.R.Lee.Night0",
+					"Trigger": "NinthFloor.T.Night",
+					"Line": "I was in with Pat. Casualty, then the film. Heard the sirens like everyone else.",
+					"StoryStep": 0,
+					"AssertsFacts": [
+						"NinthFloor.F.Alibi.Yes"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Lee.NightTooSoon",
+					"Trigger": "NinthFloor.T.Night",
+					"Line": "You what? You think I... No. I'm not having this. I want a solicitor. We're done.",
+					"Approach": "Challenge",
+					"StoryStep": 0,
+					"RequiresNotHeld": [
+						"NinthFloor.E.PawnRecord"
+					],
+					"Priority": 10,
+					"EndsCooperation": true,
+					"SetFlags": [
+						"NinthFloor.Flag.LeeLawyered"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Lee.Night1",
+					"Trigger": "NinthFloor.T.Night",
+					"Line": "I've told you. I was in with Pat.",
+					"StoryStep": 1,
+					"ComposureDelta": -5,
+					"AssertsFacts": [
+						"NinthFloor.F.Alibi.Yes"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Lee.Night1Breaks",
+					"Trigger": "NinthFloor.T.Night",
+					"Line": "Pat said that? She was asleep, she doesn't know what... All right. All right. I was in his flat. He was meant to be at the club till eleven. He come back early and caught me, and he got hold of my arm, and we were out on the balcony and he wouldn't let go. I pushed him off me. That's all I did. I pushed him off me, and he went back against the rail, and he just went.",
+					"Approach": "Challenge",
+					"StoryStep": 1,
+					"MaxComposure": 55,
+					"RequiresFlags": [
+						"NinthFloor.Flag.PatRecants"
+					],
+					"Priority": 8,
+					"SetStoryStep": 2,
+					"SetFlags": [
+						"NinthFloor.Flag.LeeAdmits"
+					],
+					"AssertsFacts": [
+						"NinthFloor.F.Death.Pushed",
+						"NinthFloor.F.WhoThere.Lee",
+						"NinthFloor.F.Alibi.No",
+						"NinthFloor.F.Ring.StolenByLee"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Lee.ColinRapport",
+					"Trigger": "NinthFloor.T.Colin",
+					"Line": "I didn't mean it. You have to know that. I'd been taking bits from his flat for weeks, off Pat's hook, and that night he come back early. He grabbed me on the balcony. I only pushed him off me. I've seen him go over every night for thirty years.",
+					"Approach": "Rapport",
+					"StoryStep": 1,
+					"MinTrust": 50,
+					"RequiresFlags": [
+						"NinthFloor.Flag.PatRecants"
+					],
+					"Priority": 8,
+					"SetStoryStep": 2,
+					"SetFlags": [
+						"NinthFloor.Flag.LeeAdmits"
+					],
+					"AssertsFacts": [
+						"NinthFloor.F.Death.Pushed",
+						"NinthFloor.F.WhoThere.Lee",
+						"NinthFloor.F.Alibi.No",
+						"NinthFloor.F.Ring.StolenByLee"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Lee.Colin",
+					"Trigger": "NinthFloor.T.Colin",
+					"Line": "Miserable old sod, if you want the truth. Always banging on the wall about the telly."
+				},
+				{
+					"Id": "NinthFloor.R.Lee.Night2",
+					"Trigger": "NinthFloor.T.Night",
+					"Line": "I've told you what happened. I'm not saying it again.",
+					"StoryStep": 2
+				},
+				{
+					"Id": "NinthFloor.R.Lee.Pat",
+					"Trigger": "NinthFloor.T.Pat",
+					"Line": "Pat was good to me. Better than my own mam. Leave her out of it.",
+					"TrustDelta": 5
+				},
+				{
+					"Id": "NinthFloor.R.Lee.Key",
+					"Trigger": "NinthFloor.T.Key",
+					"Line": "Pat's keys? Nothing to do with me.",
+					"ComposureDelta": -10
+				},
+				{
+					"Id": "NinthFloor.R.Lee.Ring0",
+					"Trigger": "NinthFloor.T.Ring",
+					"Line": "What ring?",
+					"StoryStep": 0,
+					"ComposureDelta": -5
+				},
+				{
+					"Id": "NinthFloor.R.Lee.Ring1",
+					"Trigger": "NinthFloor.T.Ring",
+					"Line": "I told you. He give it me to sell.",
+					"StoryStep": 1,
+					"AssertsFacts": [
+						"NinthFloor.F.Ring.SoldByColin"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Lee.Diary",
+					"Trigger": "NinthFloor.E.Diary",
+					"Line": "'Someone's been in the flat.' He was going a bit funny by then. Ask anyone.",
+					"AssertsFacts": [
+						"NinthFloor.F.Mood.Yes"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Lee.Photos",
+					"Trigger": "NinthFloor.E.ScenePhotos",
+					"Line": "Looks like he was having a clear-out."
+				},
+				{
+					"Id": "NinthFloor.R.Lee.PM",
+					"Trigger": "NinthFloor.E.PostMortem",
+					"Line": "I don't know nothing about bruises. He fell nine floors.",
+					"ComposureDelta": -10
+				},
+				{
+					"Id": "NinthFloor.R.Lee.PMTooSoon",
+					"Trigger": "NinthFloor.E.PostMortem",
+					"Line": "You what? You think I... No. I'm not having this. I want a solicitor. We're done.",
+					"Approach": "Challenge",
+					"StoryStep": 0,
+					"RequiresNotHeld": [
+						"NinthFloor.E.PawnRecord"
+					],
+					"Priority": 10,
+					"EndsCooperation": true,
+					"SetFlags": [
+						"NinthFloor.Flag.LeeLawyered"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Lee.Pawn0",
+					"Trigger": "NinthFloor.E.PawnRecord",
+					"Line": "Yeah, all right, I pawned it. He give it me to sell for him. He was skint, wasn't he? Council were after him. I was doing him a favour.",
+					"StoryStep": 0,
+					"SetStoryStep": 1,
+					"ComposureDelta": -15,
+					"AssertsFacts": [
+						"NinthFloor.F.Ring.SoldByColin"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Lee.Pawn1",
+					"Trigger": "NinthFloor.E.PawnRecord",
+					"Line": "I've said. He give it me.",
+					"StoryStep": 1,
+					"ComposureDelta": -10
+				},
+				{
+					"Id": "NinthFloor.R.Lee.CallLog",
+					"Trigger": "NinthFloor.E.CallLog",
+					"Line": "White jacket. Everybody had a white jacket in 1996.",
+					"ComposureDelta": -15
+				},
+				{
+					"Id": "NinthFloor.R.Lee.OwnStatement",
+					"Trigger": "NinthFloor.E.LeeStatement1996",
+					"Line": "That's what I said."
+				},
+				{
+					"Id": "NinthFloor.R.Lee.PatStatement",
+					"Trigger": "NinthFloor.E.PatStatement1996",
+					"Line": "There you go. Pat says."
+				}
+			]
+		},
+		{
+			"Id": "NinthFloor.C.Pat",
+			"Name": "Pat Rawlings",
+			"Role": "Colin's next-door neighbour. Now 91, in a care home in Mapperley",
+			"StartingTrust": 50,
+			"StartingComposure": 45,
+			"RapportTrustDelta": 6,
+			"ChallengeTrustDelta": -10,
+			"ChallengeComposureDelta": -15,
+			"DefaultLine": "I'm sorry, duck. I lose track.",
+			"RefusalLine": "The care home manager says Pat is too upset to see anyone, and won't be asked again.",
+			"Responses": [
+				{
+					"Id": "NinthFloor.R.Pat.Night",
+					"Trigger": "NinthFloor.T.Night",
+					"Line": "Lee was with me. He was always with me of a Saturday. We had our tea on our knees.",
+					"AssertsFacts": [
+						"NinthFloor.F.Alibi.Yes"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Pat.NightTruth",
+					"Trigger": "NinthFloor.T.Night",
+					"Line": "I nodded off. I always nodded off in Casualty. The sirens woke me, and Lee was coming in the door in that white jacket of his. I told the policeman he'd been with me all night, because he had, mostly. He was good to me, Lee. He did my shopping.",
+					"Approach": "Rapport",
+					"MinTrust": 62,
+					"Priority": 5,
+					"SetFlags": [
+						"NinthFloor.Flag.PatRecants"
+					],
+					"AssertsFacts": [
+						"NinthFloor.F.Alibi.No"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Pat.NightPressed",
+					"Trigger": "NinthFloor.T.Night",
+					"Line": "Don't you raise your voice at me. I'm ninety-one. I want you to go now.",
+					"Approach": "Challenge",
+					"Priority": 6,
+					"EndsCooperation": true,
+					"SetFlags": [
+						"NinthFloor.Flag.PatUpset"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Pat.Colin",
+					"Trigger": "NinthFloor.T.Colin",
+					"Line": "Colin was a gentleman. After Maureen went he'd sit with me Sundays. He gave me his spare key, in case he had a fall.",
+					"SetFlags": [
+						"NinthFloor.Flag.SpareKey"
+					],
+					"AssertsFacts": [
+						"NinthFloor.F.Mood.No"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Pat.Lee",
+					"Trigger": "NinthFloor.T.Lee",
+					"Line": "Lee was my lodger. My sister's lad's friend. He'd had a hard start. He kept his keys on my hook by the door, next to Colin's.",
+					"SetFlags": [
+						"NinthFloor.Flag.SpareKey"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Pat.Key",
+					"Trigger": "NinthFloor.T.Key",
+					"Line": "On the hook by the door. Colin's and Lee's, side by side. Anyone could have picked up the wrong one."
+				},
+				{
+					"Id": "NinthFloor.R.Pat.Ring",
+					"Trigger": "NinthFloor.T.Ring",
+					"Line": "Maureen's ring. She'd have hated it out of her box."
+				},
+				{
+					"Id": "NinthFloor.R.Pat.Pawn",
+					"Trigger": "NinthFloor.E.PawnRecord",
+					"Line": "Maureen's ring. Oh, no. Oh, Lee. ... I'll tell you something I never told the policeman. I was asleep that night. When I woke up he was coming in the door with his coat on.",
+					"MinTrust": 50,
+					"Priority": 5,
+					"Once": true,
+					"SetFlags": [
+						"NinthFloor.Flag.PatRecants"
+					],
+					"AssertsFacts": [
+						"NinthFloor.F.Alibi.No"
+					]
+				},
+				{
+					"Id": "NinthFloor.R.Pat.PawnLow",
+					"Trigger": "NinthFloor.E.PawnRecord",
+					"Line": "I can't read that without my glasses, duck."
+				},
+				{
+					"Id": "NinthFloor.R.Pat.OwnStatement",
+					"Trigger": "NinthFloor.E.PatStatement1996",
+					"Line": "That's my writing. I said what I thought was right."
+				},
+				{
+					"Id": "NinthFloor.R.Pat.LeeStatement",
+					"Trigger": "NinthFloor.E.LeeStatement1996",
+					"Line": "Lee said that? Well, then."
+				},
+				{
+					"Id": "NinthFloor.R.Pat.Diary",
+					"Trigger": "NinthFloor.E.Diary",
+					"Line": "He never said a word to me about anyone in his flat. He'd not have wanted to worry me."
+				}
+			]
+		}
+	],
+	"Evidence": [
+		{
+			"Id": "NinthFloor.E.Diary",
+			"ExhibitRef": "KP/1",
+			"Name": "Page from Colin Pask's diary, week of 4 March 1996",
+			"Description": "Sent in by Karen Pask last month. She found it in a box of his things she had never been able to open.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "NinthFloor.E.Diary.Entry",
+					"Text": "Tuesday 5 March: \"Someone has been in the flat again. Maureen's box moved. Said nothing to Pat. Will get lock changed Monday.\"",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "NinthFloor.E.Diary.Entry.Afraid",
+							"Text": "A frightened, grieving man, losing his grip",
+							"SupportsFacts": [
+								"NinthFloor.F.Mood.Yes"
+							]
+						},
+						{
+							"Id": "NinthFloor.E.Diary.Entry.Key",
+							"Text": "Someone was getting in with a key, and he was going to stop them",
+							"SupportsFacts": [
+								"NinthFloor.F.Mood.No"
+							]
+						}
+					]
+				}
+			],
+			"Author": "NinthFloor.C.Colin",
+			"SetFlagsWhenExamined": [
+				"NinthFloor.Flag.JewelleryBox"
+			]
+		},
+		{
+			"Id": "NinthFloor.E.Inquest",
+			"ExhibitRef": "HM/2",
+			"Name": "Coroner's summary, inquest of Colin Pask, June 1996",
+			"Description": "The coroner's notes and verdict.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "NinthFloor.E.Inquest.Background",
+					"Text": "Widowed in 1994. On his GP's books for low mood. Council tax arrears of \u00a3212. No note was found.",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "NinthFloor.E.Inquest.Background.Suicide",
+							"Text": "A grieving man in debt took his own life",
+							"SupportsFacts": [
+								"NinthFloor.F.Death.Suicide",
+								"NinthFloor.F.Mood.Yes"
+							]
+						},
+						{
+							"Id": "NinthFloor.E.Inquest.Background.Common",
+							"Text": "Plenty of people are low and in arrears. It doesn't make them jump",
+							"SupportsFacts": []
+						}
+					]
+				},
+				{
+					"Id": "NinthFloor.E.Inquest.Verdict",
+					"Text": "Open verdict. \"There is no evidence that any other person was present.\"",
+					"SupportsFacts": [],
+					"Interpretations": []
+				}
+			]
+		},
+		{
+			"Id": "NinthFloor.E.PostMortem",
+			"ExhibitRef": "PM/1",
+			"Name": "Post-mortem report, Colin Pask",
+			"Description": "The pathologist's report, March 1996.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "NinthFloor.E.PostMortem.Arm",
+					"Text": "Injuries consistent with a fall from height. Also: four fresh oval bruises on the left upper arm in a fingertip pattern, and the nail of the right index finger torn back, with fibres beneath it. The fibres were not kept.",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "NinthFloor.E.PostMortem.Arm.Gripped",
+							"Text": "Someone gripped his arm, and he fought them",
+							"SupportsFacts": [
+								"NinthFloor.F.Death.Pushed"
+							]
+						},
+						{
+							"Id": "NinthFloor.E.PostMortem.Arm.Fall",
+							"Text": "He caught the rail going over. The fall did the rest",
+							"SupportsFacts": [
+								"NinthFloor.F.Death.Accident"
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"Id": "NinthFloor.E.ScenePhotos",
+			"ExhibitRef": "SC/4",
+			"Name": "Scene photographs, Flat 9D, Kingsmead House",
+			"Description": "Taken the same night.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "NinthFloor.E.ScenePhotos.Chair",
+					"Text": "No forced entry. The balcony door is open. A dining chair lies on its side on the balcony.",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "NinthFloor.E.ScenePhotos.Chair.Climb",
+							"Text": "He took a chair out to climb on",
+							"SupportsFacts": [
+								"NinthFloor.F.Death.Suicide"
+							]
+						},
+						{
+							"Id": "NinthFloor.E.ScenePhotos.Chair.Struggle",
+							"Text": "The chair went over in a struggle",
+							"SupportsFacts": [
+								"NinthFloor.F.Death.Pushed"
+							]
+						}
+					]
+				},
+				{
+					"Id": "NinthFloor.E.ScenePhotos.Box",
+					"Text": "On the bedside table, a small jewellery box, open and empty.",
+					"SupportsFacts": [],
+					"Interpretations": []
+				}
+			],
+			"SetFlagsWhenExamined": [
+				"NinthFloor.Flag.JewelleryBox"
+			]
+		},
+		{
+			"Id": "NinthFloor.E.LeeStatement1996",
+			"ExhibitRef": "SC/7",
+			"Name": "Witness statement of Lee Cotter, 10/03/1996",
+			"Description": "Taken during house-to-house on the ninth floor.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "NinthFloor.E.LeeStatement1996.Alibi",
+					"Text": "\"I was at Pat's all evening. We watched Casualty and then the film. I never went out.\"",
+					"SupportsFacts": [
+						"NinthFloor.F.Alibi.Yes",
+						"NinthFloor.F.WhoThere.NoOne"
+					],
+					"Interpretations": []
+				}
+			],
+			"Author": "NinthFloor.C.Lee"
+		},
+		{
+			"Id": "NinthFloor.E.PatStatement1996",
+			"ExhibitRef": "SC/8",
+			"Name": "Witness statement of Pat Rawlings, 10/03/1996",
+			"Description": "Taken during house-to-house on the ninth floor.",
+			"Availability": "InitialFile",
+			"Findings": [
+				{
+					"Id": "NinthFloor.E.PatStatement1996.Alibi",
+					"Text": "\"Lee was with me all evening, watching the television. I heard a bang and then the sirens.\"",
+					"SupportsFacts": [
+						"NinthFloor.F.Alibi.Yes"
+					],
+					"Interpretations": []
+				}
+			],
+			"Author": "NinthFloor.C.Pat"
+		},
+		{
+			"Id": "NinthFloor.E.CallLog",
+			"ExhibitRef": "CF/1",
+			"Name": "999 control log, Kingsmead House, 9/3/1996",
+			"Description": "Police and ambulance control log for the night. Has to be requested from the archive.",
+			"Availability": "OnRequest",
+			"Findings": [
+				{
+					"Id": "NinthFloor.E.CallLog.Calls",
+					"Text": "21:38, Flat 7F: \"a man shouting up on nine, then something fell past my window.\" 21:41, Flat 7F again: \"a young lad in a white jacket running down the stairs.\" The second call appears nowhere in the investigation file.",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "NinthFloor.E.CallLog.Calls.Fled",
+							"Text": "Someone was with Colin when he fell, and ran",
+							"SupportsFacts": [
+								"NinthFloor.F.Death.Pushed",
+								"NinthFloor.F.WhoThere.Stranger"
+							]
+						},
+						{
+							"Id": "NinthFloor.E.CallLog.Calls.Lee",
+							"Text": "The lad on the stairs was Lee Cotter",
+							"SupportsFacts": [
+								"NinthFloor.F.Death.Pushed",
+								"NinthFloor.F.WhoThere.Lee"
+							]
+						},
+						{
+							"Id": "NinthFloor.E.CallLog.Calls.Curious",
+							"Text": "A lad running to see what had happened",
+							"SupportsFacts": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"Id": "NinthFloor.E.PawnRecord",
+			"ExhibitRef": "CF/2",
+			"Name": "Pledge ledger, Hockley pawnbrokers, March 1996",
+			"Description": "Needs a production order. The shop closed in 2004; the ledgers went to the owner's son.",
+			"Availability": "OnRequest",
+			"Findings": [
+				{
+					"Id": "NinthFloor.E.PawnRecord.Ring",
+					"Text": "Monday 11 March 1996: \"Lady's eternity ring, 9ct gold, five small diamonds. Pledged by L. Cotter, 9C Kingsmead House. \u00a345.\" Never redeemed.",
+					"SupportsFacts": [],
+					"Interpretations": [
+						{
+							"Id": "NinthFloor.E.PawnRecord.Ring.Stolen",
+							"Text": "Lee took it from Colin's flat",
+							"SupportsFacts": [
+								"NinthFloor.F.Ring.StolenByLee"
+							]
+						},
+						{
+							"Id": "NinthFloor.E.PawnRecord.Ring.Errand",
+							"Text": "Colin gave it to Lee to sell for him",
+							"SupportsFacts": [
+								"NinthFloor.F.Ring.SoldByColin",
+								"NinthFloor.F.Mood.Yes"
+							]
+						}
+					]
+				}
+			],
+			"RequiresFlags": [
+				"NinthFloor.Flag.RingLead"
+			]
+		}
+	]
+}

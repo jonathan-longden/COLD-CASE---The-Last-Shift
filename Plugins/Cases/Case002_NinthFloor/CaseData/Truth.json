@@ -1,0 +1,63 @@
+{
+	"SchemaVersion": 1,
+	"CaseId": "NinthFloor",
+	"TrueFacts": [
+		"NinthFloor.F.Death.Pushed",
+		"NinthFloor.F.WhoThere.Lee",
+		"NinthFloor.F.Alibi.No",
+		"NinthFloor.F.Ring.StolenByLee",
+		"NinthFloor.F.Mood.No"
+	],
+	"Summary": "Lee Cotter, 22, lodged with Pat Rawlings in the flat next to Colin's. Pat kept Colin's spare key on the hook by her door, beside Lee's keys, and for weeks Lee had been letting himself into Colin's flat while he was at the club, taking small things. Colin noticed, wrote it in his diary, and planned to change the lock. On Saturday 9 March Colin came home from the club early. He found Lee in the bedroom with Maureen's eternity ring and caught hold of his arm. They struggled out onto the balcony; the chair went over; Lee shoved him off, and Colin went back against the rail and over it. Lee ran down the stairs, where a neighbour on the seventh floor saw a lad in a white jacket. Her second call never reached the file. Pat had slept through Casualty and woke to the sirens as Lee came in. She told the police he had been with her all night because she could not imagine otherwise. Two days later Lee pawned the ring for forty-five pounds. The inquest heard about the grief, the GP and the arrears. It never heard about the bruises' shape, the missing ring or the second call.",
+	"Epilogues": [
+		{
+			"RequiresFlags": [
+				"NinthFloor.Flag.LeeAdmits"
+			],
+			"RequiresAnswers": [
+				"NinthFloor.F.Death.Pushed",
+				"NinthFloor.F.WhoThere.Lee"
+			],
+			"Text": "Lee Cotter was charged with the manslaughter of Colin Pask and pleaded guilty. Karen Pask sat in the public gallery every day. Afterwards she asked about her mother's ring. It had been sold on in 1997, and was never found."
+		},
+		{
+			"RequiresNotFlags": [
+				"NinthFloor.Flag.LeeAdmits"
+			],
+			"RequiresAnswers": [
+				"NinthFloor.F.WhoThere.Lee"
+			],
+			"Text": "The Crown Prosecution Service would not charge Lee Cotter on what the file held. The coroner reopened the inquest, and a second jury found that Colin Pask had been unlawfully killed. Karen Pask has stopped writing to us. She says she knows now, and that will have to do."
+		},
+		{
+			"RequiresAnswers": [
+				"NinthFloor.F.Death.Suicide"
+			],
+			"Text": "The file went back to the archive with the original verdict standing. Karen Pask wrote again the following March. And the March after that."
+		},
+		{
+			"RequiresFlags": [
+				"NinthFloor.Flag.LeeLawyered"
+			],
+			"RequiresNotFlags": [
+				"NinthFloor.Flag.LeeAdmits"
+			],
+			"Text": "Lee Cotter's solicitor complained in writing about the way his client was questioned before any evidence was put to him. The letter is on the file, and any future defence will read it."
+		},
+		{
+			"RequiresFlags": [
+				"NinthFloor.Flag.PatUpset"
+			],
+			"Text": "Pat Rawlings died that summer. Her carers said she had been unsettled since the police visit, and asked for Lee every day."
+		},
+		{
+			"RequiresFlags": [
+				"NinthFloor.Flag.PatRecants"
+			],
+			"RequiresNotFlags": [
+				"NinthFloor.Flag.PatUpset"
+			],
+			"Text": "Pat Rawlings asked one of her carers to write a letter to Karen Pask. It said: I'm sorry, duck. I was asleep."
+		}
+	]
+}
