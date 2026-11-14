@@ -62,7 +62,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Save")
 	bool OpenCase(FName CasePlugin);
 
+	/** True when the last OpenCase started its case from the beginning (there was no autosave to resume). */
+	bool WasLastOpenFresh() const { return bLastOpenFresh; }
+
 private:
+	bool bLastOpenFresh = false;
 	static FString ManualSlotName(int32 SlotNumber);
 	FString AutosaveSlotName() const;
 	static FString AutosaveSlotNameFor(FName CasePlugin);

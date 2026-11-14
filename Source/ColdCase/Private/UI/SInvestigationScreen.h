@@ -138,6 +138,9 @@ private:
 	bool bClipOpened = false;
 	bool bOpeningFilmOffered = false;
 
+	/** The case the screen is showing. If the active case changes underneath it (for example from the console), the screen starts afresh. */
+	FName ShownCasePlugin;
+
 	/** The opening film's buttons fade away while it plays and come back on any key or mouse movement. */
 	bool IsFullScreenFilm() const;
 	float GetFilmMenuOpacity() const;

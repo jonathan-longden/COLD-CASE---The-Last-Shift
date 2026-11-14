@@ -189,6 +189,25 @@ void SInvestigationScreen::Tick(const FGeometry& AllottedGeometry, const double 
 {
 	SCompoundWidget::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
 
+	// A different case is now open (from the case list or the console): leave any clip and start on the new case's front page.
+	// Its opening film plays if the case was opened from the beginning.
+	if (Investigation.IsValid() && Investigation->IsCaseActive())
+	{
+		const FName Active = Investigation->GetActiveCasePlugin();
+		if (ShownCasePlugin.IsNone())
+		{
+			ShownCasePlugin = Active;
+		}
+		else if (Active != ShownCasePlugin)
+		{
+			ShownCasePlugin = Active;
+			Transcript.Reset();
+			LeadsCase = NAME_None;
+			bOpeningFilmOffered = !(Saves.IsValid() && Saves->WasLastOpenFresh());
+			GoTo(EPage::Home);
+		}
+	}
+
 	// Rebuilding is deferred to here so a button is never destroyed in the middle of its own click.
 	if (bRebuildPending)
 	{
@@ -1020,8 +1039,8 @@ void SInvestigationScreen::BuildCases()
 			if (bOpened)
 			{
 				// A new case on the desk: its opening film (if it has one) plays the first time it is opened.
-				FSaveSlotHeader Ignored;
-				bOpeningFilmOffered = Saves->GetAutosaveHeaderFor(PluginCopy, Ignored);
+				ShownCasePlugin = PluginCopy;
+				bOpeningFilmOffered = !Saves->WasLastOpenFresh();
 				Notice = FString::Printf(TEXT("You take out the file: %s."), *CaseTitle);
 			}
 			else
