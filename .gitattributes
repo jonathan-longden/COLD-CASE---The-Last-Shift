@@ -36,6 +36,9 @@ Plugins/Cases/Case000_TillRoll/Media/OpeningFilm.mp4 -filter -diff -merge -text
 Plugins/Cases/Case000_TillRoll/Media/TillRollDesk.mp4 -filter -diff -merge -text
 Plugins/Cases/Case000_TillRoll/Media/DinerClosing.mp4 -filter -diff -merge -text
 Plugins/Cases/Case000_TillRoll/Media/DinerFromOpposite.mp4 -filter -diff -merge -text
+Plugins/Cases/Case002_NinthFloor/Media/OpeningFilm.mp4 -filter -diff -merge -text
+Plugins/Cases/Case003_BonfireNight/Media/OpeningFilm.mp4 -filter -diff -merge -text
+Plugins/Cases/Case004_LongNight/Media/OpeningFilm.mp4 -filter -diff -merge -text
 
 # Small UI images kept in plain Git so they can be pushed from anywhere.
 Art/UI/*.png -filter -diff -merge -text

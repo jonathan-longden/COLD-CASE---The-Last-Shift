@@ -3,6 +3,13 @@
 	"CaseId": "Bonfire",
 	"Title": "Case 3: Bonfire Night",
 	"Briefing": "On Bonfire Night 1983 fire tore through 14 Kirkby Street in the Meadows and killed Eileen Grice, 71. The fire brigade put it down to a rocket through the letterbox. The street put it down to a fourteen-year-old called Tony Shaw, and his family were driven out within the year. Tony is 57 now. He has written to the Chief Constable asking, one last time, for his name to be cleared. Tell me what started that fire. Go gently with Tony. The last time police spoke to him, he was a child in a room with no adult.",
+	"OpeningFilm": {
+		"Id": "Bonfire.M.OpeningFilm",
+		"Kind": "Video",
+		"File": "OpeningFilm.mp4",
+		"Caption": "Tony's letter",
+		"Transcript": "To the Chief Constable. My name is Anthony Shaw. Bonfire Night, 1983, Mrs Grice's house on Kirkby Street burned with her inside it. I was fourteen. The whole street said it was me. Your lot kept me in a room all night. No mum. No solicitor. Nobody. They never charged me. They didn't need to. We were gone by the summer. I'm fifty-seven now. I didn't do it. I'm asking you, one last time."
+	},
 	"KeyQuestions": [
 		"Bonfire.Q.Cause",
 		"Bonfire.Q.Who",

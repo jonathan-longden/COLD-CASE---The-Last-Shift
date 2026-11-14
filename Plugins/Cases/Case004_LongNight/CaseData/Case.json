@@ -3,6 +3,13 @@
 	"CaseId": "LongNight",
 	"Title": "Case 4: The Long Night",
 	"Briefing": "On the night of 21 November 1984, at the height of the miners' strike, Dennis Hale, 41, a Gedling miner who had gone back to work, was found dead at the foot of the railway embankment behind the pit. Paul Ritchie, a 23-year-old flying picket from Barnsley, confessed after nineteen hours in a cell and served nine years for manslaughter. He died in 2015, still saying he had been made to sign. His daughter Gemma took the case to the Criminal Cases Review Commission, and they have sent it to us. Everyone in this file picked a side in 1984. Most of them still have. Don't let them pick one for you.",
+	"OpeningFilm": {
+		"Id": "LongNight.M.OpeningFilm",
+		"Kind": "Video",
+		"File": "OpeningFilm.mp4",
+		"Caption": "Gemma's letter",
+		"Transcript": "My dad was Paul Ritchie. He came down from Barnsley on a picket coach. He was twenty-three. That night a man died behind Gedling pit. Dennis Hale. He had a family too. I know that. My dad was nineteen hours in a cell before he signed. He served nine years. Every birthday, every Christmas, he'd say it. I never touched him, Gem. He died still saying it. I'm not asking you to believe him. I'm asking you to look."
+	},
 	"KeyQuestions": [
 		"LongNight.Q.Confession",
 		"LongNight.Q.PaulWhere",

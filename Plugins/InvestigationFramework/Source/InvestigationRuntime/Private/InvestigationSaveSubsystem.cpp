@@ -219,6 +219,7 @@ bool UInvestigationSaveSubsystem::LoadAutosave()
 
 bool UInvestigationSaveSubsystem::LoadSlot(const FString& SlotName)
 {
+	bLastOpenFresh = false;   // a loaded save is never a fresh start
 	if (!Investigation || !CaseFile || !CaseState || !Interviews || !Theory)
 	{
 		return false;
@@ -265,6 +266,7 @@ bool UInvestigationSaveSubsystem::OpenCase(FName CasePlugin)
 	{
 		return false;
 	}
+	bLastOpenFresh = false;
 	if (Investigation->IsCaseActive())
 	{
 		if (Investigation->GetActiveCasePlugin() == CasePlugin)
@@ -277,7 +279,8 @@ bool UInvestigationSaveSubsystem::OpenCase(FName CasePlugin)
 	{
 		return true;
 	}
-	return Investigation->StartCase(CasePlugin);
+	bLastOpenFresh = Investigation->StartCase(CasePlugin);
+	return bLastOpenFresh;
 }
 
 // ---------------------------------------------------------------------------------------------
