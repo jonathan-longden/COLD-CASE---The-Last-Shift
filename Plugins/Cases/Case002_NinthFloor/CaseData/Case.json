@@ -3,6 +3,13 @@
 	"CaseId": "NinthFloor",
 	"Title": "Case 2: The Ninth Floor",
 	"Briefing": "Colin Pask, 58, a retired bus driver, went over the balcony of his ninth-floor flat in Kingsmead House, St Ann's, on Saturday 9 March 1996. The coroner recorded an open verdict and the file was closed as a probable suicide. His daughter Karen has written to us every March since. This year she sent something new: a page from his diary. Find out how Colin Pask died. And be careful who you lean on. Some of these people are very old now, and some of them aren't.",
+	"OpeningFilm": {
+		"Id": "NinthFloor.M.OpeningFilm",
+		"Kind": "Video",
+		"File": "OpeningFilm.mp4",
+		"Caption": "Karen's letter",
+		"Transcript": "Dear Sir or Madam. It's March again, so you'll know who this is from. My dad was Colin Pask. He drove the buses in this city for thirty-one years. On the ninth of March, 1996, he went off that balcony. Everybody said he jumped. He rang me at six that night. He was off to the club, and he'd be back for the film at nine. Last month I finally opened the box of his things. His diary was in it. He wrote that someone had been in his flat. Please. Read it this time."
+	},
 	"KeyQuestions": [
 		"NinthFloor.Q.Death",
 		"NinthFloor.Q.WhoThere",

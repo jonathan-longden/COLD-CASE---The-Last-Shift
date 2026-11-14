@@ -11,5 +11,9 @@ public class Case003_BonfireNight : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[] { "Core" });
 
 		RuntimeDependencies.Add("$(PluginDir)/CaseData/...", StagedFileType.UFS);
+
+		// Video and sound clips are copied as ordinary files beside the game, not packed into the .pak,
+		// because Windows cannot play a video from inside a .pak file.
+		RuntimeDependencies.Add("$(PluginDir)/Media/...", StagedFileType.NonUFS);
 	}
 }
