@@ -1626,8 +1626,9 @@ void SInvestigationScreen::BuildCases()
 		}
 		else if (Status != TEXT("Not yet opened."))
 		{
-			Card.Tag = TEXT("In progress");
-			Card.Tone = ETone::Teal;
+			const bool bClosed = Header.Summary.EndsWith(TEXT("concluded"));
+			Card.Tag = bClosed ? TEXT("Concluded") : TEXT("In progress");
+			Card.Tone = bClosed ? ETone::Dim : ETone::Teal;
 		}
 
 		const FName PluginCopy = Plugin;
@@ -2317,7 +2318,7 @@ TSharedRef<SWidget> SInvestigationScreen::MakeHeader()
 			.HAlign(HAlign_Right)
 			[
 				SNew(STextBlock)
-				.Visibility(CaseName.IsEmpty() || Page == EPage::Home ? EVisibility::Collapsed : EVisibility::Visible)
+				.Visibility(CaseName.IsEmpty() || Page == EPage::Home || !bEnteredCase ? EVisibility::Collapsed : EVisibility::Visible)
 				.Text(FText::FromString(CaseName.ToUpper()))
 				.Font(Caps(11))
 				.ColorAndOpacity(FSlateColor(TextDim))
@@ -2927,6 +2928,7 @@ TSharedRef<SWidget> SInvestigationScreen::MakeTitleScreen(const TSharedRef<SVert
 			+ SVerticalBox::Slot()
 			.FillHeight(1.f)
 			.VAlign(VAlign_Center)
+			.HAlign(HAlign_Left)
 			[
 				SNew(SBox)
 				.WidthOverride(470.f)
@@ -3009,6 +3011,18 @@ bool SInvestigationScreen::DevCommand(const TArray<FString>& Args)
 	if (Args.Num() >= 1 && Args[0] == TEXT("Title")) { GoTo(EPage::Title); return true; }
 	if (Args.Num() >= 1 && Args[0] == TEXT("ExitConfirm")) { GoTo(EPage::ExitConfirm); return true; }
 	if (Args.Num() >= 1 && Args[0] == TEXT("CasesFromTitle")) { bCasesFromTitle = true; GoTo(EPage::Cases); return true; }
+	if (Args.Num() >= 2 && Args[0] == TEXT("OpenCase"))
+	{
+		// Exactly what choosing the case in the list does.
+		FCaseContent Content;
+		FString Error;
+		if (!FCaseDataLoader::LoadContent(FName(*Args[1]), Content, Error))
+		{
+			return false;
+		}
+		EnterCase(FName(*Args[1]), Content.Title.ToString());
+		return true;
+	}
 	if (Args.Num() >= 1 && Args[0] == TEXT("Continue"))
 	{
 		if (bEnteredCase || ContinueFromLatestSave())
@@ -3113,7 +3127,7 @@ namespace InvestigationScreenPrivate
 	// Development only: drives the screens without a keyboard or controller, for unattended screenshots.
 	static FAutoConsoleCommand UiCommand(
 		TEXT("ColdCase.UI"),
-		TEXT("Development only. ColdCase.UI <Title|ExitConfirm|Continue|CasesFromTitle|Home|Exhibits|Exhibit|Statements|People|Interview|Theory|Review|CaseReview|SaveLoad|Cases|Clip|Ask|Present> [Id]"),
+		TEXT("Development only. ColdCase.UI <Title|ExitConfirm|Continue|CasesFromTitle|OpenCase <Plugin>|Home|Exhibits|Exhibit|Statements|People|Interview|Theory|Review|CaseReview|SaveLoad|Cases|Clip|Ask|Present> [Id]"),
 		FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
 		{
 			const TSharedPtr<SInvestigationScreen> Screen = SInvestigationScreen::GetActive();
