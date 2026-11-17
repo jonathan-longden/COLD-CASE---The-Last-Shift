@@ -36,6 +36,6 @@ Name: "{group}\Uninstall {#AppName}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; Tasks: desktopicon
 
 [Run]
-; Microsoft runtimes the game needs (Visual C++ and DirectX). Safe to run when they are already installed.
-Filename: "{app}\Engine\Extras\Redist\en-us\UEPrereqSetup_x64.exe"; Parameters: "/quiet /norestart"; StatusMsg: "Installing Microsoft runtimes..."; Flags: waituntilterminated skipifdoesntexist
+; Microsoft Visual C++ runtime the game needs (UE 5.7 ships vc_redist instead of UEPrereqSetup). Safe to run when it is already installed.
+Filename: "{app}\Engine\Extras\Redist\en-us\vc_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing Microsoft Visual C++ runtime..."; Flags: waituntilterminated skipifdoesntexist
 Filename: "{app}\{#AppExe}"; Description: "Play {#AppName} now"; Flags: nowait postinstall skipifsilent
