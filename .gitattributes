@@ -43,3 +43,5 @@ Plugins/Cases/Case004_LongNight/Media/OpeningFilm.mp4 -filter -diff -merge -text
 
 # Small UI images kept in plain Git so they can be pushed from anywhere.
 Art/UI/*.png -filter -diff -merge -text
+
+ReviewShots/** -filter -diff -merge -text
