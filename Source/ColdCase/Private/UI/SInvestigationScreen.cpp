@@ -2931,7 +2931,7 @@ TSharedRef<SWidget> SInvestigationScreen::MakeTitleScreen(const TSharedRef<SVert
 			.HAlign(HAlign_Left)
 			[
 				SNew(SBox)
-				.WidthOverride(470.f)
+				.WidthOverride(620.f)   // wide enough for the COLD CASE title at any letter spacing
 				.HAlign(HAlign_Fill)
 				[
 					SNew(SVerticalBox)
