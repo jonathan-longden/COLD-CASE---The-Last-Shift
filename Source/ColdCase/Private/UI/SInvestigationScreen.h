@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "CaseDataTypes.h"
+#include "InvestigationSaveGame.h"
 #include "Brushes/SlateColorBrush.h"
 #include "Brushes/SlateDynamicImageBrush.h"
 #include "Widgets/DeclarativeSyntaxSupport.h"
@@ -72,7 +73,9 @@ private:
 		CaseReview,
 		SaveLoad,
 		Clip,
-		Cases
+		Cases,
+		Title,        // the main menu the game starts on
+		ExitConfirm   // "Exit the game?" before closing
 	};
 
 	/** One choice in the left-hand list. A second line (after a line break) is shown smaller, as detail. */
@@ -80,6 +83,8 @@ private:
 	{
 		FText Label;
 		TFunction<void()> Action;
+		/** An unavailable choice is shown dimmed with its reason, and keyboard and controller skip it. */
+		bool bEnabled = true;
 	};
 
 	/** Colour coding for tags and card edges. Teal informs, amber asks for attention, red marks a problem. */
@@ -151,6 +156,33 @@ private:
 	void BuildSaveLoad();
 	void BuildClip();
 	void BuildCases();
+	void BuildTitle();
+	void BuildExitConfirm();
+
+	/**
+	 * The main menu. The game starts here with the first case loaded but untouched; nothing is saved
+	 * over until the player has actually gone into a case (bEnteredCase), so an untouched start can never
+	 * overwrite real progress.
+	 */
+	bool bEnteredCase = false;
+	/** Where Back leads from the case list: the main menu, or the case on the desk. */
+	bool bCasesFromTitle = false;
+
+	/** Takes up a case from the case list: the one already on the desk, its autosave, or a fresh start. */
+	void EnterCase(FName CasePlugin, const FString& CaseTitle);
+	/** The newest save of any kind, for Continue. Tries each in turn, newest first, until one loads. */
+	bool ContinueFromLatestSave();
+	struct FSaveChoice
+	{
+		FSaveSlotHeader Header;
+		FName AutosavePlugin;   // set for an autosave
+		int32 ManualSlot = 0;   // set for a manual save
+	};
+	TArray<FSaveChoice> GetSavesNewestFirst();
+	/** Keeps progress safe on the way out of a case (to the menu, or out of the game). */
+	void SaveProgressQuietly();
+	void QuitGame();
+	TSharedRef<SWidget> MakeTitleScreen(const TSharedRef<SVerticalBox>& Menu);
 
 	/**
 	 * New lines of enquiry (records that can now be requested, people who can now be found, things that
@@ -195,6 +227,7 @@ private:
 	float GetPageFade() const;
 
 	void AddItem(const FText& Label, TFunction<void()> Action);
+	void AddDisabledItem(const FText& Label);
 	void AddBackItem();
 	void AskOrPresent(FName Id, bool bPresent);
 
@@ -225,7 +258,7 @@ private:
 	double FilmMenuShownAt = 0.0;
 	FSlateBrush PictureBrush;
 
-	EPage Page = EPage::Home;
+	EPage Page = EPage::Title;
 	bool bRebuildPending = true;
 
 	/** What the current page is about, where a page needs it. */

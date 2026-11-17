@@ -13,6 +13,8 @@
 #include "InvestigationLog.h"
 #include "InvestigationSettings.h"
 #include "InputCoreTypes.h"
+#include "Containers/Ticker.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "InterviewSubsystem.h"
 #include "InvestigationSaveSubsystem.h"
 #include "InvestigationSubsystem.h"
@@ -230,14 +232,16 @@ namespace InvestigationScreenPrivate
 	class SMenuButton : public SButton
 	{
 	public:
-		SLATE_BEGIN_ARGS(SMenuButton) {}
+		SLATE_BEGIN_ARGS(SMenuButton) : _Enabled(true) {}
 			SLATE_ARGUMENT(FText, Label)
+			SLATE_ARGUMENT(bool, Enabled)
 			SLATE_EVENT(FOnClicked, OnClicked)
 		SLATE_END_ARGS()
 
 		void Construct(const FArguments& InArgs)
 		{
 			// "Load slot 1\nCase 1, 17/11/2026" reads as a line and a smaller line of detail.
+			bAvailable = InArgs._Enabled;
 			const FString Full = InArgs._Label.ToString();
 			FString Main = Full;
 			FString Detail;
@@ -254,7 +258,7 @@ namespace InvestigationScreenPrivate
 					SNew(STextBlock)
 					.Text(FText::FromString(Main))
 					.Font(Sans(16))
-					.ColorAndOpacity_Lambda([this]() { return FSlateColor(IsLit() ? TextMain : TextBody); })
+					.ColorAndOpacity_Lambda([this]() { return FSlateColor(!bAvailable ? WithAlpha(TextDim, 0.7f) : IsLit() ? TextMain : TextBody); })
 					.AutoWrapText(true)
 				];
 			if (!Detail.IsEmpty())
@@ -266,12 +270,14 @@ namespace InvestigationScreenPrivate
 						SNew(STextBlock)
 						.Text(FText::FromString(Detail))
 						.Font(Sans(13))
-						.ColorAndOpacity(FSlateColor(TextDim))
+						.ColorAndOpacity(FSlateColor(bAvailable ? TextDim : WithAlpha(TextDim, 0.7f)))
 						.AutoWrapText(true)
 					];
 			}
 
 			SButton::Construct(SButton::FArguments()
+				.IsEnabled(bAvailable)
+				.IsFocusable(bAvailable)
 				.ButtonStyle(&FCoreStyle::Get().GetWidgetStyle<FButtonStyle>("NoBorder"))
 				.OnClicked(InArgs._OnClicked)
 				.ContentPadding(FMargin(0.f))
@@ -319,8 +325,11 @@ namespace InvestigationScreenPrivate
 
 		bool IsLit() const
 		{
-			return HasKeyboardFocus() || IsHovered();
+			return bAvailable && (HasKeyboardFocus() || IsHovered());
 		}
+
+	private:
+		bool bAvailable = true;
 	};
 
 	FString ApproachName(EInterviewApproach Approach)
@@ -425,6 +434,8 @@ void SInvestigationScreen::Construct(const FArguments& InArgs)
 		PaperBrush->Tiling = ESlateBrushTileType::Both;
 	}
 	MediaPlayback = InArgs._MediaPlayback;
+	// The game opens on the main menu; an opening film plays only when a case is started fresh from there.
+	bOpeningFilmOffered = true;
 	if (UGameInstance* Instance = GameInstance.Get())
 	{
 		Investigation = Instance->GetSubsystem<UInvestigationSubsystem>();
@@ -648,7 +659,18 @@ void SInvestigationScreen::GoBack()
 {
 	switch (Page)
 	{
+	case EPage::Title:
+		break;
 	case EPage::Home:
+		// Back from the front of the file is the main menu. Nothing is lost: the case stays open behind it.
+		SaveProgressQuietly();
+		GoTo(EPage::Title);
+		break;
+	case EPage::ExitConfirm:
+		GoTo(EPage::Title);
+		break;
+	case EPage::Cases:
+		GoTo(bCasesFromTitle ? EPage::Title : EPage::Home);
 		break;
 	case EPage::Exhibit:
 		GoTo(EPage::Exhibits);
@@ -685,6 +707,13 @@ void SInvestigationScreen::AddItem(const FText& Label, TFunction<void()> Action)
 	Item.Action = MoveTemp(Action);
 }
 
+void SInvestigationScreen::AddDisabledItem(const FText& Label)
+{
+	FMenuItem& Item = Items.AddDefaulted_GetRef();
+	Item.Label = Label;
+	Item.bEnabled = false;
+}
+
 void SInvestigationScreen::AddBackItem()
 {
 	AddItem(FText::FromString(TEXT("Back")), [this]() { GoBack(); });
@@ -697,6 +726,17 @@ void SInvestigationScreen::BuildPage()
 	Notices.Reset();
 	Items.Reset();
 
+	if (Page == EPage::Title || Page == EPage::ExitConfirm)
+	{
+		Page == EPage::Title ? BuildTitle() : BuildExitConfirm();
+		if (!Notice.IsEmpty())
+		{
+			Notices.Add(Notice);
+			Notice.Reset();
+		}
+		return;
+	}
+
 	if (!GetCase() || !CaseFile.IsValid() || !Interviews.IsValid() || !Theory.IsValid() || !Resolution.IsValid() || !Saves.IsValid())
 	{
 		Title = FText::FromString(TEXT("COLD CASE"));
@@ -707,7 +747,7 @@ void SInvestigationScreen::BuildPage()
 	}
 
 	// The opening film plays once, the first time the case is on screen.
-	if (!bOpeningFilmOffered)
+	if (!bOpeningFilmOffered && Page == EPage::Home)
 	{
 		bOpeningFilmOffered = true;
 		const FCaseMediaClip& Opening = GetCase()->OpeningFilm;
@@ -772,7 +812,8 @@ void SInvestigationScreen::BuildHome()
 		AddItem(FText::FromString(TEXT("Look back through the exhibits")), [this]() { GoTo(EPage::Exhibits); });
 		AddItem(FText::FromString(TEXT("Look back through the statements")), [this]() { GoTo(EPage::Statements); });
 		AddItem(FText::FromString(TEXT("Save or load")), [this]() { GoTo(EPage::SaveLoad); });
-		AddItem(FText::FromString(TEXT("Other case files")), [this]() { GoTo(EPage::Cases); });
+		AddItem(FText::FromString(TEXT("Other case files")), [this]() { bCasesFromTitle = false; GoTo(EPage::Cases); });
+		AddItem(FText::FromString(TEXT("Main menu")), [this]() { SaveProgressQuietly(); GoTo(EPage::Title); });
 		return;
 	}
 
@@ -828,7 +869,8 @@ void SInvestigationScreen::BuildHome()
 	AddItem(FText::FromString(TEXT("Interview someone")), [this]() { GoTo(EPage::People); });
 	AddItem(FText::FromString(TEXT("Your theory")), [this]() { GoTo(EPage::Theory); });
 	AddItem(FText::FromString(TEXT("Save or load")), [this]() { GoTo(EPage::SaveLoad); });
-	AddItem(FText::FromString(TEXT("Other case files")), [this]() { GoTo(EPage::Cases); });
+	AddItem(FText::FromString(TEXT("Other case files")), [this]() { bCasesFromTitle = false; GoTo(EPage::Cases); });
+	AddItem(FText::FromString(TEXT("Main menu")), [this]() { SaveProgressQuietly(); GoTo(EPage::Title); });
 }
 
 void SInvestigationScreen::BuildExhibits()
@@ -1547,7 +1589,8 @@ void SInvestigationScreen::BuildCases()
 			continue;
 		}
 
-		const bool bCurrent = Investigation->GetActiveCasePlugin() == Plugin;
+		// "On the desk" means the player is working on it now; the case loaded quietly at start-up does not count.
+		const bool bCurrent = bEnteredCase && Investigation->GetActiveCasePlugin() == Plugin;
 		FString Status;
 		FSaveSlotHeader Header;
 		if (bCurrent)
@@ -1581,31 +1624,25 @@ void SInvestigationScreen::BuildCases()
 			Card.Tag = TEXT("On your desk");
 			Card.Tone = ETone::Amber;
 		}
-
-		if (bCurrent)
+		else if (Status != TEXT("Not yet opened."))
 		{
-			continue;
+			const bool bClosed = Header.Summary.EndsWith(TEXT("concluded"));
+			Card.Tag = bClosed ? TEXT("Concluded") : TEXT("In progress");
+			Card.Tone = bClosed ? ETone::Dim : ETone::Teal;
 		}
+
 		const FName PluginCopy = Plugin;
 		const FString CaseTitle = Content.Title.ToString();
-		AddItem(FText::FromString(FString::Printf(TEXT("Open %s"), *CaseTitle)), [this, PluginCopy, CaseTitle]()
+		if (bCurrent)
 		{
-			const bool bOpened = Saves.IsValid() && Saves->OpenCase(PluginCopy);
-			Transcript.Reset();
-			LeadsCase = NAME_None;
-			if (bOpened)
+			// From the main menu, the case on the desk is one of the choices too.
+			if (bCasesFromTitle)
 			{
-				// A new case on the desk: its opening film (if it has one) plays the first time it is opened.
-				ShownCasePlugin = PluginCopy;
-				bOpeningFilmOffered = !Saves->WasLastOpenFresh();
-				Notice = FString::Printf(TEXT("You take out the file: %s."), *CaseTitle);
+				AddItem(FText::FromString(FString::Printf(TEXT("Return to %s"), *CaseTitle)), [this]() { GoTo(EPage::Home); });
 			}
-			else
-			{
-				Notice = TEXT("That file could not be opened. See the Output Log (LogInvestigation).");
-			}
-			GoTo(bOpened ? EPage::Home : EPage::Cases);
-		});
+			continue;
+		}
+		AddItem(FText::FromString(FString::Printf(TEXT("Open %s"), *CaseTitle)), [this, PluginCopy, CaseTitle]() { EnterCase(PluginCopy, CaseTitle); });
 	}
 
 	AddBackItem();
@@ -2281,7 +2318,7 @@ TSharedRef<SWidget> SInvestigationScreen::MakeHeader()
 			.HAlign(HAlign_Right)
 			[
 				SNew(STextBlock)
-				.Visibility(CaseName.IsEmpty() || Page == EPage::Home ? EVisibility::Collapsed : EVisibility::Visible)
+				.Visibility(CaseName.IsEmpty() || Page == EPage::Home || !bEnteredCase ? EVisibility::Collapsed : EVisibility::Visible)
 				.Text(FText::FromString(CaseName.ToUpper()))
 				.Font(Caps(11))
 				.ColorAndOpacity(FSlateColor(TextDim))
@@ -2324,7 +2361,10 @@ TSharedRef<SWidget> SInvestigationScreen::MakeFooter()
 	Hint(TEXT("MOVE"), TEXT("arrows / d-pad"));
 	Hint(TEXT("CHOOSE"), TEXT("Enter / A"));
 	Hint(TEXT("BACK"), TEXT("Esc / B"));
-	Hint(TEXT("SCROLL FILE"), TEXT("PgUp PgDn / LB RB"));
+	if (Page != EPage::Title && Page != EPage::ExitConfirm)
+	{
+		Hint(TEXT("SCROLL FILE"), TEXT("PgUp PgDn / LB RB"));
+	}
 	return Hints;
 }
 
@@ -2340,6 +2380,7 @@ void SInvestigationScreen::RebuildWidgets()
 		const TFunction<void()> Action = Item.Action;
 		const TSharedRef<SMenuButton> Button = SNew(SMenuButton)
 			.Label(Item.Label)
+			.Enabled(Item.bEnabled)
 			.OnClicked_Lambda([Action]()
 			{
 				if (Action)
@@ -2356,10 +2397,26 @@ void SInvestigationScreen::RebuildWidgets()
 				Button
 			];
 
-		if (!FirstButton.IsValid())
+		if (!FirstButton.IsValid() && Item.bEnabled)
 		{
 			FirstButton = Button;
 		}
+	}
+
+	// The main menu and its exit question have their own full-screen layout.
+	if (Page == EPage::Title || Page == EPage::ExitConfirm)
+	{
+		ContentScrollWeak.Reset();
+		ChildSlot
+		[
+			MakeTitleScreen(Menu)
+		];
+		FirstButtonWeak = FirstButton;
+		if (FirstButton.IsValid() && FSlateApplication::IsInitialized())
+		{
+			FSlateApplication::Get().SetAllUserFocus(FirstButton, EFocusCause::SetDirectly);
+		}
+		return;
 	}
 
 	// The opening film fills the whole screen, with its choices tucked into a corner.
@@ -2596,14 +2653,394 @@ void SInvestigationScreen::RebuildWidgets()
 	}
 }
 
+TArray<SInvestigationScreen::FSaveChoice> SInvestigationScreen::GetSavesNewestFirst()
+{
+	TArray<FSaveChoice> Choices;
+	if (!Saves.IsValid())
+	{
+		return Choices;
+	}
+
+	const UInvestigationSettings* Settings = GetDefault<UInvestigationSettings>();
+	TArray<FName> Plugins = Settings->CasePlugins;
+	if (Plugins.Num() == 0)
+	{
+		Plugins.Add(Settings->StartupCasePlugin);
+	}
+	for (const FName Plugin : Plugins)
+	{
+		FSaveChoice Choice;
+		if (Saves->GetAutosaveHeaderFor(Plugin, Choice.Header))
+		{
+			Choice.AutosavePlugin = Plugin;
+			Choices.Add(Choice);
+		}
+	}
+	for (int32 Slot = 1; Slot <= UInvestigationSaveSubsystem::NumManualSlots; ++Slot)
+	{
+		FSaveChoice Choice;
+		if (Saves->GetManualSlotHeader(Slot, Choice.Header))
+		{
+			Choice.ManualSlot = Slot;
+			Choices.Add(Choice);
+		}
+	}
+	Choices.Sort([](const FSaveChoice& A, const FSaveChoice& B) { return A.Header.SavedAt > B.Header.SavedAt; });
+	return Choices;
+}
+
+bool SInvestigationScreen::ContinueFromLatestSave()
+{
+	for (const FSaveChoice& Choice : GetSavesNewestFirst())
+	{
+		const bool bLoaded = Choice.ManualSlot > 0 ? Saves->LoadManual(Choice.ManualSlot) : Saves->LoadAutosaveFor(Choice.AutosavePlugin);
+		if (bLoaded)
+		{
+			bEnteredCase = true;
+			ShownCasePlugin = Investigation->GetActiveCasePlugin();
+			Transcript.Reset();
+			LeadsCase = NAME_None;
+			bOpeningFilmOffered = true;   // a resumed case goes straight to its file
+			return true;
+		}
+	}
+	return false;
+}
+
+void SInvestigationScreen::EnterCase(FName CasePlugin, const FString& CaseTitle)
+{
+	if (!Saves.IsValid() || !Investigation.IsValid())
+	{
+		return;
+	}
+
+	bool bOpened = false;
+	bool bFresh = false;
+	FSaveSlotHeader Header;
+	const bool bAlreadyLoaded = Investigation->IsCaseActive() && Investigation->GetActiveCasePlugin() == CasePlugin;
+
+	if (bEnteredCase)
+	{
+		// The usual way between cases: the one on the desk is autosaved, the other picked up where it was left.
+		bOpened = Saves->OpenCase(CasePlugin);
+		bFresh = Saves->WasLastOpenFresh();
+	}
+	else if (Saves->GetAutosaveHeaderFor(CasePlugin, Header) && Saves->LoadAutosaveFor(CasePlugin))
+	{
+		// Nothing has been done yet this session, so nothing is saved first: the untouched start-up case
+		// must never be written over a real autosave.
+		bOpened = true;
+	}
+	else if (bAlreadyLoaded)
+	{
+		// The start-up case, never played: it is already loaded fresh.
+		bOpened = true;
+		bFresh = !Investigation->IsCaseConcluded();
+	}
+	else
+	{
+		bOpened = Investigation->StartCase(CasePlugin);
+		bFresh = bOpened;
+	}
+
+	Transcript.Reset();
+	LeadsCase = NAME_None;
+	if (!bOpened)
+	{
+		Notice = TEXT("That file could not be opened. See the Output Log (LogInvestigation).");
+		GoTo(EPage::Cases);
+		return;
+	}
+	bEnteredCase = true;
+	ShownCasePlugin = Investigation->GetActiveCasePlugin();
+	// A case started from the beginning opens with its film; one picked up again goes straight to its file.
+	bOpeningFilmOffered = !bFresh;
+	Notice = FString::Printf(TEXT("You take out the file: %s."), *CaseTitle);
+	GoTo(EPage::Home);
+}
+
+void SInvestigationScreen::SaveProgressQuietly()
+{
+	// Only once the player has really been in a case, and never in the middle of an interview (the save
+	// system refuses that itself). Autosaves are written in the background.
+	if (bEnteredCase && Saves.IsValid() && Interviews.IsValid() && !Interviews->IsInterviewActive())
+	{
+		Saves->Autosave();
+	}
+}
+
+void SInvestigationScreen::QuitGame()
+{
+	SaveProgressQuietly();
+	// A moment for the background save to reach the disk, then close (or end Play-in-Editor).
+	TWeakObjectPtr<UGameInstance> Instance = GameInstance;
+	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([Instance](float)
+	{
+		if (UGameInstance* Game = Instance.Get())
+		{
+			UKismetSystemLibrary::QuitGame(Game->GetWorld(), Game->GetFirstLocalPlayerController(), EQuitPreference::Quit, false);
+		}
+		return false;
+	}), 0.75f);
+}
+
+void SInvestigationScreen::BuildTitle()
+{
+	Title = FText::FromString(TEXT("COLD CASE"));
+	const FCaseContent* Case = GetCase();
+
+	// Continue: back to the case on the desk, or else the newest save of any kind.
+	if (bEnteredCase && Case)
+	{
+		AddItem(FText::FromString(FString::Printf(TEXT("Continue\n%s"), *Case->Title.ToString())), [this]()
+		{
+			bOpeningFilmOffered = true;
+			GoTo(EPage::Home);
+		});
+	}
+	else
+	{
+		const TArray<FSaveChoice> Latest = GetSavesNewestFirst();
+		if (Latest.Num() > 0)
+		{
+			const FSaveSlotHeader& Header = Latest[0].Header;
+			AddItem(FText::FromString(FString::Printf(TEXT("Continue\n%s  \u00B7  saved %s"), *Header.CaseTitle.ToString(), *Header.SavedAt.ToString(TEXT("%d/%m/%Y %H:%M")))), [this]()
+			{
+				if (!ContinueFromLatestSave())
+				{
+					Notice = TEXT("Your last save could not be loaded. Choose a case instead.");
+					GoTo(EPage::Title);
+					return;
+				}
+				GoTo(EPage::Home);
+			});
+		}
+		else
+		{
+			AddDisabledItem(FText::FromString(TEXT("Continue\nNo saved investigation yet")));
+		}
+	}
+
+	{
+		const UInvestigationSettings* Settings = GetDefault<UInvestigationSettings>();
+		const int32 Count = FMath::Max(1, Settings->CasePlugins.Num());
+		AddItem(FText::FromString(FString::Printf(TEXT("Cases\n%d case files"), Count)), [this]()
+		{
+			bCasesFromTitle = true;
+			GoTo(EPage::Cases);
+		});
+	}
+
+	// Save: only once there is a case in play to save.
+	if (bEnteredCase && Case)
+	{
+		const FString CaseTitle = Case->Title.ToString();
+		AddItem(FText::FromString(FString::Printf(TEXT("Save\n%s"), *CaseTitle)), [this, CaseTitle]()
+		{
+			SaveProgressQuietly();
+			Notice = FString::Printf(TEXT("Progress saved: %s, %s."), *CaseTitle, *FDateTime::Now().ToString(TEXT("%H:%M")));
+			GoTo(EPage::Title);
+		});
+	}
+	else
+	{
+		AddDisabledItem(FText::FromString(TEXT("Save\nNothing to save yet. Open a case first")));
+	}
+
+	AddItem(FText::FromString(TEXT("Exit")), [this]() { GoTo(EPage::ExitConfirm); });
+}
+
+void SInvestigationScreen::BuildExitConfirm()
+{
+	Title = FText::FromString(TEXT("COLD CASE"));
+	AddLead(TEXT("Close the game?"));
+	AddLead(bEnteredCase ? TEXT("Your progress is saved before the game closes.") : TEXT("Nothing has changed since the game started."), ETone::Dim);
+
+	AddItem(FText::FromString(TEXT("Stay")), [this]() { GoTo(EPage::Title); });
+	AddItem(FText::FromString(TEXT("Exit to desktop")), [this]() { QuitGame(); });
+}
+
+TSharedRef<SWidget> SInvestigationScreen::MakeTitleScreen(const TSharedRef<SVerticalBox>& Menu)
+{
+	using namespace InvestigationScreenPrivate;
+	const FSlateBrush* Background = GetImage(FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("Art"), TEXT("UI"), TEXT("Title.png"))));
+
+	// Words above the menu (the exit question), and any confirmation below it.
+	const TSharedRef<SVerticalBox> Words = SNew(SVerticalBox);
+	for (const FBlock& Block : Blocks)
+	{
+		Words->AddSlot()
+			.AutoHeight()
+			.Padding(0.f, 0.f, 0.f, 8.f)
+			[
+				SNew(STextBlock)
+				.Text(FText::FromString(Block.Text))
+				.Font(Block.Tone == ETone::Dim ? Sans(16) : Sans(22, TEXT("Light")))
+				.ColorAndOpacity(FSlateColor(Block.Tone == ETone::Dim ? TextDim : TextMain))
+				.AutoWrapText(true)
+			];
+	}
+	const TSharedRef<SVerticalBox> Toasts = SNew(SVerticalBox);
+	for (const FString& Message : Notices)
+	{
+		Toasts->AddSlot()
+			.AutoHeight()
+			.Padding(0.f, 16.f, 0.f, 0.f)
+			[
+				SNew(SBorder)
+				.BorderImage(ToneBrush(1))
+				.Padding(FMargin(14.f, 9.f))
+				[
+					SNew(STextBlock)
+					.Text(FText::FromString(Message))
+					.Font(Sans(15))
+					.ColorAndOpacity(FSlateColor(TextMain))
+					.AutoWrapText(true)
+				]
+			];
+	}
+
+	const FText Subtitle = FText::FromString(TEXT("The Last Shift"));
+
+	return SNew(SOverlay)
+
+		// Nottingham after midnight, darkened on the left where the menu sits.
+		+ SOverlay::Slot()
+		[
+			SNew(SBorder)
+			.BorderImage(&BackgroundBrush)
+			.Padding(FMargin(0.f))
+			[
+				SNew(SScaleBox)
+				.Stretch(EStretch::ScaleToFill)
+				.Visibility(Background ? EVisibility::HitTestInvisible : EVisibility::Collapsed)
+				[
+					SNew(SImage).Image(Background ? Background : static_cast<const FSlateBrush*>(&BackgroundBrush))
+				]
+			]
+		]
+
+		+ SOverlay::Slot()
+		.Padding(FMargin(110.f, 60.f, 56.f, 26.f))
+		[
+			SNew(SVerticalBox)
+
+			+ SVerticalBox::Slot()
+			.FillHeight(1.f)
+			.VAlign(VAlign_Center)
+			.HAlign(HAlign_Left)
+			[
+				SNew(SBox)
+				.WidthOverride(620.f)   // wide enough for the COLD CASE title at any letter spacing
+				.HAlign(HAlign_Fill)
+				[
+					SNew(SVerticalBox)
+
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					[
+						SNew(STextBlock)
+						.Text(FText::FromString(TEXT("MAJOR CRIME REVIEW")))
+						.Font(Caps(13))
+						.ColorAndOpacity(FSlateColor(Amber))
+					]
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					.Padding(0.f, 10.f, 0.f, 0.f)
+					[
+						SNew(STextBlock)
+						.Text(FText::FromString(TEXT("COLD CASE")))
+						.Font([]() { FSlateFontInfo Font = Sans(64, TEXT("Light")); Font.LetterSpacing = 220; return Font; }())
+						.ColorAndOpacity(FSlateColor(TextMain))
+					]
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					.Padding(0.f, 4.f, 0.f, 0.f)
+					[
+						SNew(STextBlock)
+						.Text(Subtitle)
+						.Font(Sans(17))
+						.ColorAndOpacity(FSlateColor(TextBody))
+						.AutoWrapText(true)
+					]
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					.Padding(0.f, 26.f, 0.f, 26.f)
+					[
+						SNew(SBox)
+						.WidthOverride(64.f)
+						.HAlign(HAlign_Left)
+						[
+							SNew(SBox)
+							.WidthOverride(64.f)
+							.HeightOverride(2.f)
+							[
+								SNew(SImage).Image(WhiteBrush()).ColorAndOpacity(FSlateColor(Amber))
+							]
+						]
+					]
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					[
+						Words
+					]
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					.Padding(0.f, Blocks.Num() > 0 ? 12.f : 0.f, 0.f, 0.f)
+					[
+						Menu
+					]
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					[
+						Toasts
+					]
+				]
+			]
+
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			[
+				MakeFooter()
+			]
+		];
+}
+
 bool SInvestigationScreen::DevCommand(const TArray<FString>& Args)
 {
+	if (Args.Num() >= 1 && Args[0] == TEXT("Title")) { GoTo(EPage::Title); return true; }
+	if (Args.Num() >= 1 && Args[0] == TEXT("ExitConfirm")) { GoTo(EPage::ExitConfirm); return true; }
+	if (Args.Num() >= 1 && Args[0] == TEXT("CasesFromTitle")) { bCasesFromTitle = true; GoTo(EPage::Cases); return true; }
+	if (Args.Num() >= 2 && Args[0] == TEXT("OpenCase"))
+	{
+		// Exactly what choosing the case in the list does.
+		FCaseContent Content;
+		FString Error;
+		if (!FCaseDataLoader::LoadContent(FName(*Args[1]), Content, Error))
+		{
+			return false;
+		}
+		EnterCase(FName(*Args[1]), Content.Title.ToString());
+		return true;
+	}
+	if (Args.Num() >= 1 && Args[0] == TEXT("Continue"))
+	{
+		if (bEnteredCase || ContinueFromLatestSave())
+		{
+			GoTo(EPage::Home);
+			return true;
+		}
+		return false;
+	}
+
 	const FCaseContent* Case = GetCase();
 	if (Args.Num() < 1 || !Case || !CaseFile.IsValid())
 	{
 		return false;
 	}
 	const FString What = Args[0];
+	// Jumping into a case page from the console counts as being in that case.
+	bEnteredCase = true;
 	const FName Id = Args.Num() > 1 ? FName(*Args[1]) : NAME_None;
 
 	if (What == TEXT("Home")) { GoTo(EPage::Home); return true; }
@@ -2613,7 +3050,7 @@ bool SInvestigationScreen::DevCommand(const TArray<FString>& Args)
 	if (What == TEXT("Theory")) { GoTo(EPage::Theory); return true; }
 	if (What == TEXT("Review")) { GoTo(EPage::Review); return true; }
 	if (What == TEXT("SaveLoad")) { GoTo(EPage::SaveLoad); return true; }
-	if (What == TEXT("Cases")) { GoTo(EPage::Cases); return true; }
+	if (What == TEXT("Cases")) { bCasesFromTitle = false; GoTo(EPage::Cases); return true; }
 	if (What == TEXT("CaseReview"))
 	{
 		if (!Investigation.IsValid() || !Investigation->IsCaseConcluded())
@@ -2690,7 +3127,7 @@ namespace InvestigationScreenPrivate
 	// Development only: drives the screens without a keyboard or controller, for unattended screenshots.
 	static FAutoConsoleCommand UiCommand(
 		TEXT("ColdCase.UI"),
-		TEXT("Development only. ColdCase.UI <Home|Exhibits|Exhibit|Statements|People|Interview|Theory|Review|CaseReview|SaveLoad|Cases|Clip|Ask|Present> [Id]"),
+		TEXT("Development only. ColdCase.UI <Title|ExitConfirm|Continue|CasesFromTitle|OpenCase <Plugin>|Home|Exhibits|Exhibit|Statements|People|Interview|Theory|Review|CaseReview|SaveLoad|Cases|Clip|Ask|Present> [Id]"),
 		FConsoleCommandWithArgsDelegate::CreateLambda([](const TArray<FString>& Args)
 		{
 			const TSharedPtr<SInvestigationScreen> Screen = SInvestigationScreen::GetActive();
