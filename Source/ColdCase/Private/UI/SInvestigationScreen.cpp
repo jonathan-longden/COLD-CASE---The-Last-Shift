@@ -818,7 +818,7 @@ void SInvestigationScreen::BuildHome()
 		Stat(TEXT("Requests outstanding"), FString::FromInt(Pending), FString(), ETone::Neutral);
 		Stat(TEXT("Statements taken"), FString::FromInt(CaseFile->GetStatements().Num()), FString(), ETone::Neutral);
 		Stat(TEXT("People spoken to"), FString::Printf(TEXT("%d of %d"), Spoken, Available), FString(), ETone::Neutral);
-		Stat(TEXT("Key questions"), FString::Printf(TEXT("%d of %d"), Answered, Case.KeyQuestions.Num()), TEXT("answered"), ETone::Neutral);
+		Stat(TEXT("Key questions answered"), FString::Printf(TEXT("%d of %d"), Answered, Case.KeyQuestions.Num()), FString(), ETone::Neutral);
 
 		AddLead(TEXT("Nothing in this file has been tested in court. Treat every page as a claim, not a fact."), ETone::Dim);
 	}
@@ -861,7 +861,7 @@ void SInvestigationScreen::BuildExhibits()
 		}
 
 		const FName EvidenceId = Item->Id;
-		const FString Label = FString::Printf(TEXT("%s  %s%s"), *Item->ExhibitRef, *Item->Name.ToString(), Held.bExamined ? TEXT("") : TEXT("  (not yet examined)"));
+		const FString Label = FString::Printf(TEXT("%s  %s%s"), *Item->ExhibitRef, *Item->Name.ToString(), Held.bExamined ? TEXT("") : TEXT("\nNot yet examined"));
 		AddItem(FText::FromString(Label), [this, EvidenceId]()
 		{
 			SelectedEvidence = EvidenceId;
@@ -1914,7 +1914,7 @@ TSharedRef<SWidget> SInvestigationScreen::MakeBlock(const FBlock& Block)
 			.AutoHeight()
 			[
 				SNew(SBox)
-				.MaxDesiredHeight(560.f)
+				.MaxDesiredHeight(Block.Kind == EBlock::Video ? 560.f : 400.f)
 				[
 					MakeImage(Block.Image, 0.f, false)
 				]
@@ -2279,21 +2279,6 @@ TSharedRef<SWidget> SInvestigationScreen::MakeHeader()
 			+ SVerticalBox::Slot()
 			.AutoHeight()
 			.HAlign(HAlign_Right)
-			[
-				SNew(SBorder)
-				.BorderImage(ToneBrush(3))
-				.Padding(FMargin(10.f, 4.f))
-				[
-					SNew(STextBlock)
-					.Text(FText::FromString(TEXT("RESTRICTED")))
-					.Font(Caps(11))
-					.ColorAndOpacity(FSlateColor(Red))
-				]
-			]
-			+ SVerticalBox::Slot()
-			.AutoHeight()
-			.HAlign(HAlign_Right)
-			.Padding(0.f, 10.f, 0.f, 0.f)
 			[
 				SNew(STextBlock)
 				.Visibility(CaseName.IsEmpty() || Page == EPage::Home ? EVisibility::Collapsed : EVisibility::Visible)
