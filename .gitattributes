@@ -8,6 +8,7 @@
 *.uplugin text eol=crlf
 *.md text eol=crlf
 *.bat text eol=crlf
+*.iss text eol=crlf
 
 # Unreal binary assets: stored in Git LFS, lockable so two people can't edit the same asset at once
 *.uasset filter=lfs diff=lfs merge=lfs -text lockable
