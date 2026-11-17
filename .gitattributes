@@ -43,3 +43,5 @@ Plugins/Cases/Case004_LongNight/Media/OpeningFilm.mp4 -filter -diff -merge -text
 
 # Small UI images kept in plain Git so they can be pushed from anywhere.
 Art/UI/*.png -filter -diff -merge -text
+# Exhibit stills and case covers sit beside the clips and are read as plain files, like the UI pictures.
+Plugins/Cases/*/Media/*.png -filter -diff -merge -text
