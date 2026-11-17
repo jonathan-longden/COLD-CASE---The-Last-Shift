@@ -1431,10 +1431,10 @@ void SInvestigationScreen::BuildCaseReview()
 		{
 			Missed.Text = TEXT("None identified.");
 		}
-		for (const FText& Line : Report.Missed)
+		for (const FText& MissedLine : Report.Missed)
 		{
 			FRow& Row = Missed.Rows.AddDefaulted_GetRef();
-			Row.Text = FString::Printf(TEXT("\u2022  %s"), *Line.ToString());
+			Row.Text = FString::Printf(TEXT("\u2022  %s"), *MissedLine.ToString());
 		}
 		Missed.Tone = Report.Missed.Num() > 0 ? ETone::Amber : ETone::Neutral;
 	}
