@@ -7,6 +7,8 @@
 #include "Widgets/DeclarativeSyntaxSupport.h"
 #include "Widgets/SCompoundWidget.h"
 
+class SScrollBox;
+
 class UCaseMediaPlayback;
 class UGameInstance;
 class UCaseFileSubsystem;
@@ -17,7 +19,7 @@ class UInvestigationSubsystem;
 class UTheorySubsystem;
 
 /**
- * The prototype's whole interface: a list of choices on the left, text on the right.
+ * The prototype's whole interface: a list of choices on the left, the case file on the right.
  *
  * It is presentation only. It holds no investigation state of its own: every choice calls one of the
  * investigation subsystems, then the screen is rebuilt from what they report.
@@ -73,18 +75,66 @@ private:
 		Cases
 	};
 
-	/** One choice in the left-hand list. */
+	/** One choice in the left-hand list. A second line (after a line break) is shown smaller, as detail. */
 	struct FMenuItem
 	{
 		FText Label;
 		TFunction<void()> Action;
 	};
 
+	/** Colour coding for tags and card edges. Teal informs, amber asks for attention, red marks a problem. */
+	enum class ETone : uint8 { Neutral, Teal, Amber, Red, Dim };
+
+	/** One labelled line inside a card or document (a transcript line, a review field, a figure). */
+	struct FRow
+	{
+		FString Label;
+		FString Text;
+		FString Tag;
+		ETone Tone = ETone::Neutral;
+		/** Typewriter face: for words quoted from a document or a recording. */
+		bool bTyped = false;
+		/** Shown quieter (for example the interviewer's own question in a transcript). */
+		bool bQuiet = false;
+		/** A thin rule above the row, to separate one exchange from the next. */
+		bool bRuleAbove = false;
+	};
+
+	/** The kinds of part a page is made of. Each has its own look; see MakeBlock. */
+	enum class EBlock : uint8
+	{
+		Lead,       // a plain paragraph introducing the page
+		Section,    // a small heading with a rule
+		Document,   // a typed sheet of paper: briefings, statements, transcripts
+		Stats,      // small figures: the state of the file
+		Card,       // a dark card: an exhibit, a person, a question, a save
+		Picture,    // a photograph, given the room it needs
+		Video,      // the clip playing now
+		Banner      // a wide cropped photograph at the top of a page
+	};
+
+	struct FBlock
+	{
+		EBlock Kind = EBlock::Lead;
+		FString Label;
+		FString Text;
+		FString Meta;
+		FString Tag;
+		FString Stamp;
+		ETone Tone = ETone::Neutral;
+		bool bTyped = false;
+		TArray<FRow> Rows;
+		/** Owned by the image cache, or the clip's picture brush. */
+		const FSlateBrush* Image = nullptr;
+		FVector2D ImageSize = FVector2D::ZeroVector;
+		float ImageHeight = 0.f;
+	};
+
 	/** Moves to a page and rebuilds the screen on the next frame. */
 	void GoTo(EPage NewPage);
 	void GoBack();
 
-	/** Fills Title, Body and Items for the current page from the investigation subsystems. */
+	/** Fills Title, Blocks and Items for the current page from the investigation subsystems. */
 	void BuildPage();
 	void BuildHome();
 	void BuildExhibits();
@@ -113,8 +163,36 @@ private:
 	/** Starts a video or sound clip and shows it. ReturnTo is where Back leads afterwards. */
 	void OpenClip(const FCaseMediaClip& Clip, EPage ReturnTo);
 
-	/** Replaces the widgets on screen with ones for Title, Body and Items. */
+	/** Replaces the widgets on screen with ones for Title, Blocks and Items. */
 	void RebuildWidgets();
+
+	/** Page parts. */
+	FBlock& AddBlock(EBlock Kind);
+	void AddLead(const FString& Text, ETone Tone = ETone::Neutral);
+	void AddSection(const FString& Label);
+	FBlock& AddDocument(const FString& Label, const FString& Text);
+	FBlock& AddCard(const FString& Label, const FString& Text);
+	TSharedRef<SWidget> MakeBlock(const FBlock& Block);
+	TSharedRef<SWidget> MakeRows(const TArray<FRow>& Rows, bool bOnPaper);
+	TSharedRef<SWidget> MakeImage(const FSlateBrush* Image, float Height, bool bFill);
+	TSharedRef<SWidget> MakeHeader();
+	TSharedRef<SWidget> MakeFooter();
+	FString GetMenuHeading() const;
+
+	/** A picture file as a brush, loaded once. Null (and nothing drawn) when the file is not there. */
+	const FSlateBrush* GetImage(const FString& Path);
+	/** A still that sits beside a case's clips, e.g. Media/TillRollDesk.png for TillRollDesk.mp4. */
+	const FSlateBrush* GetCaseImage(FName CasePlugin, const FString& File);
+	const FSlateBrush* GetClipStill(const FCaseMediaClip& Clip);
+	TMap<FString, TSharedPtr<FSlateDynamicImageBrush>> ImageCache;
+
+	/** Scrolls the case-file side with Page Up / Page Down or the shoulder buttons. */
+	TWeakPtr<SScrollBox> ContentScrollWeak;
+
+	/** A short fade when a new page comes up. */
+	double PageShownAt = 0.0;
+	EPage LastShownPage = EPage::Home;
+	float GetPageFade() const;
 
 	void AddItem(const FText& Label, TFunction<void()> Action);
 	void AddBackItem();
@@ -155,26 +233,34 @@ private:
 	FName SelectedQuestion;
 	EInterviewApproach Approach = EInterviewApproach::Neutral;
 
+	/** One question and answer in the interview on screen. */
+	struct FExchange
+	{
+		FString Asked;
+		FString Speaker;
+		FString Line;
+		bool bEnded = false;
+	};
+
 	/** What has been said in the interview on screen. Display only; the case file keeps the real record. */
-	TArray<FString> Transcript;
+	TArray<FExchange> Transcript;
 
 	/** A one-off message shown at the top of the next page (for example a refusal). */
 	FString Notice;
+	/** Messages shown at the top of the page on screen: the one-off notice and any new lines of enquiry. */
+	TArray<FString> Notices;
 
 	/** The top button of the current page, so focus can be put back on the list. */
 	TWeakPtr<SWidget> FirstButtonWeak;
 
 	FText Title;
-	FString Body;
+	TArray<FBlock> Blocks;
 	TArray<FMenuItem> Items;
 
-	FSlateColorBrush BackgroundBrush = FSlateColorBrush(FLinearColor(0.012f, 0.014f, 0.018f, 1.f));
+	FSlateColorBrush BackgroundBrush = FSlateColorBrush(FLinearColor(0.0034f, 0.0044f, 0.0060f, 1.f));
 
-	/** The case-file look: a darkened photograph behind everything, and the page text typed on paper. */
+	/** The case-file look: a dim photograph of the office behind everything, and paper for documents. */
 	TSharedPtr<FSlateDynamicImageBrush> BackdropBrush;
 	TSharedPtr<FSlateDynamicImageBrush> PaperBrush;
-	FSlateColorBrush ShadeBrush = FSlateColorBrush(FLinearColor(0.f, 0.f, 0.f, 0.45f));
-	FSlateColorBrush AccentBrush = FSlateColorBrush(FLinearColor(0.78f, 0.52f, 0.22f, 1.f));
 	FSlateColorBrush FilmBackgroundBrush = FSlateColorBrush(FLinearColor::Black);
-	FSlateColorBrush PanelBrush = FSlateColorBrush(FLinearColor(0.03f, 0.035f, 0.045f, 1.f));
 };
