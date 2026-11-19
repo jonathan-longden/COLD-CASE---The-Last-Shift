@@ -2900,7 +2900,7 @@ TSharedRef<SWidget> SInvestigationScreen::MakeTitleScreen(const TSharedRef<SVert
 			];
 	}
 
-	const FText Subtitle = FText::FromString(TEXT("The Last Shift"));
+	const FText Subtitle = FText::FromString(TEXT("The Review Unit"));
 
 	return SNew(SOverlay)
 
