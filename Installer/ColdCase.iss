@@ -21,7 +21,8 @@ OutputBaseFilename=ColdCase_Setup
 Compression=lzma2/normal
 SolidCompression=no
 DiskSpanning=no
-UninstallDisplayIcon={app}\{#AppExe}
+UninstallDisplayIcon={app}\ColdCase.ico
+SetupIconFile=..\Build\Windows\Application.ico
 WizardStyle=modern
 
 [Tasks]
@@ -29,11 +30,12 @@ Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription:
 
 [Files]
 Source: "..\Packaged\Release\Windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\Build\Windows\Application.ico"; DestDir: "{app}"; DestName: "ColdCase.ico"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\{#AppName}"; Filename: "{app}\{#AppExe}"
+Name: "{group}\{#AppName}"; Filename: "{app}\{#AppExe}"; IconFilename: "{app}\ColdCase.ico"
 Name: "{group}\Uninstall {#AppName}"; Filename: "{uninstallexe}"
-Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; Tasks: desktopicon
+Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; IconFilename: "{app}\ColdCase.ico"; Tasks: desktopicon
 
 [Run]
 ; Microsoft Visual C++ runtime the game needs (UE 5.7 ships vc_redist instead of UEPrereqSetup). Safe to run when it is already installed.

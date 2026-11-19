@@ -3,7 +3,10 @@ Binaries/
 Intermediate/
 Saved/
 DerivedDataCache/
-Build/
+/Build/*
+!/Build/Windows/
+/Build/Windows/*
+!/Build/Windows/Application.ico
 Packaged/
 Plugins/**/Binaries/
 Plugins/**/Intermediate/
